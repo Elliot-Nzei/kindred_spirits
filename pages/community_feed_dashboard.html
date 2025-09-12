@@ -8,7 +8,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <script type="module" src="https://static.rocket.new/rocket-web.js?_cfg=https%3A%2F%2Fkindredsp1403back.builtwithrocket.new&_be=https%3A%2F%2Fapplication.rocket.new&_v=0.1.8"></script>
-<style>
+<script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script>
+        <style>
         /* Comments Modal Improvements */
         .modal-comments-list {
             max-height: 320px;
@@ -32,6 +33,12 @@
             .mobile-bottom-padding {
                 padding-bottom: 5.5rem !important;
             }
+        }
+        .emoji-btn {
+            transition: transform 0.2s;
+        }
+        .emoji-btn:hover {
+            transform: scale(1.2);
         }
     </style>
 </head>
@@ -110,12 +117,22 @@
                     <!-- Interaction Bar -->
                     <div class="flex items-center justify-between pt-3 border-t border-border-light">
                         <div class="flex items-center space-x-4">
-                            <button type="button" class="flex items-center space-x-2 text-text-secondary hover:text-primary transition-colors">
-                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"/>
-                                </svg>
-                                <span class="text-sm">24</span>
-                            </button>
+                            <div class="relative" x-data="{ open: false }">
+                                <button @click="open = !open" type="button" class="like-btn flex items-center space-x-2 text-text-secondary hover:text-primary transition-colors" data-post-id="post1">
+                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"/>
+                                    </svg>
+                                    <span class="text-sm">24</span>
+                                </button>
+                                <div x-show="open" @click.away="open = false" class="absolute bottom-full flex space-x-2 bg-white p-2 rounded-full shadow-lg">
+                                    <button class="emoji-btn" data-emoji="like">👍</button>
+                                    <button class="emoji-btn" data-emoji="love">❤️</button>
+                                    <button class="emoji-btn" data-emoji="laugh">😂</button>
+                                    <button class="emoji-btn" data-emoji="care">🤗</button>
+                                    <button class="emoji-btn" data-emoji="sad">😢</button>
+                                    <button class="emoji-btn" data-emoji="angry">😡</button>
+                                </div>
+                            </div>
                             <button type="button" class="flex items-center space-x-2 text-text-secondary hover:text-primary transition-colors open-comments-modal-btn" data-post-id="post1">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
@@ -190,12 +207,22 @@
                     <!-- Interaction Bar -->
                     <div class="flex items-center justify-between pt-3 border-t border-border-light">
                         <div class="flex items-center space-x-4">
-                            <button class="flex items-center space-x-2 text-text-secondary hover:text-primary transition-colors">
-                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"/>
-                            </svg>
-                            <span class="text-sm">18</span>
-                            </button>
+                            <div class="relative" x-data="{ open: false }">
+                                <button @click="open = !open" type="button" class="like-btn flex items-center space-x-2 text-text-secondary hover:text-primary transition-colors" data-post-id="post2">
+                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"/>
+                                    </svg>
+                                    <span class="text-sm">18</span>
+                                </button>
+                                <div x-show="open" @click.away="open = false" class="absolute bottom-full flex space-x-2 bg-white p-2 rounded-full shadow-lg">
+                                    <button class="emoji-btn" data-emoji="like">👍</button>
+                                    <button class="emoji-btn" data-emoji="love">❤️</button>
+                                    <button class="emoji-btn" data-emoji="laugh">😂</button>
+                                    <button class="emoji-btn" data-emoji="care">🤗</button>
+                                    <button class="emoji-btn" data-emoji="sad">😢</button>
+                                    <button class="emoji-btn" data-emoji="angry">😡</button>
+                                </div>
+                            </div>
                             <button class="flex items-center space-x-2 text-text-secondary hover:text-primary transition-colors open-comments-modal-btn" data-post-id="post2">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
@@ -249,6 +276,15 @@
                             <a href="personal_growth_pathway.html" class="text-secondary-600 hover:text-secondary-700 text-sm font-medium">Shadow Work Module →</a>
                         </div>
                     </div>
+                </div>
+
+                <!-- Notifications -->
+                <div class="card">
+                    <h3 class="font-crimson text-lg font-semibold text-primary mb-4">Notifications</h3>
+                    <div id="notifications-list" class="space-y-3">
+                        <!-- Notifications will be dynamically inserted here -->
+                    </div>
+                    <button id="view-all-notifications" class="text-primary text-sm mt-2 hover:underline hidden">View all</button>
                 </div>
 
                 <!-- Community Milestones -->
@@ -350,8 +386,32 @@
                 </svg>
                 <span class="text-xs mt-1">Profile</span>
             </a>
+            <button id="mobile-notifications-btn" class="relative flex flex-col items-center p-2 text-text-secondary">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M10 2a6 6 0 00-6 6v3.586l-1.707 1.707A1 1 0 003 15h14a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"/>
+                </svg>
+                <span class="text-xs mt-1">Notifications</span>
+                <span id="mobile-notifications-badge" class="absolute top-0 right-0 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center hidden">0</span>
+            </button>
         </div>
     </nav>
+
+    <!-- Notifications Modal (Mobile) -->
+    <div id="mobile-notifications-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4 relative shadow-sacred-strong flex flex-col max-h-[90vh]">
+            <div class="flex items-center justify-between pb-4 border-b border-border-light mb-4">
+                <h3 class="font-crimson text-xl font-semibold text-primary">Notifications</h3>
+                <button type="button" id="close-mobile-notifications-modal" class="text-text-secondary hover:text-primary transition-colors" title="Close notifications modal">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <div id="mobile-notifications-list" class="space-y-4 mb-4 pr-2 flex-1 overflow-y-auto">
+                <!-- Notifications will be dynamically inserted here -->
+            </div>
+        </div>
+    </div>
 
     <!-- Floating Action Button for Mobile -->
     <button type="button" class="md:hidden fixed bottom-20 right-4 w-14 h-14 bg-accent text-primary rounded-full shadow-sacred-strong hover:shadow-contemplative transition-all duration-300 flex items-center justify-center" title="Add new post">
@@ -443,6 +503,144 @@
     </div>
 
     <script>
+        // Like and Notification System
+        const likeButtons = document.querySelectorAll('.like-btn');
+        const notificationsList = document.getElementById('notifications-list');
+        let notifications = {};
+
+        // Fetch notifications from JSON file
+        fetch('../data/notifications.json')
+            .then(response => response.json())
+            .then(data => {
+                notifications = data;
+                updateNotificationsList();
+            });
+
+        likeButtons.forEach(btn => {
+            const postId = btn.dataset.postId;
+            let liked = false;
+
+            btn.addEventListener('click', () => {
+                liked = !liked;
+                const likeCountSpan = btn.querySelector('span');
+                let likeCount = parseInt(likeCountSpan.textContent);
+
+                if (liked) {
+                    likeCount++;
+                    addNotification('like', postId);
+                } else {
+                    likeCount--;
+                    removeNotification('like', postId);
+                }
+
+                likeCountSpan.textContent = likeCount;
+                btn.classList.toggle('text-primary', liked);
+                btn.classList.toggle('text-text-secondary', !liked);
+            });
+
+            const emojiBtns = btn.parentElement.querySelectorAll('.emoji-btn');
+            emojiBtns.forEach(emojiBtn => {
+                emojiBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const emoji = emojiBtn.dataset.emoji;
+                    addNotification(emoji, postId);
+                    const likeCountSpan = btn.querySelector('span');
+                    let likeCount = parseInt(likeCountSpan.textContent);
+                    likeCount++;
+                    likeCountSpan.textContent = likeCount;
+                    btn.parentElement.querySelector('[x-data]').__x.$data.open = false;
+                });
+            });
+        });
+
+        function addNotification(type, postId) {
+            if (!notifications[postId]) {
+                notifications[postId] = [];
+            }
+            notifications[postId].push({ type: type, user: 'current_user', timestamp: new Date() });
+            updateNotificationsList();
+            // Here you would typically save the notifications to the server
+            // For this example, we're just updating the local object
+        }
+
+        function removeNotification(type, postId) {
+            if (notifications[postId]) {
+                notifications[postId] = notifications[postId].filter(notification => notification.type !== type && notification.user !== 'current_user');
+                updateNotificationsList();
+            }
+        }
+
+        function updateNotificationsList() {
+            notificationsList.innerHTML = '';
+            const mobileNotificationsList = document.getElementById('mobile-notifications-list');
+            mobileNotificationsList.innerHTML = '';
+            let notificationCount = 0;
+
+            for (const postId in notifications) {
+                notifications[postId].forEach(notification => {
+                    notificationCount++;
+                    const notificationElement = document.createElement('div');
+                    notificationElement.className = 'flex items-center space-x-3 p-2 rounded-lg hover:bg-primary-50 transition-colors';
+                    notificationElement.innerHTML = `
+                        <div class="w-8 h-8 bg-accent rounded-full flex items-center justify-center">
+                            <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <p class="text-text-primary font-medium text-sm">Someone ${notification.type}d your post</p>
+                            <p class="text-text-secondary text-xs">${postId}</p>
+                        </div>
+                    `;
+                    notificationElement.addEventListener('click', () => {
+                        const postElement = document.querySelector(`[data-post-id="${postId}"]`);
+                        if (postElement) {
+                            postElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        }
+                        document.getElementById('mobile-notifications-modal').classList.add('hidden');
+                    });
+
+                    if (notificationCount <= 4) {
+                        notificationsList.appendChild(notificationElement.cloneNode(true));
+                    }
+                    mobileNotificationsList.appendChild(notificationElement);
+                });
+            }
+
+            const viewAllBtn = document.getElementById('view-all-notifications');
+            if (notificationCount > 4) {
+                viewAllBtn.classList.remove('hidden');
+            } else {
+                viewAllBtn.classList.add('hidden');
+            }
+
+            const mobileNotificationsBadge = document.getElementById('mobile-notifications-badge');
+            if (notificationCount > 0) {
+                mobileNotificationsBadge.textContent = notificationCount;
+                mobileNotificationsBadge.classList.remove('hidden');
+            } else {
+                mobileNotificationsBadge.classList.add('hidden');
+            }
+
+            if (notificationCount > 7) {
+                mobileNotificationsList.classList.add('overflow-y-scroll');
+            } else {
+                mobileNotificationsList.classList.remove('overflow-y-scroll');
+            }
+        }
+
+        document.getElementById('mobile-notifications-btn').addEventListener('click', () => {
+            document.getElementById('mobile-notifications-modal').classList.remove('hidden');
+        });
+
+        document.getElementById('close-mobile-notifications-modal').addEventListener('click', () => {
+            document.getElementById('mobile-notifications-modal').classList.add('hidden');
+        });
+
+        document.getElementById('view-all-notifications').addEventListener('click', () => {
+            document.getElementById('mobile-notifications-modal').classList.remove('hidden');
+        });
+
         // Pull to refresh functionality
         let startY = 0;
         let pullDistance = 0;
