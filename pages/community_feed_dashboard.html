@@ -29,7 +29,7 @@
         }
     </style>
 </head>
-<body class="bg-background min-h-screen">
+<body class="bg-background min-h-screen pb-24 md:pb-0">
     <!-- Header with Floating Elements -->
     <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-border-light">
         <div class="max-w-6xl mx-auto px-4 py-3">
@@ -308,7 +308,7 @@
     </div>
 
     <!-- Mobile Bottom Navigation -->
-    <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-border-light">
+    <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-border-light z-50">
         <div class="flex items-center justify-around py-2">
             <a href="community_feed_dashboard.html" class="flex flex-col items-center p-2 text-primary">
                 <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
@@ -523,10 +523,13 @@
                     <div class="flex items-center space-x-2 mb-1">
                         <img src="${comment.avatar}" alt="${comment.author}'s Profile" class="w-8 h-8 rounded-full object-cover" />
                         <span class="font-medium text-text-primary text-sm">${comment.author}</span>
-                        <span class="text-text-secondary text-xs">${comment.time}</span>
                     </div>
-                    <p class="text-text-primary text-sm">${comment.text}</p>
-                    <button class="reply-btn text-primary text-xs mt-2 hover:underline" data-comment-id="${comment.id}" data-author="${comment.author}">Reply</button>
+                    <p class="text-text-primary text-sm pl-10">${comment.text}</p>
+                    <div class="flex items-center space-x-4 text-xs text-text-secondary pl-10 mt-2">
+                        <button type="button" class="font-semibold hover:underline">Like</button>
+                        <button type="button" class="reply-btn font-semibold hover:underline" data-comment-id="${comment.id}" data-author="${comment.author}">Reply</button>
+                        <span>${comment.time}</span>
+                    </div>
                 `;
                 parentElement.appendChild(commentDiv);
 
