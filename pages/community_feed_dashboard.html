@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Community Feed Dashboard - Kindred Spirits</title>
+    <title>Community Feed Dashboard - Metanoia</title>
     <link rel="stylesheet" href="../css/main.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -49,11 +49,8 @@
             <div class="flex items-center justify-between">
                 <!-- Logo -->
                 <a href="../index.html" class="flex items-center space-x-2">
-                    <svg class="w-8 h-8 text-primary" viewBox="0 0 32 32" fill="currentColor">
-                        <path d="M16 2L20.5 10.5L30 12L22 20L24 30L16 25L8 30L10 20L2 12L11.5 10.5L16 2Z"/>
-                        <circle cx="16" cy="16" r="4" fill="white"/>
-                    </svg>
-                    <h1 class="font-crimson text-xl font-semibold text-primary">Kindred Spirits</h1>
+                    <img src="../img/logo_only.jpg" alt="Metanoia Logo" class="w-8 h-8 rounded-full object-cover">
+                    <h1 class="font-crimson text-xl font-semibold text-primary">Metanoia</h1>
                 </a>
 
                 <!-- Floating Meditation Timer -->
@@ -117,21 +114,52 @@
                     <!-- Interaction Bar -->
                     <div class="flex items-center justify-between pt-3 border-t border-border-light">
                         <div class="flex items-center space-x-4">
-                            <div class="relative" x-data="{ open: false }">
-                                <button @click="open = !open" type="button" class="like-btn flex items-center space-x-2 text-text-secondary hover:text-primary transition-colors" data-post-id="post1">
-                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"/>
-                                    </svg>
-                                    <span class="text-sm">24</span>
+                            <div class="relative" x-data="{ open: false, currentReaction: 'none', reactions: { 'like': 0, 'love': 0, 'laugh': 0, 'care': 0, 'sad': 0, 'angry': 0 } }" x-init="
+                                // Initialize reactions from a dummy source or fetch from backend
+                                // For now, let's set some dummy initial values
+                                if (Math.random() > 0.5) {
+                                    reactions.like = Math.floor(Math.random() * 20) + 5;
+                                    reactions.love = Math.floor(Math.random() * 10) + 2;
+                                }
+                                if (Math.random() > 0.7) {
+                                    currentReaction = 'like';
+                                }
+                            ">
+                                <button @click="open = !open" type="button" class="reaction-btn flex items-center space-x-2 text-text-secondary hover:text-primary transition-colors" :class="{'text-primary': currentReaction !== 'none'}">
+                                    <template x-if="currentReaction === 'none'">
+                                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"/>
+                                        </svg>
+                                    </template>
+                                    <template x-if="currentReaction === 'like'">👍</template>
+                                    <template x-if="currentReaction === 'love'">❤️</template>
+                                    <template x-if="currentReaction === 'laugh'">😂</template>
+                                    <template x-if="currentReaction === 'care'">🤗</template>
+                                    <template x-if="currentReaction === 'sad'">😢</template>
+                                    <template x-if="currentReaction === 'angry'">😡</template>
+                                    <span class="text-sm" x-text="Object.values(reactions).reduce((a, b) => a + b, 0)"></span>
                                 </button>
-                                <div x-show="open" @click.away="open = false" class="absolute bottom-full flex space-x-2 bg-white p-2 rounded-full shadow-lg">
-                                    <button class="emoji-btn" data-emoji="like">👍</button>
-                                    <button class="emoji-btn" data-emoji="love">❤️</button>
-                                    <button class="emoji-btn" data-emoji="laugh">😂</button>
-                                    <button class="emoji-btn" data-emoji="care">🤗</button>
-                                    <button class="emoji-btn" data-emoji="sad">😢</button>
-                                    <button class="emoji-btn" data-emoji="angry">😡</button>
+                                <div x-show="open" @click.away="open = false" class="absolute bottom-full flex space-x-2 bg-white p-2 rounded-full shadow-lg z-10">
+                                    <button class="emoji-btn" data-emoji="like" @click="currentReaction = 'like'; reactions.like++; open = false; addNotification('like', postId);">👍</button>
+                                    <button class="emoji-btn" data-emoji="love" @click="currentReaction = 'love'; reactions.love++; open = false; addNotification('love', postId);">❤️</button>
+                                    <button class="emoji-btn" data-emoji="laugh" @click="currentReaction = 'laugh'; reactions.laugh++; open = false; addNotification('laugh', postId);">😂</button>
+                                    <button class="emoji-btn" data-emoji="care" @click="currentReaction = 'care'; reactions.care++; open = false; addNotification('care', postId);">🤗</button>
+                                    <button class="emoji-btn" data-emoji="sad" @click="currentReaction = 'sad'; reactions.sad++; open = false; addNotification('sad', postId);">😢</button>
+                                    <button class="emoji-btn" data-emoji="angry" @click="currentReaction = 'angry'; reactions.angry++; open = false; addNotification('angry', postId);">😡</button>
                                 </div>
+                            </div>
+                            <div class="reaction-summary flex items-center space-x-2 text-text-secondary text-sm">
+                                <template x-for="(count, emoji) in reactions" :key="emoji">
+                                    <span x-show="count > 0" class="flex items-center space-x-1">
+                                        <template x-if="emoji === 'like'">👍</template>
+                                        <template x-if="emoji === 'love'">❤️</template>
+                                        <template x-if="emoji === 'laugh'">😂</template>
+                                        <template x-if="emoji === 'care'">🤗</template>
+                                        <template x-if="emoji === 'sad'">😢</template>
+                                        <template x-if="emoji === 'angry'">😡</template>
+                                        <span x-text="count"></span>
+                                    </span>
+                                </template>
                             </div>
                             <button type="button" class="flex items-center space-x-2 text-text-secondary hover:text-primary transition-colors open-comments-modal-btn" data-post-id="post1">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -284,7 +312,7 @@
                     <div id="notifications-list" class="space-y-3">
                         <!-- Notifications will be dynamically inserted here -->
                     </div>
-                    <button id="view-all-notifications" class="text-primary text-sm mt-2 hover:underline hidden">View all</button>
+                    <button id="view-all-notifications" class="text-primary text-sm mt-2 hover:underline hidden" onclick="window.location.href='notifications.html'">View all</button>
                 </div>
 
                 <!-- Community Milestones -->
@@ -388,23 +416,6 @@
             </a>
         </div>
     </nav>
-
-    <!-- Notifications Modal (Mobile) -->
-    <div id="mobile-notifications-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
-        <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4 relative shadow-sacred-strong flex flex-col max-h-[90vh] h-full overflow-hidden">
-            <div class="flex items-center justify-between pb-4 border-b border-border-light mb-4">
-                <h3 class="font-crimson text-xl font-semibold text-primary">Notifications</h3>
-                <button type="button" id="close-mobile-notifications-modal" class="text-text-secondary hover:text-primary transition-colors" title="Close notifications modal">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                    </svg>
-                </button>
-            </div>
-            <div id="mobile-notifications-list" class="space-y-4 mb-4 overflow-y-scroll max-h-[500px]">
-                <!-- Notifications will be dynamically inserted here -->
-            </div>
-        </div>
-    </div>
 
     <!-- Floating Action Button for Mobile -->
     <button type="button" class="md:hidden fixed bottom-20 right-4 w-14 h-14 bg-accent text-primary rounded-full shadow-sacred-strong hover:shadow-contemplative transition-all duration-300 flex items-center justify-center" title="Add new post">
@@ -520,7 +531,7 @@
         const dummyReactors = {
             'post1': { name: 'Maya Chen', avatar: 'https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg' },
             'post2': { name: 'Alex Rivera', avatar: 'https://images.pexels.com/photos/1681010/pexels-photo-1681010.jpeg' },
-            'default': { name: 'A Kindred Spirit', avatar: 'https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' }
+            'default': { name: 'A Metanoia Soul', avatar: 'https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' }
         };
 
         // Fetch notifications from JSON file
@@ -586,63 +597,11 @@
             }
         }
 
-        function updateNotificationsList() {
-            notificationsList.innerHTML = '';
-            const mobileNotificationsList = document.getElementById('mobile-notifications-list');
-            mobileNotificationsList.innerHTML = '';
-            let allNotifications = [];
-            for (const postId in notifications) {
-                notifications[postId].forEach(notification => {
-                    allNotifications.push(notification);
-                });
-            }
-
-            // Sort notifications by timestamp (latest first)
-            allNotifications.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-
-            let notificationCount = 0;
-
-            allNotifications.forEach(notification => {
-                notificationCount++;
-                const notificationElement = document.createElement('div');
-                notificationElement.className = 'flex items-center space-x-3 p-2 rounded-lg border border-gray-200 hover:bg-gray-100 transition-colors';
-                notificationElement.innerHTML = `
-                    <img src="${notification.avatar}" alt="${notification.user}'s avatar" class="w-8 h-8 rounded-full object-cover flex-shrink-0" />
-                    <div class="flex-1">
-                        <p class="text-gray-800 text-sm">
-                            <span class="font-medium">${notification.user}</span> ${notification.type}d your post
-                        </p>
-                        <p class="text-gray-600 text-xs mt-0.5">${timeAgo(notification.timestamp)}</p>
-                    </div>
-                `;
-                notificationElement.addEventListener('click', () => {
-                    const postElement = document.querySelector(`[data-post-id="${notification.postId}"]`); // Use notification.postId
-                    if (postElement) {
-                        postElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    }
-                    document.getElementById('mobile-notifications-modal').classList.add('hidden');
-                });
-
-                if (notificationCount <= 3) {
-                    notificationsList.appendChild(notificationElement.cloneNode(true));
-                }
-                mobileNotificationsList.appendChild(notificationElement);
-            });
-
-            const viewAllBtn = document.getElementById('view-all-notifications');
-            if (notificationCount > 3) {
-                viewAllBtn.classList.remove('hidden');
-            } else {
-                viewAllBtn.classList.add('hidden');
-            }
-        }
-
-        document.getElementById('close-mobile-notifications-modal').addEventListener('click', () => {
-            document.getElementById('mobile-notifications-modal').classList.add('hidden');
-        });
+        mobileNotificationsList.innerHTML = '';
 
         document.getElementById('view-all-notifications').addEventListener('click', () => {
-            document.getElementById('mobile-notifications-modal').classList.remove('hidden');
+            // This event listener is now redundant as the button has an onclick handler
+            // It's kept here for clarity, but its functionality is now handled by the HTML href
         });
 
         // Pull to refresh functionality
