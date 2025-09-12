@@ -9,19 +9,19 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <script type="module" src="https://static.rocket.new/rocket-web.js?_cfg=https%3A%2F%2Fkindredsp1403back.builtwithrocket.new&_be=https%3A%2F%2Fapplication.rocket.new&_v=0.1.8"></script>
 </head>
-<body class="bg-background min-h-screen pb-24 md:pb-0">
+<body class="bg-background min-h-screen">
     <!-- Header with Floating Elements -->
     <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-border-light">
         <div class="max-w-6xl mx-auto px-4 py-3">
             <div class="flex items-center justify-between">
                 <!-- Logo -->
-                <div class="flex items-center space-x-2">
+                <a href="../index.html" class="flex items-center space-x-2">
                     <svg class="w-8 h-8 text-primary" viewBox="0 0 32 32" fill="currentColor">
                         <path d="M16 2L20.5 10.5L30 12L22 20L24 30L16 25L8 30L10 20L2 12L11.5 10.5L16 2Z"/>
                         <circle cx="16" cy="16" r="4" fill="white"/>
                     </svg>
                     <h1 class="font-crimson text-xl font-semibold text-primary">Kindred Spirits</h1>
-                </div>
+                </a>
 
                 <!-- Floating Meditation Timer -->
                 <div class="hidden md:flex items-center space-x-4">
@@ -53,8 +53,16 @@
             <img src="https://images.pexels.com/photos/1051838/pexels-photo-1051838.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Sacred forest sanctuary" class="w-full h-full object-cover" onerror="this.src='https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'; this.onerror=null;" />
         </div>
 
-        <div class="relative z-10 max-w-6xl mx-auto px-4 py-6">
-            <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        <div class="relative z-10 max-w-6xl mx-auto px-4 pt-6 pb-40 md:pb-6">
+            <!-- Add responsive padding for mobile to prevent content hiding behind navbar -->
+            <style>
+                @media (max-width: 767px) {
+                    .mobile-bottom-padding {
+                        padding-bottom: 5.5rem !important; /* Height of navbar + some space */
+                    }
+                }
+            </style>
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 mobile-bottom-padding">
                 <!-- Main Practice Area -->
                 <main class="lg:col-span-3 space-y-6">
                     <!-- Welcome & Current Practice -->
@@ -176,7 +184,6 @@
                                     <div class="w-10 h-10 bg-accent-200 rounded-full flex items-center justify-center">
                                         <svg class="w-5 h-5 text-accent-700" fill="currentColor" viewBox="0 0 20 20">
                                             <path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                                        </svg>
                                     </div>
                                     <div>
                                         <h4 class="font-medium text-primary">Morning Rituals</h4>
@@ -266,7 +273,6 @@
                                 <div class="flex items-center space-x-2">
                                     <svg class="w-5 h-5 text-success" fill="currentColor" viewBox="0 0 20 20">
                                         <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                                    </svg>
                                 </div>
                             </div>
 
@@ -412,7 +418,7 @@
     </div>
 
     <!-- Mobile Bottom Navigation -->
-    <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-border-light z-50">
+    <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-surface border-t border-border-light z-50">
         <div class="flex items-center justify-around py-2">
             <a href="community_feed_dashboard.html" class="flex flex-col items-center p-2 text-text-secondary">
                 <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
@@ -452,7 +458,7 @@
     </nav>
 
     <!-- Floating Practice Button -->
-    <button type="button" class="md:hidden fixed bottom-20 right-4 w-14 h-14 bg-primary text-white rounded-full shadow-sacred-strong hover:shadow-contemplative transition-all duration-300 flex items-center justify-center" title="Begin practice">
+    <button type="button" class="md:hidden fixed bottom-20 right-4 w-14 h-14 bg-primary text-white rounded-full shadow-sacred-strong hover:shadow-contemplative transition-all duration-300 flex items-center justify-center z-50" title="Begin practice">
         <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
             <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"/>
         </svg>

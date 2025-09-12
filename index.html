@@ -73,11 +73,17 @@
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
+        
+        @media (max-width: 767px) {
+            .mobile-bottom-padding {
+                padding-bottom: 5.5rem !important; /* Height of navbar + some space */
+            }
+        }
     </style>
 <script type="module" src="https://static.rocket.new/rocket-web.js?_cfg=https%3A%2F%2Fkindredsp1403back.builtwithrocket.new&_be=https%3A%2F%2Fapplication.rocket.new&_v=0.1.8"></script>
 </head>
 <body>
-    <div class="welcome-container fade-in">
+    <div class="welcome-container fade-in mobile-bottom-padding">
         <div class="logo">✨ Kindred Spirits</div>
         <div class="subtitle">Connect • Grow • Transform</div>
         <div class="loading-text">Preparing your spiritual journey...</div>

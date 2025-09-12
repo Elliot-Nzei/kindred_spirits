@@ -27,9 +27,15 @@
             flex-direction: column;
             max-height: 90vh;
         }
+        /* Add mobile bottom padding for main content */
+        @media (max-width: 767px) {
+            .mobile-bottom-padding {
+                padding-bottom: 5.5rem !important;
+            }
+        }
     </style>
 </head>
-<body class="bg-background min-h-screen pb-24 md:pb-0">
+<body class="bg-background min-h-screen">
     <!-- Header with Floating Elements -->
     <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-border-light">
         <div class="max-w-6xl mx-auto px-4 py-3">
@@ -66,7 +72,7 @@
         </div>
     </header>
 
-    <div class="max-w-6xl mx-auto px-4 py-6">
+    <div class="max-w-6xl mx-auto px-4 pt-6 pb-40 md:pb-6 mobile-bottom-padding">
         <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
             <!-- Main Feed -->
             <main class="lg:col-span-3 space-y-6">
@@ -308,7 +314,7 @@
     </div>
 
     <!-- Mobile Bottom Navigation -->
-    <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-border-light z-50">
+    <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-surface border-t border-border-light z-50">
         <div class="flex items-center justify-around py-2">
             <a href="community_feed_dashboard.html" class="flex flex-col items-center p-2 text-primary">
                 <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">

@@ -8,6 +8,13 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <script type="module" src="https://static.rocket.new/rocket-web.js?_cfg=https%3A%2F%2Fkindredsp1403back.builtwithrocket.new&_be=https%3A%2F%2Fapplication.rocket.new&_v=0.1.8"></script>
+    <style>
+        @media (max-width: 767px) {
+            .mobile-bottom-padding {
+                padding-bottom: 5.5rem !important;
+            }
+        }
+    </style>
 </head>
 <body class="bg-background min-h-screen">
     <!-- Header -->
@@ -15,13 +22,13 @@
         <div class="max-w-6xl mx-auto px-4 py-3">
             <div class="flex items-center justify-between">
                 <!-- Logo -->
-                <div class="flex items-center space-x-2">
+                <a href="../index.html" class="flex items-center space-x-2">
                     <svg class="w-8 h-8 text-primary" viewBox="0 0 32 32" fill="currentColor">
                         <path d="M16 2L20.5 10.5L30 12L22 20L24 30L16 25L8 30L10 20L2 12L11.5 10.5L16 2Z"/>
                         <circle cx="16" cy="16" r="4" fill="white"/>
                     </svg>
                     <h1 class="font-crimson text-xl font-semibold text-primary">Kindred Spirits</h1>
-                </div>
+                </a>
 
                 <!-- Desktop Navigation -->
                 <nav class="hidden md:flex items-center space-x-6">
@@ -43,7 +50,7 @@
     </header>
 
     <!-- Hero Section -->
-    <section class="relative py-16 md:py-24 bg-gradient-to-br from-primary-50 via-white to-secondary-50">
+    <section class="relative py-16 md:py-24 bg-gradient-to-br from-primary-50 via-white to-secondary-50 mobile-bottom-padding">
         <div class="max-w-6xl mx-auto px-4">
             <div class="text-center max-w-4xl mx-auto">
                 <div class="flex items-center justify-center space-x-2 mb-6">
@@ -81,7 +88,7 @@
     </section>
 
     <!-- Workshop Grid -->
-    <section class="py-16 md:py-24">
+    <section class="py-16 md:py-24 mobile-bottom-padding">
         <div class="max-w-6xl mx-auto px-4">
             <!-- Free Workshop - Featured -->
             <div class="mb-16">
@@ -342,7 +349,7 @@
     </section>
 
     <!-- Pricing Options -->
-    <section class="py-16 bg-gradient-to-br from-primary-50 to-secondary-50">
+    <section class="py-16 bg-gradient-to-br from-primary-50 to-secondary-50 mobile-bottom-padding">
         <div class="max-w-4xl mx-auto px-4">
             <div class="text-center mb-12">
                 <h2 class="font-crimson text-3xl font-semibold text-primary mb-4">Sacred Investment Options</h2>
@@ -457,7 +464,7 @@
     </section>
 
     <!-- Community Testimonials -->
-    <section class="py-16 md:py-24">
+    <section class="py-16 md:py-24 mobile-bottom-padding">
         <div class="max-w-6xl mx-auto px-4">
             <div class="text-center mb-12">
                 <h2 class="font-crimson text-3xl font-semibold text-primary mb-4">Transformation Stories</h2>
@@ -479,9 +486,6 @@
                         "The Sacred Library has become my daily sanctuary. Vani's talks have guided me through my darkest moments and helped me find light within myself."
                     </p>
                     <div class="flex items-center space-x-1">
-                        <svg class="w-4 h-4 text-accent-500" fill="currentColor" viewBox="0 0 20 20">
-                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-                        </svg>
                         <svg class="w-4 h-4 text-accent-500" fill="currentColor" viewBox="0 0 20 20">
                             <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
                         </svg>
@@ -521,9 +525,6 @@
                         <svg class="w-4 h-4 text-accent-500" fill="currentColor" viewBox="0 0 20 20">
                             <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
                         </svg>
-                        <svg class="w-4 h-4 text-accent-500" fill="currentColor" viewBox="0 0 20 20">
-                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-                        </svg>
                     </div>
                 </div>
 
@@ -551,9 +552,6 @@
                         <svg class="w-4 h-4 text-accent-500" fill="currentColor" viewBox="0 0 20 20">
                             <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
                         </svg>
-                        <svg class="w-4 h-4 text-accent-500" fill="currentColor" viewBox="0 0 20 20">
-                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-                        </svg>
                     </div>
                 </div>
             </div>
@@ -561,7 +559,7 @@
     </section>
 
     <!-- Call to Action -->
-    <section class="py-16 bg-gradient-to-r from-primary to-secondary">
+    <section class="py-16 bg-gradient-to-r from-primary to-secondary mobile-bottom-padding">
         <div class="max-w-4xl mx-auto px-4 text-center">
             <h2 class="font-crimson text-3xl md:text-4xl font-semibold text-white mb-6">
                 Your Soul's Journey Awaits
