@@ -417,6 +417,22 @@
         </div>
     </div>
 
+    <!-- Practice Start Modal -->
+    <div id="practice-modal" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-xl p-6 max-w-sm w-full shadow-sacred-strong relative">
+            <button id="close-practice-modal" class="absolute top-3 right-3 text-gray-400 hover:text-primary transition-colors" aria-label="Close">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+            <h2 class="font-crimson text-xl font-semibold text-primary mb-4">Begin Practice</h2>
+            <p class="text-text-secondary mb-6">Ready to start your sacred session? Set your intention and begin when you are ready.</p>
+            <button class="w-full bg-primary text-white py-3 rounded-lg font-semibold hover:bg-primary-700 transition-all duration-300" onclick="startTimer()">
+                Start Practice
+            </button>
+        </div>
+    </div>
+
     <!-- Mobile Bottom Navigation -->
     <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-surface border-t border-border-light z-50">
         <div class="flex items-center justify-around py-2">
@@ -458,7 +474,7 @@
     </nav>
 
     <!-- Floating Practice Button -->
-    <button type="button" class="md:hidden fixed bottom-20 right-4 w-14 h-14 bg-primary text-white rounded-full shadow-sacred-strong hover:shadow-contemplative transition-all duration-300 flex items-center justify-center z-50" title="Begin practice">
+    <button type="button" id="open-practice-modal" class="md:hidden fixed bottom-20 right-4 w-14 h-14 bg-primary text-white rounded-full shadow-sacred-strong hover:shadow-contemplative transition-all duration-300 flex items-center justify-center z-50" title="Begin practice">
         <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
             <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"/>
         </svg>
@@ -538,6 +554,20 @@
 
         // Begin practice button
         document.querySelector('.w-full.bg-primary').addEventListener('click', startTimer);
+
+        // Modal open/close logic for floating action button
+        document.getElementById('open-practice-modal').addEventListener('click', function() {
+            document.getElementById('practice-modal').classList.remove('hidden');
+        });
+        document.getElementById('close-practice-modal').addEventListener('click', function() {
+            document.getElementById('practice-modal').classList.add('hidden');
+        });
+        // Optional: close modal when clicking outside content
+        document.getElementById('practice-modal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                this.classList.add('hidden');
+            }
+        });
 
         // Smooth scroll animations
         const observerOptions = {
