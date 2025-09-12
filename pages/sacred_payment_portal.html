@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sacred Payment Portal - Kindred Spirits</title>
+    <link rel="stylesheet" href="../css/main.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<script type="module" src="https://static.rocket.new/rocket-web.js?_cfg=https%3A%2F%2Fkindredsp1403back.builtwithrocket.new&_be=https%3A%2F%2Fapplication.rocket.new&_v=0.1.8"></script>
+</head>
+<body class="bg-background min-h-screen">
+    <!-- Header -->
+    <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-border-light">
+        <div class="max-w-6xl mx-auto px-4 py-3">
+            <div class="flex items-center justify-between">
+                <!-- Logo -->
+                <div class="flex items-center space-x-2">
+                    <svg class="w-8 h-8 text-primary" viewBox="0 0 32 32" fill="currentColor">
+                        <path d="M16 2L20.5 10.5L30 12L22 20L24 30L16 25L8 30L10 20L2 12L11.5 10.5L16 2Z"/>
+                        <circle cx="16" cy="16" r="4" fill="white"/>
+                    </svg>
+                    <h1 class="font-crimson text-xl font-semibold text-primary">Kindred Spirits</h1>
+                </div>
+
+                <!-- Security Badge -->
+                <div class="hidden md:flex items-center space-x-4">
+                    <div class="flex items-center space-x-2 text-success text-sm">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                        </svg>
+                        <span class="font-medium">Secure Payment</span>
+                    </div>
+                </div>
+
+                <!-- Back Button -->
+                <a href="workshop_gateway.html" class="md:hidden p-2 text-primary">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <div class="max-w-4xl mx-auto px-4 py-6">
+        <!-- Sacred Investment Header -->
+        <div class="text-center mb-8">
+            <div class="inline-flex items-center space-x-2 bg-accent-50 text-accent-700 px-4 py-2 rounded-full text-sm font-medium mb-4">
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                </svg>
+                <span>Sacred Investment Portal</span>
+            </div>
+            <h1 class="font-crimson text-3xl md:text-4xl font-semibold text-primary mb-3">Honor Your Spiritual Journey</h1>
+            <p class="text-text-secondary text-lg max-w-2xl mx-auto">Transform your investment into a sacred commitment to your personal growth and awakening.</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Payment Options -->
+            <div class="lg:col-span-2 space-y-6">
+                <!-- Pricing Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Individual Workshop -->
+                    <div class="card card-hover border-2 border-transparent hover:border-secondary-200">
+                        <div class="text-center mb-4">
+                            <div class="w-12 h-12 bg-secondary-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                                <svg class="w-6 h-6 text-secondary-600" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"/>
+                                </svg>
+                            </div>
+                            <h3 class="font-crimson text-xl font-semibold text-primary mb-2">Single Workshop</h3>
+                            <div class="text-3xl font-bold text-primary mb-1">$47</div>
+                            <p class="text-text-secondary text-sm">One transformative session</p>
+                        </div>
+                        <ul class="space-y-2 mb-6">
+                            <li class="flex items-center space-x-2 text-sm">
+                                <svg class="w-4 h-4 text-success" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                </svg>
+                                <span>3-hour guided experience</span>
+                            </li>
+                            <li class="flex items-center space-x-2 text-sm">
+                                <svg class="w-4 h-4 text-success" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                </svg>
+                                <span>Lifetime access to recording</span>
+                            </li>
+                            <li class="flex items-center space-x-2 text-sm">
+                                <svg class="w-4 h-4 text-success" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                </svg>
+                                <span>Bonus meditation practices</span>
+                            </li>
+                        </ul>
+                        <button class="w-full bg-secondary text-white py-3 rounded-lg hover:bg-secondary-600 transition-all duration-300 font-medium">
+                            Choose Workshop
+                        </button>
+                    </div>
+
+                    <!-- Full Platform Access -->
+                    <div class="card card-hover border-2 border-accent-300 relative">
+                        <div class="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                            <span class="bg-accent text-primary px-4 py-1 rounded-full text-sm font-medium">Most Popular</span>
+                        </div>
+                        <div class="text-center mb-4">
+                            <div class="w-12 h-12 bg-accent-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                                <svg class="w-6 h-6 text-accent-600" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                </svg>
+                            </div>
+                            <h3 class="font-crimson text-xl font-semibold text-primary mb-2">Sacred Circle</h3>
+                            <div class="text-3xl font-bold text-primary mb-1">$97<span class="text-lg text-text-secondary">/month</span></div>
+                            <p class="text-text-secondary text-sm">Complete spiritual journey</p>
+                        </div>
+                        <ul class="space-y-2 mb-6">
+                            <li class="flex items-center space-x-2 text-sm">
+                                <svg class="w-4 h-4 text-success" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                </svg>
+                                <span>All workshops & content</span>
+                            </li>
+                            <li class="flex items-center space-x-2 text-sm">
+                                <svg class="w-4 h-4 text-success" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                </svg>
+                                <span>Live monthly sessions</span>
+                            </li>
+                            <li class="flex items-center space-x-2 text-sm">
+                                <svg class="w-4 h-4 text-success" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                </svg>
+                                <span>Personal growth pathway</span>
+                            </li>
+                            <li class="flex items-center space-x-2 text-sm">
+                                <svg class="w-4 h-4 text-success" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                </svg>
+                                <span>Community access</span>
+                            </li>
+                        </ul>
+                        <button class="w-full bg-accent text-primary py-3 rounded-lg hover:bg-accent-500 transition-all duration-300 font-medium">
+                            Begin Sacred Journey
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Sliding Scale Options -->
+                <div class="card bg-gradient-to-r from-primary-50 to-secondary-50 border-primary-200">
+                    <div class="flex items-center space-x-3 mb-4">
+                        <svg class="w-6 h-6 text-primary" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"/>
+                        </svg>
+                        <h3 class="font-crimson text-xl font-semibold text-primary">Sliding Scale & Scholarships</h3>
+                    </div>
+                    <p class="text-text-primary mb-4">We believe spiritual growth should be accessible to all souls, regardless of financial circumstances. Choose what feels aligned with your current situation.</p>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="text-center p-4 bg-white rounded-lg border border-primary-200">
+                            <h4 class="font-medium text-primary mb-1">Supporter</h4>
+                            <p class="text-2xl font-bold text-primary">$127/mo</p>
+                            <p class="text-xs text-text-secondary">Help others access wisdom</p>
+                        </div>
+                        <div class="text-center p-4 bg-white rounded-lg border border-primary-200">
+                            <h4 class="font-medium text-primary mb-1">Standard</h4>
+                            <p class="text-2xl font-bold text-primary">$97/mo</p>
+                            <p class="text-xs text-text-secondary">Full value exchange</p>
+                        </div>
+                        <div class="text-center p-4 bg-white rounded-lg border border-primary-200">
+                            <h4 class="font-medium text-primary mb-1">Supported</h4>
+                            <p class="text-2xl font-bold text-primary">$67/mo</p>
+                            <p class="text-xs text-text-secondary">Community supported access</p>
+                        </div>
+                    </div>
+                    <button class="w-full mt-4 bg-primary text-white py-2 rounded-lg hover:bg-primary-700 transition-all duration-300 font-medium text-sm">
+                        Apply for Scholarship
+                    </button>
+                </div>
+
+                <!-- Payment Form -->
+                <div class="card" id="payment-form">
+                    <h3 class="font-crimson text-xl font-semibold text-primary mb-6">Complete Your Sacred Investment</h3>
+                    
+                    <!-- Intention Setting -->
+                    <div class="mb-6 p-4 bg-accent-50 rounded-lg border border-accent-200">
+                        <h4 class="font-medium text-primary mb-2">Set Your Intention</h4>
+                        <p class="text-text-secondary text-sm mb-3">What do you hope to receive from this spiritual investment?</p>
+                        <textarea class="w-full px-3 py-2 border border-accent-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-300 text-sm" rows="3" placeholder="I am investing in my spiritual growth because..."></textarea>
+                    </div>
+
+                    <!-- Payment Details -->
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-text-primary mb-2">Email Address</label>
+                            <input type="email" class="input-field" placeholder="your@email.com" required />
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-text-primary mb-2">Full Name</label>
+                            <input type="text" class="input-field" placeholder="Your Full Name" required />
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-text-primary mb-2">Card Information</label>
+                            <div class="space-y-3">
+                                <div class="relative">
+                                    <input type="text" class="input-field pr-12" placeholder="1234 5678 9012 3456" required />
+                                    <div class="absolute right-3 top-1/2 transform -translate-y-1/2 flex space-x-1">
+                                        <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Card" class="w-6 h-4 object-cover rounded" onerror="this.src='https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'; this.onerror=null;" />
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-2 gap-3">
+                                    <input type="text" class="input-field" placeholder="MM/YY" required />
+                                    <input type="text" class="input-field" placeholder="CVC" required />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-text-primary mb-2">Billing Address</label>
+                            <div class="space-y-3">
+                                <input type="text" class="input-field" placeholder="Address Line 1" required />
+                                <div class="grid grid-cols-2 gap-3">
+                                    <input type="text" class="input-field" placeholder="City" required />
+                                    <input type="text" class="input-field" placeholder="ZIP Code" required />
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Payment Options -->
+                        <div class="border-t border-border-light pt-4">
+                            <h4 class="font-medium text-text-primary mb-3">Payment Options</h4>
+                            <div class="space-y-2">
+                                <label class="flex items-center space-x-3">
+                                    <input type="radio" name="payment-plan" value="full" class="text-primary" checked />
+                                    <span class="text-sm">Pay in full today</span>
+                                </label>
+                                <label class="flex items-center space-x-3">
+                                    <input type="radio" name="payment-plan" value="monthly" class="text-primary" />
+                                    <span class="text-sm">Monthly payments (3 months)</span>
+                                </label>
+                                <label class="flex items-center space-x-3">
+                                    <input type="radio" name="payment-plan" value="gift" class="text-primary" />
+                                    <span class="text-sm">Gift membership for someone else</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Complete Payment Button -->
+                    <button class="w-full bg-primary text-white py-4 rounded-lg hover:bg-primary-700 transition-all duration-300 font-medium text-lg mt-6">
+                        Complete Sacred Investment - $97
+                    </button>
+
+                    <!-- Security Notice -->
+                    <div class="flex items-center justify-center space-x-2 mt-4 text-text-secondary text-sm">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
+                        </svg>
+                        <span>Secured by 256-bit SSL encryption</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Trust & Support Sidebar -->
+            <div class="lg:col-span-1 space-y-6">
+                <!-- Trust Signals -->
+                <div class="card">
+                    <h3 class="font-crimson text-lg font-semibold text-primary mb-4">Sacred Guarantee</h3>
+                    <div class="space-y-4">
+                        <div class="flex items-start space-x-3">
+                            <svg class="w-5 h-5 text-success mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                            </svg>
+                            <div>
+                                <h4 class="font-medium text-text-primary text-sm">30-Day Reflection Period</h4>
+                                <p class="text-text-secondary text-xs">Full refund if not aligned</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <svg class="w-5 h-5 text-success mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                            </svg>
+                            <div>
+                                <h4 class="font-medium text-text-primary text-sm">Secure & Private</h4>
+                                <p class="text-text-secondary text-xs">Bank-level encryption</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <svg class="w-5 h-5 text-success mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                            </svg>
+                            <div>
+                                <h4 class="font-medium text-text-primary text-sm">Instant Access</h4>
+                                <p class="text-text-secondary text-xs">Immediate content delivery</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Testimonial -->
+                <div class="card bg-gradient-to-b from-secondary-50 to-white">
+                    <div class="flex items-center space-x-3 mb-3">
+                        <img src="https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Sarah's testimonial" class="w-10 h-10 rounded-full object-cover" onerror="this.src='https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'; this.onerror=null;" />
+                        <div>
+                            <h4 class="font-medium text-text-primary text-sm">Sarah M.</h4>
+                            <div class="flex text-accent text-xs">
+                                <span>★★★★★</span>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-text-primary text-sm italic">"This investment transformed my entire relationship with myself. The value I've received is immeasurable."</p>
+                </div>
+
+                <!-- Support Contact -->
+                <div class="card">
+                    <h3 class="font-crimson text-lg font-semibold text-primary mb-3">Need Support?</h3>
+                    <p class="text-text-secondary text-sm mb-4">Our compassionate team is here to help with any questions about your spiritual investment.</p>
+                    <div class="space-y-2">
+                        <a href="mailto:support@kindredspirits.com" class="flex items-center space-x-2 text-primary hover:text-primary-700 text-sm">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/>
+                                <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/>
+                            </svg>
+                            <span>support@kindredspirits.com</span>
+                        </a>
+                        <a href="tel:+1-555-SPIRIT" class="flex items-center space-x-2 text-primary hover:text-primary-700 text-sm">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"/>
+                            </svg>
+                            <span>1-555-SPIRIT</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Quick Links -->
+                <div class="card">
+                    <h3 class="font-crimson text-lg font-semibold text-primary mb-4">Quick Access</h3>
+                    <div class="space-y-2">
+                        <a href="community_feed_dashboard.html" class="flex items-center space-x-3 p-2 rounded-lg hover:bg-primary-50 transition-colors">
+                            <svg class="w-5 h-5 text-primary" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/>
+                            </svg>
+                            <span class="text-text-primary text-sm">Return to Community</span>
+                        </a>
+                        
+                        <a href="workshop_gateway.html" class="flex items-center space-x-3 p-2 rounded-lg hover:bg-primary-50 transition-colors">
+                            <svg class="w-5 h-5 text-primary" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                            </svg>
+                            <span class="text-text-primary text-sm">Browse Workshops</span>
+                        </a>
+                        
+                        <a href="soul_profile.html" class="flex items-center space-x-3 p-2 rounded-lg hover:bg-primary-50 transition-colors">
+                            <svg class="w-5 h-5 text-primary" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
+                            </svg>
+                            <span class="text-text-primary text-sm">My Profile</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Bottom Navigation -->
+    <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-border-light">
+        <div class="flex items-center justify-around py-2">
+            <a href="community_feed_dashboard.html" class="flex flex-col items-center p-2 text-text-secondary">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/>
+                </svg>
+                <span class="text-xs mt-1">Feed</span>
+            </a>
+            
+            <a href="practice_studio.html" class="flex flex-col items-center p-2 text-text-secondary">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"/>
+                </svg>
+                <span class="text-xs mt-1">Practice</span>
+            </a>
+            
+            <a href="workshop_gateway.html" class="flex flex-col items-center p-2 text-text-secondary">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                </svg>
+                <span class="text-xs mt-1">Workshops</span>
+            </a>
+            
+            <a href="personal_growth_pathway.html" class="flex flex-col items-center p-2 text-text-secondary">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11.707 4.707a1 1 0 00-1.414-1.414L10 9.586 8.707 8.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                </svg>
+                <span class="text-xs mt-1">Growth</span>
+            </a>
+            
+            <a href="sacred_payment_portal.html" class="flex flex-col items-center p-2 text-primary">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/>
+                </svg>
+                <span class="text-xs mt-1">Payment</span>
+            </a>
+        </div>
+    </nav>
+
+    <script>
+        // Form validation and interaction
+        document.addEventListener('DOMContentLoaded', function() {
+            const paymentForm = document.getElementById('payment-form');
+            const paymentOptions = document.querySelectorAll('input[name="payment-plan"]');
+            const completeButton = paymentForm.querySelector('button[type="submit"], button:last-of-type');
+
+            // Update button text based on payment option
+            paymentOptions.forEach(option => {
+                option.addEventListener('change', function() {
+                    if (this.value === 'monthly') {
+                        completeButton.textContent = 'Start Monthly Payments - $32/mo';
+                    } else if (this.value === 'gift') {
+                        completeButton.textContent = 'Purchase Gift Membership - $97';
+                    } else {
+                        completeButton.textContent = 'Complete Sacred Investment - $97';
+                    }
+                });
+            });
+
+            // Card number formatting
+            const cardInput = paymentForm.querySelector('input[placeholder*="1234"]');
+            if (cardInput) {
+                cardInput.addEventListener('input', function(e) {
+                    let value = e.target.value.replace(/\s/g, '').replace(/[^0-9]/gi, '');
+                    let formattedValue = value.match(/.{1,4}/g)?.join(' ') || value;
+                    e.target.value = formattedValue;
+                });
+            }
+
+            // Expiry date formatting
+            const expiryInput = paymentForm.querySelector('input[placeholder="MM/YY"]');
+            if (expiryInput) {
+                expiryInput.addEventListener('input', function(e) {
+                    let value = e.target.value.replace(/\D/g, '');
+                    if (value.length >= 2) {
+                        value = value.substring(0, 2) + '/' + value.substring(2, 4);
+                    }
+                    e.target.value = value;
+                });
+            }
+
+            // Form submission
+            completeButton.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Show processing state
+                this.textContent = 'Processing...';
+                this.disabled = true;
+                
+                // Simulate payment processing
+                setTimeout(() => {
+                    // Show success message
+                    const successMessage = document.createElement('div');
+                    successMessage.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+                    successMessage.innerHTML = `
+                        <div class="bg-white rounded-lg p-8 max-w-md mx-4 text-center">
+                            <div class="w-16 h-16 bg-success rounded-full flex items-center justify-center mx-auto mb-4">
+                                <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                </svg>
+                            </div>
+                            <h3 class="font-crimson text-xl font-semibold text-primary mb-2">Sacred Investment Complete</h3>
+                            <p class="text-text-secondary mb-6">Welcome to your spiritual journey. Check your email for access details.</p>
+                            <button onclick="window.location.href='community_feed_dashboard.html'" class="bg-primary text-white px-6 py-2 rounded-lg hover:bg-primary-700 transition-colors">
+                                Enter Community
+                            </button>
+                        </div>
+                    `;
+                    document.body.appendChild(successMessage);
+                }, 2000);
+            });
+        });
+
+        // Smooth scroll animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.card').forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            card.style.transition = 'all 0.6s ease-out';
+            observer.observe(card);
+        });
+    </script>
+<script id="dhws-dataInjector" src="../public/dhws-data-injector.js"></script>
+</body>
+</html>

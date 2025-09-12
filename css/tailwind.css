@@ -1,0 +1,166 @@
+/*
+  Kindred Spirits Tailwind CSS
+  - Use tailwind.config.js for custom colors/classes for best results
+  - Avoid using CSS variables directly in @apply (not supported by Tailwind)
+  - Use @apply only for Tailwind utility classes
+  - For custom colors, extend theme in tailwind.config.js
+  - Keep @import and @tailwind directives at the top
+  - Use comments to organize and clarify sections
+*/
+
+@import url('https://fonts.googleapis.com/css2?family=Crimson+Text:wght@400;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Primary Colors - Deep forest grounding for trust and stability */
+  --color-primary: #2D5A3D; /* forest-700 */
+  --color-primary-50: #F0F7F2; /* forest-50 */
+  --color-primary-100: #D9EBE0; /* forest-100 */
+  --color-primary-200: #B3D7C1; /* forest-200 */
+  --color-primary-300: #8CC3A2; /* forest-300 */
+  --color-primary-400: #66AF83; /* forest-400 */
+  --color-primary-500: #409B64; /* forest-500 */
+  --color-primary-600: #2D5A3D; /* forest-600 */
+  --color-primary-700: #1A3A26; /* forest-700 */
+  --color-primary-800: #0D1D13; /* forest-800 */
+  --color-primary-900: #070F0A; /* forest-900 */
+
+  /* Secondary Colors - Soft lavender wisdom for spiritual connection */
+  --color-secondary: #8B7B9B; /* lavender-500 */
+  --color-secondary-50: #F7F6F9; /* lavender-50 */
+  --color-secondary-100: #EFEDF3; /* lavender-100 */
+  --color-secondary-200: #DFDBE7; /* lavender-200 */
+  --color-secondary-300: #CFC9DB; /* lavender-300 */
+  --color-secondary-400: #BFB7CF; /* lavender-400 */
+  --color-secondary-500: #8B7B9B; /* lavender-500 */
+  --color-secondary-600: #6F5F7F; /* lavender-600 */
+  --color-secondary-700: #534763; /* lavender-700 */
+  --color-secondary-800: #372F47; /* lavender-800 */
+  --color-secondary-900: #1B172B; /* lavender-900 */
+
+  /* Accent Colors - Warm gold highlighting for premium sacred content */
+  --color-accent: #D4A574; /* gold-400 */
+  --color-accent-50: #FBF8F4; /* gold-50 */
+  --color-accent-100: #F7F1E9; /* gold-100 */
+  --color-accent-200: #EFE3D3; /* gold-200 */
+  --color-accent-300: #E7D5BD; /* gold-300 */
+  --color-accent-400: #D4A574; /* gold-400 */
+  --color-accent-500: #C19A5D; /* gold-500 */
+  --color-accent-600: #A17B3D; /* gold-600 */
+  --color-accent-700: #7A5C2E; /* gold-700 */
+  --color-accent-800: #523D1F; /* gold-800 */
+  --color-accent-900: #291E0F; /* gold-900 */
+
+  /* Background Colors */
+  --color-background: #FEFEFE; /* pure-white */
+  --color-surface: #F8F6F3; /* warm-white */
+
+  /* Text Colors */
+  --color-text-primary: #2C2C2C; /* charcoal-800 */
+  --color-text-secondary: #6B6B6B; /* gray-500 */
+
+  /* Status Colors */
+  --color-success: #4A7C59; /* nurturing-green */
+  --color-warning: #B8860B; /* gentle-amber */
+  --color-error: #A0522D; /* earthy-concern */
+
+  /* Border Colors */
+  --color-border-light: #F0EDE8; /* warm-border */
+
+  /* Shadow Colors */
+  --shadow-subtle: 0 2px 8px rgba(45, 90, 61, 0.1);
+  --shadow-strong: 0 4px 16px rgba(45, 90, 61, 0.15);
+}
+
+@layer base {
+  body {
+    font-family: 'Inter', sans-serif;
+    color: var(--color-text-primary);
+    background-color: var(--color-background);
+    line-height: 1.6;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Crimson Text', serif;
+    font-weight: 600;
+    line-height: 1.3;
+  }
+
+  .font-accent {
+    font-family: 'Dancing Script', cursive;
+  }
+}
+
+@layer components {
+  /*
+    Use only Tailwind classes in @apply. For custom colors, extend theme in tailwind.config.js
+    Example for custom color usage:
+    @apply bg-primary text-white ...
+    Make sure 'primary' is defined in tailwind.config.js
+  */
+  .btn-primary {
+    @apply px-6 py-3 rounded-lg font-inter font-semibold transition-all duration-300 ease-out hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-300;
+    background-color: var(--color-primary);
+    color: white;
+  }
+  .btn-secondary {
+    @apply px-6 py-3 rounded-lg font-inter font-semibold transition-all duration-300 ease-out hover:bg-secondary-600 focus:outline-none focus:ring-2 focus:ring-secondary-300;
+    background-color: var(--color-secondary);
+    color: white;
+  }
+  .btn-accent {
+    @apply px-6 py-3 rounded-lg font-inter font-semibold transition-all duration-300 ease-out hover:bg-accent-500 focus:outline-none focus:ring-2 focus:ring-accent-300;
+    background-color: var(--color-accent);
+    color: var(--color-primary);
+  }
+  .card {
+    @apply bg-white rounded-lg p-6 border transition-all duration-300 ease-out;
+    border-color: var(--color-border-light);
+  }
+  .card-hover {
+    @apply hover:-translate-y-1;
+  }
+  .input-field {
+    @apply w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-300 focus:border-primary transition-all duration-300 ease-out;
+    border: 1px solid var(--color-border-light);
+  }
+  .text-gradient {
+    @apply bg-gradient-to-r bg-clip-text text-transparent;
+    background-image: linear-gradient(to right, var(--color-primary), var(--color-secondary));
+  }
+  .breathing-space {
+    @apply py-16 md:py-24;
+  }
+  .contemplative-reveal {
+    @apply opacity-0 translate-y-8 transition-all duration-500 ease-out;
+  }
+  .contemplative-reveal.revealed {
+    @apply opacity-100 translate-y-0;
+  }
+}
+
+@layer utilities {
+  .shadow-sacred {
+    box-shadow: var(--shadow-subtle);
+  }
+  .shadow-sacred-strong {
+    box-shadow: var(--shadow-strong);
+  }
+  .transition-contemplative {
+    transition: all 300ms ease-out;
+  }
+  .transition-reveal {
+    transition: all 400ms ease-out;
+  }
+}
+/*
+  Future tips:
+  - Always use @apply with Tailwind classes only
+  - For custom colors, extend theme in tailwind.config.js
+  - Use CSS variables for runtime theming, but not in @apply
+  - Keep CSS organized and commented
+*/

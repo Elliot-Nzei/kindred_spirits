@@ -1,0 +1,56 @@
+
+{
+    "post1": [
+        {
+            "id": 1,
+            "author": "Maya Chen",
+            "avatar": "https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+            "time": "3h ago",
+            "text": "This is so inspiring! Thank you for sharing your journey, Sarah. 🙏",
+            "replies": [
+                {
+                    "id": 2,
+                    "author": "Sarah Chen",
+                    "avatar": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+                    "time": "2h ago",
+                    "text": "@MayaChen So glad it resonates with you! Your support means a lot. ✨",
+                    "replies": []
+                },
+                {
+                    "id": 3,
+                    "author": "Alex Rivera",
+                    "avatar": "https://images.pexels.com/photos/1681010/pexels-photo-1681010.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+                    "time": "1h ago",
+                    "text": "@SarahChen Keep up the great work! Your journey inspires us all. 😊",
+                    "replies": []
+                },
+                {
+                    "id": 4,
+                    "author": "John Doe",
+                    "avatar": "https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+                    "time": "30m ago",
+                    "text": "@MayaChen Absolutely! This community is amazing.",
+                    "replies": []
+                },
+                {
+                    "id": 5,
+                    "author": "Jane Smith",
+                    "avatar": "https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+                    "time": "10m ago",
+                    "text": "@JohnDoe I agree! Best community ever.",
+                    "replies": []
+                }
+            ]
+        }
+    ],
+    "post2": [
+        {
+            "id": 10,
+            "author": "Alex Rivera",
+            "avatar": "https://images.pexels.com/photos/1681010/pexels-photo-1681010.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2",
+            "time": "1h ago",
+            "text": "Beautiful reflection, Sarah! Keep shining your light. 💖",
+            "replies": []
+        }
+    ]
+}

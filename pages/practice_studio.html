@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Practice Studio - Kindred Spirits</title>
+    <link rel="stylesheet" href="../css/main.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<script type="module" src="https://static.rocket.new/rocket-web.js?_cfg=https%3A%2F%2Fkindredsp1403back.builtwithrocket.new&_be=https%3A%2F%2Fapplication.rocket.new&_v=0.1.8"></script>
+</head>
+<body class="bg-background min-h-screen">
+    <!-- Header with Floating Elements -->
+    <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-border-light">
+        <div class="max-w-6xl mx-auto px-4 py-3">
+            <div class="flex items-center justify-between">
+                <!-- Logo -->
+                <div class="flex items-center space-x-2">
+                    <svg class="w-8 h-8 text-primary" viewBox="0 0 32 32" fill="currentColor">
+                        <path d="M16 2L20.5 10.5L30 12L22 20L24 30L16 25L8 30L10 20L2 12L11.5 10.5L16 2Z"/>
+                        <circle cx="16" cy="16" r="4" fill="white"/>
+                    </svg>
+                    <h1 class="font-crimson text-xl font-semibold text-primary">Kindred Spirits</h1>
+                </div>
+
+                <!-- Floating Meditation Timer -->
+                <div class="hidden md:flex items-center space-x-4">
+                    <button class="flex items-center space-x-2 bg-primary-50 text-primary px-4 py-2 rounded-full hover:bg-primary-100 transition-all duration-300">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
+                        </svg>
+                        <span class="text-sm font-medium">5 min</span>
+                    </button>
+                    <button class="bg-accent text-primary px-4 py-2 rounded-full hover:bg-accent-500 transition-all duration-300 font-medium text-sm">
+                        Quick Practice
+                    </button>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <button class="md:hidden p-2 text-primary">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Sacred Practice Environment -->
+    <div class="relative min-h-screen bg-gradient-to-b from-primary-50 via-secondary-50 to-accent-50">
+        <!-- Ambient Background -->
+        <div class="absolute inset-0 opacity-30">
+            <img src="https://images.pexels.com/photos/1051838/pexels-photo-1051838.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Sacred forest sanctuary" class="w-full h-full object-cover" onerror="this.src='https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'; this.onerror=null;" />
+        </div>
+
+        <div class="relative z-10 max-w-6xl mx-auto px-4 py-6">
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+                <!-- Main Practice Area -->
+                <main class="lg:col-span-3 space-y-6">
+                    <!-- Welcome & Current Practice -->
+                    <div class="card bg-white/90 backdrop-blur-sm border-none">
+                        <div class="flex items-center justify-between mb-4">
+                            <div>
+                                <h2 class="font-crimson text-2xl font-semibold text-primary mb-2">Sacred Practice Studio</h2>
+                                <p class="text-text-secondary">Your personal sanctuary for transformation</p>
+                            </div>
+                            <div class="hidden md:flex items-center space-x-2">
+                                <button id="ambientToggle" class="p-2 bg-primary-50 text-primary rounded-full hover:bg-primary-100 transition-all duration-300">
+                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M9.383 3.076A1 1 0 0110 4v12a1 1 0 01-1.707.707L4.586 13H2a1 1 0 01-1-1V8a1 1 0 011-1h2.586l3.707-3.707a1 1 0 011.09-.217zM15.657 6.343a1 1 0 011.414 0A9.972 9.972 0 0119 12a9.972 9.972 0 01-1.929 5.657 1 1 0 11-1.414-1.414A7.971 7.971 0 0017 12c0-1.636-.49-3.154-1.343-4.243a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                                    </svg>
+                                </button>
+                                <button id="lightingToggle" class="p-2 bg-accent-50 text-accent-600 rounded-full hover:bg-accent-100 transition-all duration-300">
+                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Progress Mandala -->
+                        <div class="flex items-center justify-center mb-6">
+                            <div class="relative w-32 h-32">
+                                <svg class="w-full h-full transform -rotate-90" viewBox="0 0 120 120">
+                                    <!-- Background circle -->
+                                    <circle cx="60" cy="60" r="50" fill="none" stroke="#F0F7F2" stroke-width="8"/>
+                                    <!-- Progress circle -->
+                                    <circle cx="60" cy="60" r="50" fill="none" stroke="#2D5A3D" stroke-width="8" stroke-dasharray="314" stroke-dashoffset="188" stroke-linecap="round" class="transition-all duration-1000 ease-out"/>
+                                    <!-- Inner mandala pattern -->
+                                    <g transform="translate(60,60)" class="text-primary" fill="currentColor">
+                                        <circle r="3" opacity="0.8"/>
+                                        <g transform="rotate(0)">
+                                            <circle cx="0" cy="-20" r="2" opacity="0.6"/>
+                                            <circle cx="0" cy="-30" r="1.5" opacity="0.4"/>
+                                        </g>
+                                        <g transform="rotate(60)">
+                                            <circle cx="0" cy="-20" r="2" opacity="0.6"/>
+                                            <circle cx="0" cy="-30" r="1.5" opacity="0.4"/>
+                                        </g>
+                                        <g transform="rotate(120)">
+                                            <circle cx="0" cy="-20" r="2" opacity="0.6"/>
+                                            <circle cx="0" cy="-30" r="1.5" opacity="0.4"/>
+                                        </g>
+                                        <g transform="rotate(180)">
+                                            <circle cx="0" cy="-20" r="2" opacity="0.6"/>
+                                            <circle cx="0" cy="-30" r="1.5" opacity="0.4"/>
+                                        </g>
+                                        <g transform="rotate(240)">
+                                            <circle cx="0" cy="-20" r="2" opacity="0.6"/>
+                                            <circle cx="0" cy="-30" r="1.5" opacity="0.4"/>
+                                        </g>
+                                        <g transform="rotate(300)">
+                                            <circle cx="0" cy="-20" r="2" opacity="0.6"/>
+                                            <circle cx="0" cy="-30" r="1.5" opacity="0.4"/>
+                                        </g>
+                                    </g>
+                                </svg>
+                                <div class="absolute inset-0 flex items-center justify-center">
+                                    <div class="text-center">
+                                        <p class="text-2xl font-crimson font-semibold text-primary">40%</p>
+                                        <p class="text-xs text-text-secondary">Journey</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="text-center">
+                            <p class="text-text-primary font-medium mb-1">12 practices completed this month</p>
+                            <p class="text-text-secondary text-sm">Your spiritual garden is blooming beautifully 🌸</p>
+                        </div>
+                    </div>
+
+                    <!-- Featured Practice Session -->
+                    <div class="card bg-gradient-to-r from-primary-50 to-secondary-50 border-none card-hover">
+                        <div class="flex items-center space-x-2 mb-3">
+                            <svg class="w-5 h-5 text-accent-600" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                            </svg>
+                            <span class="text-accent-700 font-medium text-sm">Today's Featured Practice</span>
+                        </div>
+                        
+                        <div class="flex items-start space-x-4">
+                            <img src="https://images.pixabay.com/photos/2017/03/26/21/54/yoga-2176668_1280.jpg" alt="Morning meditation practice" class="w-20 h-20 rounded-lg object-cover" onerror="this.src='https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'; this.onerror=null;" />
+                            <div class="flex-1">
+                                <h3 class="font-crimson text-xl font-semibold text-primary mb-2">Sacred Morning Awakening</h3>
+                                <p class="text-text-secondary text-sm mb-3">Begin your day with intention and grace through this gentle 15-minute practice combining breathwork, gratitude, and energy alignment.</p>
+                                <div class="flex items-center space-x-4 text-sm text-text-secondary mb-3">
+                                    <span class="flex items-center space-x-1">
+                                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
+                                        </svg>
+                                        <span>15 min</span>
+                                    </span>
+                                    <span class="flex items-center space-x-1">
+                                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"/>
+                                        </svg>
+                                        <span>2.4k loves</span>
+                                    </span>
+                                </div>
+                                <button class="bg-primary text-white px-6 py-2 rounded-lg hover:bg-primary-700 transition-all duration-300 font-medium text-sm">
+                                    Begin Practice
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Practice Categories -->
+                    <div class="card bg-white/90 backdrop-blur-sm">
+                        <h3 class="font-crimson text-xl font-semibold text-primary mb-4">Sacred Practice Categories</h3>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <!-- Morning Rituals -->
+                            <div class="p-4 bg-gradient-to-br from-accent-50 to-accent-100 rounded-lg border border-accent-200 hover:shadow-sacred transition-all duration-300 cursor-pointer">
+                                <div class="flex items-center space-x-3 mb-3">
+                                    <div class="w-10 h-10 bg-accent-200 rounded-full flex items-center justify-center">
+                                        <svg class="w-5 h-5 text-accent-700" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-medium text-primary">Morning Rituals</h4>
+                                        <p class="text-text-secondary text-sm">8 practices</p>
+                                    </div>
+                                </div>
+                                <p class="text-text-secondary text-sm">Start your day with sacred intention and divine alignment</p>
+                            </div>
+
+                            <!-- Stress Release -->
+                            <div class="p-4 bg-gradient-to-br from-secondary-50 to-secondary-100 rounded-lg border border-secondary-200 hover:shadow-sacred transition-all duration-300 cursor-pointer">
+                                <div class="flex items-center space-x-3 mb-3">
+                                    <div class="w-10 h-10 bg-secondary-200 rounded-full flex items-center justify-center">
+                                        <svg class="w-5 h-5 text-secondary-700" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd"/>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-medium text-primary">Stress Release</h4>
+                                        <p class="text-text-secondary text-sm">12 practices</p>
+                                    </div>
+                                </div>
+                                <p class="text-text-secondary text-sm">Release tension and find your center in moments of overwhelm</p>
+                            </div>
+
+                            <!-- Deep Transformation -->
+                            <div class="p-4 bg-gradient-to-br from-primary-50 to-primary-100 rounded-lg border border-primary-200 hover:shadow-sacred transition-all duration-300 cursor-pointer">
+                                <div class="flex items-center space-x-3 mb-3">
+                                    <div class="w-10 h-10 bg-primary-200 rounded-full flex items-center justify-center">
+                                        <svg class="w-5 h-5 text-primary-700" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"/>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-medium text-primary">Deep Transformation</h4>
+                                        <p class="text-text-secondary text-sm">6 practices</p>
+                                    </div>
+                                </div>
+                                <p class="text-text-secondary text-sm">Journey into the depths of your soul for profound healing</p>
+                            </div>
+
+                            <!-- Breathwork Journeys -->
+                            <div class="p-4 bg-gradient-to-br from-success/10 to-success/20 rounded-lg border border-success/30 hover:shadow-sacred transition-all duration-300 cursor-pointer">
+                                <div class="flex items-center space-x-3 mb-3">
+                                    <div class="w-10 h-10 bg-success/20 rounded-full flex items-center justify-center">
+                                        <svg class="w-5 h-5 text-success" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z" clip-rule="evenodd"/>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-medium text-primary">Breathwork Journeys</h4>
+                                        <p class="text-text-secondary text-sm">10 practices</p>
+                                    </div>
+                                </div>
+                                <p class="text-text-secondary text-sm">Harness the power of conscious breathing for healing and expansion</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Practice Sessions -->
+                    <div class="card bg-white/90 backdrop-blur-sm">
+                        <h3 class="font-crimson text-xl font-semibold text-primary mb-4">Continue Your Journey</h3>
+                        
+                        <div class="space-y-4">
+                            <!-- Practice Session 1 -->
+                            <div class="flex items-center space-x-4 p-3 bg-primary-50 rounded-lg hover:bg-primary-100 transition-all duration-300 cursor-pointer">
+                                <img src="https://images.pexels.com/photos/3822622/pexels-photo-3822622.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Heart chakra healing" class="w-12 h-12 rounded-lg object-cover" onerror="this.src='https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'; this.onerror=null;" />
+                                <div class="flex-1">
+                                    <h4 class="font-medium text-primary">Heart Chakra Healing</h4>
+                                    <p class="text-text-secondary text-sm">25 min • Last practiced 2 days ago</p>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <div class="w-8 h-1 bg-primary-200 rounded-full overflow-hidden">
+                                        <div class="w-6 h-full bg-primary rounded-full"></div>
+                                    </div>
+                                    <span class="text-xs text-text-secondary">75%</span>
+                                </div>
+                            </div>
+
+                            <!-- Practice Session 2 -->
+                            <div class="flex items-center space-x-4 p-3 bg-secondary-50 rounded-lg hover:bg-secondary-100 transition-all duration-300 cursor-pointer">
+                                <img src="https://images.pixabay.com/photos/2016/11/29/20/22/girl-1871104_1280.jpg" alt="Evening gratitude practice" class="w-12 h-12 rounded-lg object-cover" onerror="this.src='https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'; this.onerror=null;" />
+                                <div class="flex-1">
+                                    <h4 class="font-medium text-primary">Evening Gratitude Practice</h4>
+                                    <p class="text-text-secondary text-sm">10 min • Completed yesterday</p>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <svg class="w-5 h-5 text-success" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                    </svg>
+                                </div>
+                            </div>
+
+                            <!-- Practice Session 3 -->
+                            <div class="flex items-center space-x-4 p-3 bg-accent-50 rounded-lg hover:bg-accent-100 transition-all duration-300 cursor-pointer">
+                                <img src="https://images.pexels.com/photos/1051838/pexels-photo-1051838.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Forest bathing meditation" class="w-12 h-12 rounded-lg object-cover" onerror="this.src='https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'; this.onerror=null;" />
+                                <div class="flex-1">
+                                    <h4 class="font-medium text-primary">Forest Bathing Meditation</h4>
+                                    <p class="text-text-secondary text-sm">30 min • New practice</p>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <span class="px-2 py-1 bg-accent text-primary text-xs rounded-full font-medium">New</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+
+                <!-- Sidebar -->
+                <aside class="lg:col-span-1 space-y-6">
+                    <!-- Practice Timer -->
+                    <div class="card bg-gradient-to-b from-primary-50 to-white">
+                        <div class="text-center mb-4">
+                            <h3 class="font-crimson text-lg font-semibold text-primary mb-2">Sacred Timer</h3>
+                            <div class="text-4xl font-crimson font-semibold text-primary mb-2">15:00</div>
+                            <p class="text-text-secondary text-sm">Set your intention</p>
+                        </div>
+                        
+                        <div class="space-y-3">
+                            <div class="flex space-x-2">
+                                <button class="flex-1 py-2 px-3 bg-primary-100 text-primary rounded-lg text-sm font-medium hover:bg-primary-200 transition-colors">5 min</button>
+                                <button class="flex-1 py-2 px-3 bg-primary text-white rounded-lg text-sm font-medium">15 min</button>
+                                <button class="flex-1 py-2 px-3 bg-primary-100 text-primary rounded-lg text-sm font-medium hover:bg-primary-200 transition-colors">30 min</button>
+                            </div>
+                            <button class="w-full bg-primary text-white py-3 rounded-lg hover:bg-primary-700 transition-all duration-300 font-medium">
+                                Begin Silent Practice
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Ambient Settings -->
+                    <div class="card">
+                        <h3 class="font-crimson text-lg font-semibold text-primary mb-4">Sacred Atmosphere</h3>
+                        
+                        <div class="space-y-4">
+                            <!-- Nature Sounds -->
+                            <div>
+                                <label class="block text-sm font-medium text-text-primary mb-2">Nature Sounds</label>
+                                <div class="grid grid-cols-2 gap-2">
+                                    <button class="p-2 bg-success/10 text-success rounded-lg text-xs font-medium border border-success/30">
+                                        🌊 Ocean
+                                    </button>
+                                    <button class="p-2 bg-primary-50 text-primary rounded-lg text-xs font-medium hover:bg-primary-100 transition-colors">
+                                        🌲 Forest
+                                    </button>
+                                    <button class="p-2 bg-primary-50 text-primary rounded-lg text-xs font-medium hover:bg-primary-100 transition-colors">
+                                        🔥 Fire
+                                    </button>
+                                    <button class="p-2 bg-primary-50 text-primary rounded-lg text-xs font-medium hover:bg-primary-100 transition-colors">
+                                        🌧️ Rain
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Lighting -->
+                            <div>
+                                <label class="block text-sm font-medium text-text-primary mb-2">Sacred Lighting</label>
+                                <div class="flex space-x-2">
+                                    <button class="flex-1 p-2 bg-accent/20 text-accent-700 rounded-lg text-xs font-medium border border-accent/40">
+                                        🕯️ Candlelight
+                                    </button>
+                                    <button class="flex-1 p-2 bg-primary-50 text-primary rounded-lg text-xs font-medium hover:bg-primary-100 transition-colors">
+                                        🌅 Dawn
+                                    </button>
+                                    <button class="flex-1 p-2 bg-primary-50 text-primary rounded-lg text-xs font-medium hover:bg-primary-100 transition-colors">
+                                        🌙 Moonlight
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Today's Intention -->
+                    <div class="card bg-gradient-to-b from-secondary-50 to-white">
+                        <h3 class="font-crimson text-lg font-semibold text-primary mb-3">Today's Intention</h3>
+                        <textarea placeholder="What does your soul need today?" class="w-full p-3 border border-border-light rounded-lg resize-none text-sm focus:outline-none focus:ring-2 focus:ring-secondary-300 focus:border-secondary transition-all duration-300" rows="3"></textarea>
+                        <button class="w-full mt-3 bg-secondary text-white py-2 rounded-lg hover:bg-secondary-600 transition-all duration-300 font-medium text-sm">
+                            Set Sacred Intention
+                        </button>
+                    </div>
+
+                    <!-- Community Insights -->
+                    <div class="card">
+                        <h3 class="font-crimson text-lg font-semibold text-primary mb-4">Community Wisdom</h3>
+                        
+                        <div class="space-y-3">
+                            <div class="p-3 bg-primary-50 rounded-lg">
+                                <p class="text-text-primary text-sm mb-2">"The breath is the bridge between body and soul."</p>
+                                <p class="text-text-secondary text-xs">- Maya, after Heart Chakra Healing</p>
+                            </div>
+                            
+                            <div class="p-3 bg-accent-50 rounded-lg">
+                                <p class="text-text-primary text-sm mb-2">"Each practice is a love letter to my future self."</p>
+                                <p class="text-text-secondary text-xs">- Alex, morning ritual practitioner</p>
+                            </div>
+                        </div>
+                        
+                        <a href="community_feed_dashboard.html" class="block mt-3 text-center text-primary hover:text-primary-700 text-sm font-medium transition-colors">
+                            Share Your Insight →
+                        </a>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div class="card">
+                        <h3 class="font-crimson text-lg font-semibold text-primary mb-4">Sacred Tools</h3>
+                        
+                        <div class="space-y-2">
+                            <a href="personal_growth_pathway.html" class="flex items-center space-x-3 p-2 rounded-lg hover:bg-primary-50 transition-colors">
+                                <svg class="w-5 h-5 text-primary" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11.707 4.707a1 1 0 00-1.414-1.414L10 9.586 8.707 8.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                </svg>
+                                <span class="text-text-primary text-sm">Growth Journey</span>
+                            </a>
+                            
+                            <a href="workshop_gateway.html" class="flex items-center space-x-3 p-2 rounded-lg hover:bg-primary-50 transition-colors">
+                                <svg class="w-5 h-5 text-primary" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                </svg>
+                                <span class="text-text-primary text-sm">Sacred Workshops</span>
+                            </a>
+                            
+                            <a href="soul_profile.html" class="flex items-center space-x-3 p-2 rounded-lg hover:bg-primary-50 transition-colors">
+                                <svg class="w-5 h-5 text-primary" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
+                                </svg>
+                                <span class="text-text-primary text-sm">Soul Profile</span>
+                            </a>
+                        </div>
+                    </div>
+                </aside>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Bottom Navigation -->
+    <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-border-light">
+        <div class="flex items-center justify-around py-2">
+            <a href="community_feed_dashboard.html" class="flex flex-col items-center p-2 text-text-secondary">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/>
+                </svg>
+                <span class="text-xs mt-1">Feed</span>
+            </a>
+            
+            <a href="practice_studio.html" class="flex flex-col items-center p-2 text-primary">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"/>
+                </svg>
+                <span class="text-xs mt-1">Practice</span>
+            </a>
+            
+            <a href="workshop_gateway.html" class="flex flex-col items-center p-2 text-text-secondary">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                </svg>
+                <span class="text-xs mt-1">Workshops</span>
+            </a>
+            
+            <a href="personal_growth_pathway.html" class="flex flex-col items-center p-2 text-text-secondary">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11.707 4.707a1 1 0 00-1.414-1.414L10 9.586 8.707 8.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                </svg>
+                <span class="text-xs mt-1">Growth</span>
+            </a>
+            
+            <a href="soul_profile.html" class="flex flex-col items-center p-2 text-text-secondary">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
+                </svg>
+                <span class="text-xs mt-1">Profile</span>
+            </a>
+        </div>
+    </nav>
+
+    <!-- Floating Practice Button -->
+    <button class="md:hidden fixed bottom-20 right-4 w-14 h-14 bg-primary text-white rounded-full shadow-sacred-strong hover:shadow-contemplative transition-all duration-300 flex items-center justify-center">
+        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"/>
+        </svg>
+    </button>
+
+    <script>
+        // Ambient controls
+        document.getElementById('ambientToggle').addEventListener('click', function() {
+            this.classList.toggle('bg-primary');
+            this.classList.toggle('text-white');
+            this.classList.toggle('bg-primary-50');
+            this.classList.toggle('text-primary');
+        });
+
+        document.getElementById('lightingToggle').addEventListener('click', function() {
+            this.classList.toggle('bg-accent');
+            this.classList.toggle('text-white');
+            this.classList.toggle('bg-accent-50');
+            this.classList.toggle('text-accent-600');
+        });
+
+        // Timer functionality
+        let timerInterval;
+        let timeLeft = 900; // 15 minutes in seconds
+        let isRunning = false;
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            const display = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            document.querySelector('.text-4xl').textContent = display;
+        }
+
+        function startTimer() {
+            if (!isRunning) {
+                isRunning = true;
+                timerInterval = setInterval(() => {
+                    timeLeft--;
+                    updateTimerDisplay();
+                    
+                    if (timeLeft <= 0) {
+                        clearInterval(timerInterval);
+                        isRunning = false;
+                        // Practice complete notification
+                        alert('🙏 Your sacred practice is complete. Take a moment to honor your journey.');
+                        timeLeft = 900; // Reset to 15 minutes
+                        updateTimerDisplay();
+                    }
+                }, 1000);
+            }
+        }
+
+        // Timer button controls
+        document.querySelectorAll('.flex-1').forEach(button => {
+            button.addEventListener('click', function() {
+                // Remove active state from all buttons
+                document.querySelectorAll('.flex-1').forEach(btn => {
+                    btn.classList.remove('bg-primary', 'text-white');
+                    btn.classList.add('bg-primary-100', 'text-primary');
+                });
+                
+                // Add active state to clicked button
+                this.classList.remove('bg-primary-100', 'text-primary');
+                this.classList.add('bg-primary', 'text-white');
+                
+                // Set timer based on button text
+                const minutes = parseInt(this.textContent);
+                timeLeft = minutes * 60;
+                updateTimerDisplay();
+                
+                if (isRunning) {
+                    clearInterval(timerInterval);
+                    isRunning = false;
+                }
+            });
+        });
+
+        // Begin practice button
+        document.querySelector('.w-full.bg-primary').addEventListener('click', startTimer);
+
+        // Smooth scroll animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.card').forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            card.style.transition = 'all 0.6s ease-out';
+            observer.observe(card);
+        });
+
+        // Nature sound toggles
+        document.querySelectorAll('[class*="grid-cols-2"] button').forEach(button => {
+            button.addEventListener('click', function() {
+                // Remove active state from siblings
+                this.parentElement.querySelectorAll('button').forEach(btn => {
+                    btn.classList.remove('bg-success/10', 'text-success', 'border-success/30');
+                    btn.classList.add('bg-primary-50', 'text-primary');
+                });
+                
+                // Add active state to clicked button
+                this.classList.remove('bg-primary-50', 'text-primary');
+                this.classList.add('bg-success/10', 'text-success', 'border-success/30');
+            });
+        });
+
+        // Lighting toggles
+        document.querySelectorAll('[class*="flex space-x-2"] button').forEach(button => {
+            button.addEventListener('click', function() {
+                // Remove active state from siblings
+                this.parentElement.querySelectorAll('button').forEach(btn => {
+                    btn.classList.remove('bg-accent/20', 'text-accent-700', 'border-accent/40');
+                    btn.classList.add('bg-primary-50', 'text-primary');
+                });
+                
+                // Add active state to clicked button
+                this.classList.remove('bg-primary-50', 'text-primary');
+                this.classList.add('bg-accent/20', 'text-accent-700', 'border-accent/40');
+            });
+        });
+
+        // Breathing animation for mandala
+        setInterval(() => {
+            const mandala = document.querySelector('svg g[transform="translate(60,60)"]');
+            if (mandala) {
+                mandala.style.transform = 'translate(60px, 60px) scale(1.05)';
+                setTimeout(() => {
+                    mandala.style.transform = 'translate(60px, 60px) scale(1)';
+                }, 2000);
+            }
+        }, 4000);
+    </script>
+<script id="dhws-dataInjector" src="../public/dhws-data-injector.js"></script>
+</body>
+</html>
