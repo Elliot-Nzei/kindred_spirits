@@ -84,6 +84,47 @@
         .text-red-love {
             color: red;
         }
+
+        /* Comments slide-up styles */
+        .comments-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.4);
+            z-index: 100;
+            justify-content: center; /* default to center for desktop */
+            align-items: center; /* default to center for desktop */
+        }
+        .comments-overlay.active {
+            display: flex;
+        }
+
+        @media (max-width: 767px) {
+            .comments-overlay.active {
+                align-items: flex-end;
+            }
+        }
+
+        .comments-sheet {
+            background: #fff;
+            border-radius: 1.25rem;
+            box-shadow: 0 -2px 16px rgba(0,0,0,0.08);
+            padding: 1.5rem;
+            max-width: 500px;
+            width: 100%;
+        }
+
+        @media (max-width: 767px) {
+            .comments-sheet {
+                width: 100%;
+                border-bottom-left-radius: 0;
+                border-bottom-right-radius: 0;
+                animation: slideUp .25s cubic-bezier(.4,0,.2,1);
+                max-height: 80vh;
+                display: flex;
+                flex-direction: column;
+            }
+        }
     </style>
 </head>
 <body class="bg-background min-h-screen">
@@ -419,16 +460,9 @@
         </div>
     </nav>
 
-    <!-- Floating Action Button for Mobile -->
-    <button type="button" class="md:hidden fixed bottom-20 right-4 w-14 h-14 bg-accent text-primary rounded-full shadow-sacred-strong hover:shadow-contemplative transition-all duration-300 flex items-center justify-center" title="Add new post">
-        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-            <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/>
-        </svg>
-    </button>
-
     <!-- Comments Modal -->
-    <div id="comments-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
-        <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4 relative shadow-sacred-strong flex flex-col max-h-[90vh] modal-content">
+    <div id="comments-modal" class="comments-overlay">
+        <div class="comments-sheet">
             <!-- Modal Header -->
             <div class="flex items-center justify-between pb-4 border-b border-border-light mb-4">
                 <h3 class="font-crimson text-xl font-semibold text-primary">Comments</h3>
@@ -508,46 +542,6 @@
         </div>
     </div>
 
-    <!-- Mobile Bottom Navigation -->
-    <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-surface border-t border-border-light z-50">
-        <div class="flex items-center justify-around py-2">
-            <a href="community_feed_dashboard.html" class="flex flex-col items-center p-2 text-primary">
-                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/>
-                </svg>
-                <span class="text-xs mt-1">Feed</span>
-            </a>
-            
-            <a href="practice_studio.html" class="flex flex-col items-center p-2 text-text-secondary">
-                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"/>
-                </svg>
-                <span class="text-xs mt-1">Practice</span>
-            </a>
-            
-            <a href="workshop_gateway.html" class="flex flex-col items-center p-2 text-text-secondary">
-                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-                </svg>
-                <span class="text-xs mt-1">Workshops</span>
-            </a>
-            
-            <a href="personal_growth_pathway.html" class="flex flex-col items-center p-2 text-text-secondary">
-                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11.707 4.707a1 1 0 00-1.414-1.414L10 9.586 8.707 8.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                </svg>
-                <span class="text-xs mt-1">Growth</span>
-            </a>
-            
-            <a href="soul_profile.html" class="flex flex-col items-center p-2 text-text-secondary">
-                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
-                </svg>
-                <span class="text-xs mt-1">Profile</span>
-            </a>
-        </div>
-    </nav>
-
     <!-- Mobile Menu Overlay (newly added) -->
     <div id="mobile-menu-overlay" class="mobile-menu-overlay">
         <div class="mobile-menu-sheet">
@@ -555,95 +549,6 @@
             <a href="help.html">Help & Support</a>
             <a href="about.html">About</a>
             <button id="close-mobile-menu" class="bg-primary text-white py-2 rounded-lg font-medium">Close</button>
-        </div>
-    </div>
-
-    <!-- Floating Action Button for Mobile -->
-    <button type="button" class="md:hidden fixed bottom-20 right-4 w-14 h-14 bg-accent text-primary rounded-full shadow-sacred-strong hover:shadow-contemplative transition-all duration-300 flex items-center justify-center" title="Add new post">
-        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-            <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/>
-        </svg>
-    </button>
-
-    <!-- Comments Modal -->
-    <div id="comments-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
-        <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4 relative shadow-sacred-strong flex flex-col max-h-[90vh] modal-content">
-            <!-- Modal Header -->
-            <div class="flex items-center justify-between pb-4 border-b border-border-light mb-4">
-                <h3 class="font-crimson text-xl font-semibold text-primary">Comments</h3>
-                <button type="button" id="close-comments-modal" class="text-text-secondary hover:text-primary transition-colors" title="Close comments modal">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                    </svg>
-                </button>
-            </div>
-
-            <!-- Comments List -->
-            <div 
-                id="modal-comments-list" 
-                class="space-y-4 mb-4 pr-2 flex-1 modal-comments-list"
-            >
-                <!-- Dummy Comment 1 -->
-                <div class="comment-item p-3 bg-surface rounded-lg border border-border-light">
-                    <div class="flex items-center space-x-2 mb-1">
-                        <img src="https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Maya's Profile" class="w-8 h-8 rounded-full object-cover" />
-                        <span class="font-medium text-text-primary text-sm">Maya Chen</span>
-                        <span class="text-text-secondary text-xs">3h ago</span>
-                    </div>
-                    <p class="text-text-primary text-sm">This is so inspiring! Thank you for sharing your journey, Sarah. 🙏</p>
-                    <button type="button" class="reply-btn text-primary text-xs mt-2 hover:underline">Reply</button>
-                </div>
-
-                <!-- Dummy Reply 1 -->
-                <div class="comment-item ml-8 p-3 bg-primary-50 rounded-lg border border-primary-200">
-                    <div class="flex items-center space-x-2 mb-1">
-                        <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Sarah's Profile" class="w-8 h-8 rounded-full object-cover" />
-                        <span class="font-medium text-text-primary text-sm">Sarah Chen</span>
-                        <span class="text-text-secondary text-xs">2h ago</span>
-                    </div>
-                    <p class="text-text-primary text-sm">@MayaChen So glad it resonates with you! Your support means a lot. ✨</p>
-                    <button class="reply-btn text-primary text-xs mt-2 hover:underline">Reply</button>
-                </div>
-
-                <!-- Dummy Comment 2 -->
-                <div class="comment-item p-3 bg-surface rounded-lg border border-border-light">
-                    <div class="flex items-center space-x-2 mb-1">
-                        <img src="https://images.pexels.com/photos/1681010/pexels-photo-1681010.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Alex's Profile" class="w-8 h-8 rounded-full object-cover" />
-                        <span class="font-medium text-text-primary text-sm">Alex Rivera</span>
-                        <span class="text-text-secondary text-xs">1h ago</span>
-                    </div>
-                    <p class="text-text-primary text-sm">Beautiful reflection, Sarah! Keep shining your light. 💖</p>
-                    <button class="reply-btn text-primary text-xs mt-2 hover:underline">Reply</button>
-                </div>
-            </div>
-
-            <!-- Comment Input -->
-            <div class="pt-4 border-t border-border-light">
-                <div class="bg-surface rounded-xl p-4 shadow-sm">
-                    <div class="flex items-start space-x-3">
-                        <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Current User's Profile" class="w-10 h-10 rounded-full object-cover border-2 border-white" />
-                        <div class="flex-1">
-                            <textarea 
-                                id="modal-comment-input" 
-                                rows="3" 
-                                class="w-full bg-transparent border-none focus:ring-0 p-0 text-text-primary placeholder-text-secondary resize-none" 
-                                placeholder="Share your sacred thoughts..."></textarea>
-                            
-                            <div class="flex items-center justify-between mt-2 pt-2 border-t border-border-light">
-                                <div class="flex items-center space-x-2 text-text-secondary">
-                                    <button class="hover:bg-primary-100 p-2 rounded-full transition-colors" title="Add emoji">
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                    </button>
-                                    <button class="hover:bg-primary-100 p-2 rounded-full transition-colors" title="Attach file">
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                                    </button>
-                                </div>
-                                <button type="button" id="post-modal-comment-btn" class="btn-primary px-6 py-2 text-sm font-semibold">Post</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
 
@@ -787,23 +692,25 @@
         const commentsModal = document.getElementById('comments-modal');
         const openCommentsModalBtns = document.querySelectorAll('.open-comments-modal-btn'); // Changed to querySelectorAll
         const closeCommentsModalBtn = document.getElementById('close-comments-modal-1');
-        // Use the correct textarea depending on which modal is open
-        function getActiveModalCommentInput() {
-            // Try to find the visible modal's textarea
-            const modal1 = document.getElementById('modal-comment-input-1');
-            const modal2 = document.getElementById('modal-comment-input-2');
-            if (modal1 && !modal1.closest('.hidden')) return modal1;
-            if (modal2 && !modal2.closest('.hidden')) return modal2;
-            // fallback
-            return modal1 || modal2;
-        }
-        // Remove old reference
-        // const modalCommentInput = document.getElementById('modal-comment-input');
-        const postModalCommentBtn1 = document.getElementById('post-modal-comment-btn-1');
-        const postModalCommentBtn2 = document.getElementById('post-modal-comment-btn-2');
-        const modalCommentsList = document.getElementById('modal-comments-list');
-        // const mainCommentCount = document.querySelector('.comment-count'); // This is now handled by updateAllCommentCounts
+        
+        openCommentsModalBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                currentPostId = btn.dataset.postId;
+                modalCommentsList.innerHTML = ''; // Clear previous comments
+                if (commentsDataByPost[currentPostId]) {
+                    renderComments(commentsDataByPost[currentPostId], modalCommentsList);
+                }
+                commentsModal.classList.add('active');
+            });
+        });
 
+        function getActiveModalCommentInput() {
+            return document.getElementById('modal-comment-input-1');
+        }
+        
+        const postModalCommentBtn1 = document.getElementById('post-modal-comment-btn-1');
+        const modalCommentsList = document.getElementById('modal-comments-list');
+        
         let commentsDataByPost = {};
 
         fetch('../data/comments.json')
@@ -863,10 +770,10 @@
                     }
                 }
             });
-        } // <-- Add this closing brace to properly close renderComments
+        } 
 
         closeCommentsModalBtn.addEventListener('click', () => {
-            commentsModal.classList.add('hidden');
+            commentsModal.classList.remove('active');
             replyingToCommentId = null;
             const modalCommentInput = getActiveModalCommentInput();
             if (modalCommentInput) modalCommentInput.value = '';
@@ -874,7 +781,7 @@
         });
         commentsModal.addEventListener('click', (e) => {
             if (e.target === commentsModal) {
-                commentsModal.classList.add('hidden');
+                commentsModal.classList.remove('active');
                 replyingToCommentId = null;
                 const modalCommentInput = getActiveModalCommentInput();
                 if (modalCommentInput) modalCommentInput.value = '';
@@ -882,58 +789,55 @@
             }
         });
 
-        // Attach event listeners to both post buttons
-        [postModalCommentBtn1, postModalCommentBtn2].forEach(btn => {
-            if (btn) {
-                btn.addEventListener('click', () => {
-                    const modalCommentInput = getActiveModalCommentInput();
-                    const commentText = modalCommentInput.value.trim();
-                    if (commentText && currentPostId) {
-                        const newComment = {
-                            id: nextCommentId++,
-                            author: 'Current User',
-                            avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-                            time: 'just now',
-                            text: commentText,
-                            replies: []
-                        };
+        if (postModalCommentBtn1) {
+            postModalCommentBtn1.addEventListener('click', () => {
+                const modalCommentInput = getActiveModalCommentInput();
+                const commentText = modalCommentInput.value.trim();
+                if (commentText && currentPostId) {
+                    const newComment = {
+                        id: nextCommentId++,
+                        author: 'Current User',
+                        avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+                        time: 'just now',
+                        text: commentText,
+                        replies: []
+                    };
 
-                        if (replyingToCommentId) {
-                            function addReplyToComment(comments, reply, parentId) {
-                                for (let i = 0; i < comments.length; i++) {
-                                    if (comments[i].id === parentId) {
-                                        comments[i].replies.push(reply);
+                    if (replyingToCommentId) {
+                        function addReplyToComment(comments, reply, parentId) {
+                            for (let i = 0; i < comments.length; i++) {
+                                if (comments[i].id === parentId) {
+                                    comments[i].replies.push(reply);
+                                    return true;
+                                }
+                                if (comments[i].replies && comments[i].replies.length > 0) {
+                                    if (addReplyToComment(comments[i].replies, reply, parentId)) {
                                         return true;
                                     }
-                                    if (comments[i].replies && comments[i].replies.length > 0) {
-                                        if (addReplyToComment(comments[i].replies, reply, parentId)) {
-                                            return true;
-                                        }
-                                    }
                                 }
-                                return false;
                             }
-                            addReplyToComment(commentsDataByPost[currentPostId], newComment, replyingToCommentId);
-                        } else {
-                            if (!commentsDataByPost[currentPostId]) commentsDataByPost[currentPostId] = [];
-                            commentsDataByPost[currentPostId].unshift(newComment);
+                            return false;
                         }
-
-                        modalCommentInput.value = '';
-                        replyingToCommentId = null;
-                        modalCommentsList.innerHTML = '';
-                        renderComments(commentsDataByPost[currentPostId], modalCommentsList);
-
-                        let countSpan = document.querySelector(`.comment-count[data-post-id="${currentPostId}"]`);
-                        if (countSpan) {
-                            let currentCount = parseInt(countSpan.textContent) || 0;
-                            countSpan.textContent = currentCount + 1;
-                        }
-                        addNotification('comment', currentPostId); // Notify on new comment
+                        addReplyToComment(commentsDataByPost[currentPostId], newComment, replyingToCommentId);
+                    } else {
+                        if (!commentsDataByPost[currentPostId]) commentsDataByPost[currentPostId] = [];
+                        commentsDataByPost[currentPostId].unshift(newComment);
                     }
-                });
-            }
-        });
+
+                    modalCommentInput.value = '';
+                    replyingToCommentId = null;
+                    modalCommentsList.innerHTML = '';
+                    renderComments(commentsDataByPost[currentPostId], modalCommentsList);
+
+                    let countSpan = document.querySelector(`.comment-count[data-post-id="${currentPostId}"]`);
+                    if (countSpan) {
+                        let currentCount = parseInt(countSpan.textContent) || 0;
+                        countSpan.textContent = currentCount + 1;
+                    }
+                    addNotification('comment', currentPostId); // Notify on new comment
+                }
+            });
+        }
 
         modalCommentsList.addEventListener('click', (e) => {
             if (e.target.classList.contains('reply-btn')) {
