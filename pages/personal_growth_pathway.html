@@ -488,7 +488,16 @@
         </svg>
     </button>
 
+    <script src="../js/auth.js"></script>
     <script>
+        // Client-side protection: Redirect if not authenticated
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!window.isAuthenticated()) {
+                window.location.href = '../index.html'; // Redirect to login page
+                return; // Stop further script execution
+            }
+        });
+
         // Sacred geometry animation
         function animateProgress() {
             const progressCircle = document.querySelector('circle[stroke-dasharray]');

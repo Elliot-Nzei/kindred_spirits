@@ -3,109 +3,713 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title data-translate="index_title">Metanoia - Welcome</title>
-    <link rel="stylesheet" href="css/main.css" />
-    <script src="js/translations.js"></script>
-    <script src="js/language.js"></script>
+    <title>Metanoia - Transform Your Journey</title>
     <style>
+                    * {
+                margin: 0;
+                padding: 0;
+                -webkit-box-sizing: border-box; /* Safari/Chrome */
+                box-sizing: border-box;
+            }
+
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --primary-light: #818cf8;
+            --accent: #f59e0b;
+            --accent-dark: #d97706;
+            --success: #10b981;
+            --error: #ef4444;
+            --text: #1f2937;
+            --text-light: #6b7280;
+            --bg-overlay: rgba(15, 23, 42, 0.7);
+        }
+
+        @keyframes float {
+            0%, 100% { -webkit-transform: translateY(0) rotate(0deg); transform: translateY(0) rotate(0deg); }
+            33% { -webkit-transform: translateY(-10px) rotate(1deg); transform: translateY(-10px) rotate(1deg); }
+            66% { -webkit-transform: translateY(5px) rotate(-1deg); transform: translateY(5px) rotate(-1deg); }
+        }
+
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(99, 102, 241, 0.5), 0 0 40px rgba(99, 102, 241, 0.2); }
+            50% { box-shadow: 0 0 30px rgba(99, 102, 241, 0.8), 0 0 60px rgba(99, 102, 241, 0.4); }
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes particle {
+            0% { -webkit-transform: translate(0, 0) scale(0); transform: translate(0, 0) scale(0); opacity: 1; }
+            50% { -webkit-transform: translate(var(--x), var(--y)) scale(1); transform: translate(var(--x), var(--y)) scale(1); }
+            100% { -webkit-transform: translate(var(--x2), var(--y2)) scale(0); transform: translate(var(--x2), var(--y2)) scale(0); opacity: 0; }
+        }
+
         body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Arial', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            position: relative;
+            overflow-x: hidden; /* Prevent horizontal scroll */
         }
-        
-        .welcome-container {
-            text-align: center;
-            color: white;
-            padding: 2rem;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
-            -webkit-backdrop-filter: blur(10px);
-            backdrop-filter: blur(10px);
-            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
-            border: 1px solid rgba(255, 255, 255, 0.18);
-            max-width: 500px;
-            width: 90%;
-        }
-        
-        .logo {
-            font-size: 3rem;
-            font-weight: bold;
-            margin-bottom: 1rem;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-        }
-        
-        .subtitle {
-            font-size: 1.2rem;
-            margin-bottom: 2rem;
-            opacity: 0.9;
-        }
-        
-        .loading-text {
-            font-size: 1rem;
-            margin-bottom: 1rem;
-            opacity: 0.8;
-        }
-        
-        .spinner {
-            width: 40px;
-            height: 40px;
-            border: 4px solid rgba(255, 255, 255, 0.3);
-            border-top: 4px solid white;
+
+        /* Animated background particles */
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.8);
             border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto;
+            animation: particle 6s infinite;
         }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+
+        .particle:nth-child(1) { --x: 100px; --y: -100px; --x2: -150px; --y2: 200px; animation-delay: 0s; }
+        .particle:nth-child(2) { --x: -120px; --y: 150px; --x2: 180px; --y2: -100px; animation-delay: 1s; }
+        .particle:nth-child(3) { --x: 150px; --y: 120px; --x2: -100px; --y2: -150px; animation-delay: 2s; }
+        .particle:nth-child(4) { --x: -180px; --y: -80px; --x2: 120px; --y2: 180px; animation-delay: 3s; }
+        .particle:nth-child(5) { --x: 80px; --y: 180px; --x2: -200px; --y2: -120px; animation-delay: 4s; }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            -webkit-backdrop-filter: blur(20px);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 3rem 2rem;
+            max-width: 440px;
+            width: 100%;
+            box-shadow: 
+                0 20px 25px -5px rgba(0, 0, 0, 0.1),
+                0 10px 10px -5px rgba(0, 0, 0, 0.04),
+                0 0 60px rgba(99, 102, 241, 0.3);
+            animation: slideInUp 0.6s ease-out;
+            position: relative;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            margin: 2rem 1rem;
+            box-sizing: border-box;
         }
-        
-        .fade-in {
-            animation: fadeIn 1s ease-in;
+
+        .logo-container {
+            text-align: center;
+            margin-bottom: 2rem;
+            position: relative;
         }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+
+        .logo {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            animation: float 4s ease-in-out infinite, glow 3s ease-in-out infinite;
+            position: relative;
         }
-        
-        @media (max-width: 767px) {
-            .mobile-bottom-padding {
-                padding-bottom: 5.5rem !important; /* Height of navbar + some space */
+
+        .logo::before {
+            content: 'M';
+            color: white;
+            font-size: 42px;
+            font-weight: bold;
+            font-family: 'Georgia', serif;
+        }
+
+        h1 {
+            color: var(--text);
+            font-size: 2rem;
+            margin: 1.5rem 0 0.5rem;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        .tagline {
+            color: var(--text-light);
+            text-align: center;
+            margin-bottom: 2rem;
+            font-size: 1rem;
+        }
+
+        .tabs {
+            display: flex;
+            background: #f3f4f6;
+            padding: 4px;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .tab-indicator {
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            width: calc(50% - 4px);
+            height: calc(100% - 8px);
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            -webkit-transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .tab-indicator.register {
+            -webkit-transform: translateX(100%);
+            transform: translateX(100%);
+        }
+
+        .tab {
+            flex: 1;
+            padding: 0.75rem 0.5rem;
+            background: none;
+            border: none;
+            color: var(--text-light);
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            -webkit-transition: color 0.3s;
+            transition: color 0.3s;
+            position: relative;
+            z-index: 1;
+        }
+
+        .tab.active {
+            color: var(--primary-dark);
+        }
+
+        .form-container {
+            position: relative;
+            min-height: 340px;
+            height: auto;
+            overflow: visible;
+        }
+
+        form {
+            position: absolute;
+            width: 100%;
+            -webkit-transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s;
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s;
+        }
+
+        .register-form {
+            -webkit-transform: translateX(100%);
+            transform: translateX(100%);
+            opacity: 0;
+        }
+
+        .register-form.active {
+            -webkit-transform: translateX(0);
+            transform: translateX(0);
+            opacity: 1;
+        }
+
+        .login-form {
+            transform: translateX(0);
+            opacity: 1;
+        }
+
+        .login-form.inactive {
+            -webkit-transform: translateX(-100%);
+            transform: translateX(-100%);
+            opacity: 0;
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            -webkit-transform: translateY(-50%);
+            transform: translateY(-50%);
+            color: var(--text-light);
+            -webkit-transition: color 0.3s;
+            transition: color 0.3s;
+        }
+
+        input {
+            width: 100%;
+            padding: 14px 16px 14px 44px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 15px;
+            -webkit-transition: all 0.3s;
+            transition: all 0.3s;
+            background: white;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        input:focus + .input-icon {
+            color: var(--primary);
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            -webkit-transform: translateY(-50%);
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--text-light);
+            cursor: pointer;
+            padding: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            -webkit-transition: color 0.3s;
+            transition: color 0.3s;
+        }
+
+        .password-toggle:hover {
+            color: var(--primary);
+        }
+
+        .remember-forgot {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            font-size: 14px;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            color: var(--text);
+            cursor: pointer;
+        }
+
+        .checkbox-label input {
+            width: auto;
+            margin-right: 8px;
+            cursor: pointer;
+        }
+
+        .forgot-link {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+            -webkit-transition: color 0.3s;
+            transition: color 0.3s;
+        }
+
+        .forgot-link:hover {
+            color: var(--primary-dark);
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            -webkit-transition: all 0.3s;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .submit-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            -webkit-transition: left 0.5s;
+            transition: left 0.5s;
+        }
+
+        .submit-btn:hover {
+            -webkit-transform: translateY(-2px);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
+        }
+
+        .submit-btn:hover::before {
+            left: 100%;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 24px 0;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #e5e7eb;
+        }
+
+        .divider span {
+            padding: 0 16px;
+            color: var(--text-light);
+            font-size: 14px;
+        }
+
+        .social-buttons {
+            display: flex;
+            gap: 12px;
+        }
+
+        .social-btn {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid #e5e7eb;
+            background: white;
+            border-radius: 12px;
+            cursor: pointer;
+            -webkit-transition: all 0.3s;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 14px;
+            color: var(--text);
+        }
+
+        .social-btn:hover {
+            border-color: var(--primary);
+            background: rgba(99, 102, 241, 0.05);
+            -webkit-transform: translateY(-2px);
+            transform: translateY(-2px);
+        }
+
+        .error-message {
+            color: var(--error);
+            font-size: 13px;
+            margin-top: 8px;
+            display: none;
+            animation: slideInUp 0.3s;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        .success-message {
+            color: var(--success);
+            font-size: 13px;
+            margin-top: 8px;
+            display: none;
+            animation: slideInUp 0.3s;
+        }
+
+        .success-message.show {
+            display: block;
+        }
+
+        /* SVG Icons */
+        .icon {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* Responsive styles */
+        @media (max-width: 600px) {
+            .container {
+                padding: 2rem 0.75rem;
+                max-width: 98vw;
+                border-radius: 16px;
+                margin: 1rem 0.25rem;
+            }
+            .logo {
+                width: 56px;
+                height: 56px;
+            }
+            h1 {
+                font-size: 1.5rem;
+            }
+            .tagline {
+                font-size: 0.95rem;
+            }
+            .tabs {
+                font-size: 0.95rem;
+            }
+            .tab {
+                padding: 0.65rem 0.25rem;
+                font-size: 0.95rem;
+            }
+            .form-container {
+                min-height: 380px;
+            }
+            input {
+                font-size: 1rem;
+                padding: 12px 12px 12px 40px;
+            }
+            .input-icon {
+                left: 12px;
+                width: 18px;
+                height: 18px;
+            }
+            .password-toggle {
+                right: 10px;
+            }
+            .submit-btn {
+                font-size: 1rem;
+                padding: 12px;
+            }
+            .divider span {
+                font-size: 0.95rem;
+            }
+            .social-btn {
+                font-size: 0.95rem;
+                padding: 8px;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .container {
+                padding: 1rem 0.25rem;
+                border-radius: 10px;
+            }
+            .logo {
+                width: 40px;
+                height: 40px;
+            }
+            h1 {
+                font-size: 1.1rem;
+            }
+            .tagline {
+                font-size: 0.85rem;
+            }
+            .form-container {
+                min-height: 420px;
             }
         }
     </style>
-<script type="module" src="https://static.rocket.new/rocket-web.js?_cfg=https%3A%2F%2Fkindredsp1403back.builtwithrocket.new&_be=https%3A%2F%2Fapplication.rocket.new&_v=0.1.8"></script>
 </head>
 <body>
-    <div class="welcome-container fade-in mobile-bottom-padding">
-        <img src="img/logo_only.jpg" alt="Metanoia Logo" class="w-24 h-24 mx-auto mb-4 rounded-full object-cover">
-        <div class="subtitle" data-translate="index_subtitle">Connect • Grow • Transform</div>
-        <div class="loading-text" data-translate="index_loading_text">Preparing your spiritual journey...</div>
-        <div class="spinner"></div>
+    <!-- Animated particles -->
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+
+    <div class="container">
+        <div class="logo-container">
+            <div class="logo"></div>
+            <h1>Metanoia</h1>
+            <p class="tagline">Transform your journey of self-discovery</p>
+        </div>
+
+        <div class="tabs">
+            <div class="tab-indicator" id="tabIndicator"></div>
+            <button class="tab active" id="loginTab">Login</button>
+            <button class="tab" id="registerTab">Register</button>
+        </div>
+
+        <div class="form-container">
+            <!-- Login Form -->
+            <form class="login-form" id="loginForm">
+                <div class="input-group">
+                    <input type="text" placeholder="Username or Email" required>
+                    <svg class="input-icon icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                </div>
+
+                <div class="input-group">
+                    <input type="password" id="loginPassword" placeholder="Password" required>
+                    <svg class="input-icon icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                    </svg>
+                    <button type="button" class="password-toggle" onclick="togglePassword('loginPassword')" aria-label="Toggle password visibility">
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                    </button>
+                </div>
+
+                <div class="remember-forgot">
+                    <label class="checkbox-label">
+                        <input type="checkbox">
+                        Remember me
+                    </label>
+                    <a href="#" class="forgot-link">Forgot password?</a>
+                </div>
+
+                <button type="submit" class="submit-btn">Sign In</button>
+                <p class="error-message" id="loginError">Invalid username or password</p>
+
+                <div class="divider">
+                    <span>or continue with</span>
+                </div>
+
+                <div class="social-buttons">
+                    <button type="button" class="social-btn">
+                        <svg class="icon" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+                            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                        </svg>
+                        Google
+                    </button>
+                    <button type="button" class="social-btn">
+                        <svg class="icon" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                        </svg>
+                        GitHub
+                    </button>
+                </div>
+            </form>
+
+            <!-- Register Form -->
+            <form class="register-form" id="registerForm">
+                <div class="input-group">
+                    <input type="text" placeholder="Username" required>
+                    <svg class="input-icon icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                </div>
+
+                <div class="input-group">
+                    <input type="email" placeholder="Email" required>
+                    <svg class="input-icon icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                        <polyline points="22,6 12,13 2,6"></polyline>
+                    </svg>
+                </div>
+
+                <div class="input-group">
+                    <input type="password" id="registerPassword" placeholder="Password" required>
+                    <svg class="input-icon icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                    </svg>
+                    <button type="button" class="password-toggle" onclick="togglePassword('registerPassword')" aria-label="Toggle password visibility">
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                    </button>
+                </div>
+
+                <div class="input-group">
+                    <input type="password" id="confirmPassword" placeholder="Confirm Password" required>
+                    <svg class="input-icon icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                </div>
+
+                <button type="submit" class="submit-btn">Create Account</button>
+                <p class="error-message" id="registerError">Passwords do not match</p>
+                <p class="success-message" id="registerSuccess">Account created successfully!</p>
+            </form>
+        </div>
     </div>
 
     <script>
-        // Redirect to the community feed dashboard after 3 seconds
-        setTimeout(function() {
-            window.location.href = 'pages/community_feed_dashboard.html';
-        }, 3000);
-        
-        // Optional: Add a fade-out effect before redirect
-        setTimeout(function() {
-            document.querySelector('.welcome-container').style.opacity = '0';
-            document.querySelector('.welcome-container').style.transform = 'translateY(-20px)';
-            document.querySelector('.welcome-container').style.transition = 'all 0.5s ease-out';
-        }, 2500);
-    </script>
-<script id="dhws-dataInjector" src="/public/dhws-data-injector.js"></script>
+        // Tab switching
+        const loginTab = document.getElementById('loginTab');
+        const registerTab = document.getElementById('registerTab');
+        const tabIndicator = document.getElementById('tabIndicator');
+        const loginForm = document.getElementById('loginForm');
+        const registerForm = document.getElementById('registerForm');
 
+        loginTab.addEventListener('click', () => {
+            loginTab.classList.add('active');
+            registerTab.classList.remove('active');
+            tabIndicator.classList.remove('register');
+            loginForm.classList.remove('inactive');
+            registerForm.classList.remove('active');
+        });
+
+        registerTab.addEventListener('click', () => {
+            registerTab.classList.add('active');
+            loginTab.classList.remove('active');
+            tabIndicator.classList.add('register');
+            loginForm.classList.add('inactive');
+            registerForm.classList.add('active');
+        });
+
+        // Password visibility toggle
+        function togglePassword(inputId) {
+            const input = document.getElementById(inputId);
+            const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
+            input.setAttribute('type', type);
+        }
+
+        // Form submissions
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            // Add your login logic here
+            console.log('Login form submitted');
+            
+            // Example: Show error message
+            // document.getElementById('loginError').classList.add('show');
+            
+            // Example: Redirect on success
+            // window.location.href = '/dashboard';
+        });
+
+        registerForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const password = document.getElementById('registerPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            if (password !== confirmPassword) {
+                document.getElementById('registerError').classList.add('show');
+                document.getElementById('registerSuccess').classList.remove('show');
+                return;
+            }
+            
+            // Add your registration logic here
+            console.log('Register form submitted');
+            document.getElementById('registerError').classList.remove('show');
+            document.getElementById('registerSuccess').classList.add('show');
+            
+            // Clear form after successful registration
+            setTimeout(() => {
+                registerForm.reset();
+                document.getElementById('registerSuccess').classList.remove('show');
+                // Switch to login tab
+                loginTab.click();
+            }, 2000);
+        });
+
+        // Clear error messages on input
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('input', () => {
+                document.querySelectorAll('.error-message').forEach(error => {
+                    error.classList.remove('show');
+                });
+            });
+        });
+    </script>
 </body>
 </html>

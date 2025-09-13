@@ -1,4 +1,10 @@
 
+run-backend:
+	@echo "Starting FastAPI backend..."
+	backend\venv\Scripts\uvicorn backend.main:app --reload
+
+.PHONY: run-backend
+
 push:
 	@echo "Adding all changes..."
 	git add .
@@ -9,3 +15,4 @@ push:
 	@echo "Done!"
 
 .PHONY: push
+

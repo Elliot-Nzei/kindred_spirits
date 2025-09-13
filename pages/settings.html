@@ -258,7 +258,16 @@
         </div>
     </div>
 
+    <script src="../js/auth.js"></script>
     <script>
+        // Client-side protection: Redirect if not authenticated
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!window.isAuthenticated()) {
+                window.location.href = '../index.html'; // Redirect to login page
+                return; // Stop further script execution
+            }
+        });
+
         // Mobile menu logic
         const mobileMenuBtn = document.getElementById('mobile-menu-btn');
         const mobileMenuOverlay = document.getElementById('mobile-menu-overlay');

@@ -51,7 +51,16 @@
     </div>
   </template>
 
+  <script src="../js/auth.js"></script>
   <script>
+    // Client-side protection: Redirect if not authenticated
+    document.addEventListener('DOMContentLoaded', () => {
+        if (!window.isAuthenticated()) {
+            window.location.href = '../index.html'; // Redirect to login page
+            return; // Stop further script execution
+        }
+    });
+
     function timeAgo(timestamp) {
       const seconds = Math.floor((new Date() - new Date(timestamp)) / 1000);
       let interval = seconds / 31536000;
