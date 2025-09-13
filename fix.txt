@@ -1,7 +1,1 @@
-i want you to change
-the website name from kindred spirit to        
-metanoia and choose one of the 2 in @img/      
-to use as the logo depending on which          
-best fits it`                                  
-make this change to the whole website on       
-the places needed
+good now @pages/settings.html in laptop mode add in a way for me to go back 

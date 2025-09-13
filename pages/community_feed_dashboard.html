@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Community Feed Dashboard - Metanoia</title>
+    <title data-translate="community_feed_dashboard_title">Community Feed Dashboard - Metanoia</title>
     <link rel="stylesheet" href="../css/main.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -135,7 +135,7 @@
                 <!-- Logo -->
                 <a href="../index.html" class="flex items-center space-x-2">
                     <img src="../img/logo_only.jpg" alt="Metanoia Logo" class="w-8 h-8 rounded-full object-cover">
-                    <h1 class="font-crimson text-xl font-semibold text-primary">Metanoia</h1>
+                    <h1 class="font-crimson text-xl font-semibold text-primary" data-translate="app_name">Metanoia</h1>
                 </a>
 
                 <!-- Floating Meditation Timer -->
@@ -144,15 +144,15 @@
                         <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                             <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
                         </svg>
-                        <span class="text-sm font-medium">5 min</span>
+                        <span class="text-sm font-medium" data-translate="meditation_time">5 min</span>
                     </button>
-                    <button type="button" class="bg-accent text-primary px-4 py-2 rounded-full hover:bg-accent-500 transition-all duration-300 font-medium text-sm">
+                    <button type="button" class="bg-accent text-primary px-4 py-2 rounded-full hover:bg-accent-500 transition-all duration-300 font-medium text-sm" data-translate="quick_practice_btn">
                         Quick Practice
                     </button>
                 </div>
 
                 <!-- Mobile Menu Button (moved here from tab bar) -->
-                <button id="mobile-menu-btn" type="button" class="md:hidden p-2 text-primary" title="Open menu" aria-label="More options">
+                <button id="mobile-menu-btn" type="button" class="md:hidden p-2 text-primary" aria-label="More options" data-translate="open_menu_btn_title">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <circle cx="5" cy="12" r="2" />
                         <circle cx="12" cy="12" r="2" />
@@ -172,12 +172,12 @@
                     <div class="flex items-center space-x-3 mb-4">
                         <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Vani's Profile" class="w-12 h-12 rounded-full object-cover" onerror="this.src='https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'; this.onerror=null;" />
                         <div>
-                            <h3 class="font-crimson text-lg font-semibold text-primary">Good morning, Sarah ✨</h3>
-                            <p class="text-text-secondary text-sm">Your spiritual community awaits</p>
+                            <h3 class="font-crimson text-lg font-semibold text-primary" data-translate="welcome_message">Good morning, Sarah ✨</h3>
+                            <p class="text-text-secondary text-sm" data-translate="community_tagline">Your spiritual community awaits</p>
                         </div>
                     </div>
-                    <p class="text-text-primary font-medium">"Today, let your heart be your compass and your breath be your anchor."</p>
-                    <p class="text-text-secondary text-sm mt-2">- Daily wisdom from Vani</p>
+                    <p class="text-text-primary font-medium" data-translate="daily_wisdom_quote">"Today, let your heart be your compass and your breath be your anchor."</p>
+                    <p class="text-text-secondary text-sm mt-2" data-translate="daily_wisdom_author">- Daily wisdom from Vani</p>
                 </div>
 
                 <!-- Community Post -->
@@ -189,7 +189,7 @@
                                 <h4 class="font-medium text-text-primary">Maya Chen</h4>
                                 <span class="text-text-secondary text-sm">2h ago</span>
                             </div>
-                            <p class="text-text-secondary text-sm">Sharing from the heart</p>
+                            <p class="text-text-secondary text-sm" data-translate="sharing_from_heart">Sharing from the heart</p>
                         </div>
                     </div>
                     
@@ -231,17 +231,17 @@
                         <svg class="w-5 h-5 text-accent-600" fill="currentColor" viewBox="0 0 20 20">
                             <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
                         </svg>
-                        <span class="text-accent-700 font-medium text-sm">Sacred Workshop</span>
+                        <span class="text-accent-700 font-medium text-sm" data-translate="sacred_workshop_label">Sacred Workshop</span>
                     </div>
                     
-                    <h3 class="font-crimson text-xl font-semibold text-primary mb-2">Awakening Your Inner Wisdom</h3>
-                    <p class="text-text-primary mb-4">Join Vani for a transformative 3-hour journey into the depths of your soul's knowing. Discover ancient practices for modern awakening.</p>
+                    <h3 class="font-crimson text-xl font-semibold text-primary mb-2" data-translate="workshop_title">Awakening Your Inner Wisdom</h3>
+                    <p class="text-text-primary mb-4" data-translate="workshop_description">Join Vani for a transformative 3-hour journey into the depths of your soul's knowing. Discover ancient practices for modern awakening.</p>
                     
                     <div class="flex items-center justify-between">
                         <div class="text-sm text-text-secondary">
-                            <span>Next session: Dec 15, 2025</span>
+                            <span data-translate="next_session_label">Next session:</span> <span data-translate="next_session_date">Dec 15, 2025</span>
                         </div>
-                        <a href="workshop_gateway.html" class="bg-accent text-primary px-4 py-2 rounded-lg hover:bg-accent-500 transition-all duration-300 font-medium text-sm">
+                        <a href="workshop_gateway.html" class="bg-accent text-primary px-4 py-2 rounded-lg hover:bg-accent-500 transition-all duration-300 font-medium text-sm" data-translate="learn_more_btn">
                             Learn More
                         </a>
                     </div>
@@ -253,13 +253,13 @@
                         <svg class="w-5 h-5 text-secondary-600" fill="currentColor" viewBox="0 0 20 20">
                             <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
                         </svg>
-                        <span class="text-secondary-700 font-medium text-sm">Daily Reflection</span>
+                        <span class="text-secondary-700 font-medium text-sm" data-translate="daily_reflection_label">Daily Reflection</span>
                     </div>
                     
-                    <h3 class="font-crimson text-lg font-semibold text-primary mb-2">What does your soul need today?</h3>
-                    <p class="text-text-secondary text-sm mb-4">Take a moment to listen within. Share your insights with the community.</p>
+                    <h3 class="font-crimson text-lg font-semibold text-primary mb-2" data-translate="daily_prompt_question">What does your soul need today?</h3>
+                    <p class="text-text-secondary text-sm mb-4" data-translate="daily_prompt_description">Take a moment to listen within. Share your insights with the community.</p>
                     
-                    <button type="button" class="w-full bg-white text-primary border border-primary-200 py-2 rounded-lg hover:bg-primary-50 transition-all duration-300 font-medium text-sm">
+                    <button type="button" class="w-full bg-white text-primary border border-primary-200 py-2 rounded-lg hover:bg-primary-50 transition-all duration-300 font-medium text-sm" data-translate="share_reflection_btn">
                         Share Your Reflection
                     </button>
                 </article>
@@ -273,7 +273,7 @@
                                 <h4 class="font-medium text-text-primary">Alex Rivera</h4>
                                 <span class="text-text-secondary text-sm">4h ago</span>
                             </div>
-                            <p class="text-text-secondary text-sm">On the path of growth</p>
+                            <p class="text-text-secondary text-sm" data-translate="path_of_growth">On the path of growth</p>
                         </div>
                     </div>
                     
@@ -315,11 +315,11 @@
                 <div class="card bg-gradient-to-b from-primary-50 to-white">
                     <div class="flex items-center space-x-2 mb-3">
                         <div class="w-2 h-2 bg-success rounded-full animate-pulse"></div>
-                        <h3 class="font-crimson text-lg font-semibold text-primary">Live Now</h3>
+                        <h3 class="font-crimson text-lg font-semibold text-primary" data-translate="live_now_heading">Live Now</h3>
                     </div>
-                    <p class="text-text-primary font-medium mb-2">Evening Meditation Circle</p>
-                    <p class="text-text-secondary text-sm mb-3">Join 47 souls in guided reflection</p>
-                    <button type="button" class="w-full bg-primary text-white py-2 rounded-lg hover:bg-primary-700 transition-all duration-300 font-medium text-sm">
+                    <p class="text-text-primary font-medium mb-2" data-translate="meditation_circle_title">Evening Meditation Circle</p>
+                    <p class="text-text-secondary text-sm mb-3" data-translate="meditation_circle_description">Join 47 souls in guided reflection</p>
+                    <button type="button" class="w-full bg-primary text-white py-2 rounded-lg hover:bg-primary-700 transition-all duration-300 font-medium text-sm" data-translate="join_session_btn">
                         Join Session
                     </button>
                 </div>
@@ -330,36 +330,36 @@
                         <svg class="w-5 h-5 text-accent-600" fill="currentColor" viewBox="0 0 20 20">
                             <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.293l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13a1 1 0 102 0V9.414l1.293 1.293a1 1 0 001.414-1.414z" clip-rule="evenodd"/>
                         </svg>
-                        <h3 class="font-crimson text-lg font-semibold text-primary">Soul Compass</h3>
+                        <h3 class="font-crimson text-lg font-semibold text-primary" data-translate="soul_compass_heading">Soul Compass</h3>
                     </div>
                     
                     <div class="space-y-3">
                         <div class="p-3 bg-accent-50 rounded-lg border border-accent-200">
-                            <h4 class="font-medium text-primary text-sm mb-1">Recommended for You</h4>
-                            <p class="text-text-secondary text-xs mb-2">Based on your meditation practice</p>
-                            <a href="practice_studio.html" class="text-accent-600 hover:text-accent-700 text-sm font-medium">Breathwork Fundamentals →</a>
+                            <h4 class="font-medium text-primary text-sm mb-1" data-translate="recommended_for_you">Recommended for You</h4>
+                            <p class="text-text-secondary text-xs mb-2" data-translate="recommended_reason">Based on your meditation practice</p>
+                            <a href="practice_studio.html" class="text-accent-600 hover:text-accent-700 text-sm font-medium" data-translate="breathwork_fundamentals">Breathwork Fundamentals →</a>
                         </div>
                         
                         <div class="p-3 bg-secondary-50 rounded-lg border border-secondary-200">
-                            <h4 class="font-medium text-primary text-sm mb-1">Continue Your Journey</h4>
-                            <p class="text-text-secondary text-xs mb-2">Next step in your pathway</p>
-                            <a href="personal_growth_pathway.html" class="text-secondary-600 hover:text-secondary-700 text-sm font-medium">Shadow Work Module →</a>
+                            <h4 class="font-medium text-primary text-sm mb-1" data-translate="continue_journey">Continue Your Journey</h4>
+                            <p class="text-text-secondary text-xs mb-2" data-translate="next_step_pathway">Next step in your pathway</p>
+                            <a href="personal_growth_pathway.html" class="text-secondary-600 hover:text-secondary-700 text-sm font-medium" data-translate="shadow_work_module">Shadow Work Module →</a>
                         </div>
                     </div>
                 </div>
 
                 <!-- Notifications -->
                 <div class="card">
-                    <h3 class="font-crimson text-lg font-semibold text-primary mb-4">Notifications</h3>
+                    <h3 class="font-crimson text-lg font-semibold text-primary mb-4" data-translate="notifications_heading">Notifications</h3>
                     <div id="notifications-list" class="space-y-3">
                         <!-- Notifications will be dynamically inserted here -->
                     </div>
-                    <button id="view-all-notifications" class="text-primary text-sm mt-2 hover:underline hidden" onclick="window.location.href='notifications.html'">View all</button>
+                    <button id="view-all-notifications" class="text-primary text-sm mt-2 hover:underline hidden" onclick="window.location.href='notifications.html'" data-translate="view_all_notifications">View all</button>
                 </div>
 
                 <!-- Community Milestones -->
                 <div class="card">
-                    <h3 class="font-crimson text-lg font-semibold text-primary mb-4">Community Milestones</h3>
+                    <h3 class="font-crimson text-lg font-semibold text-primary mb-4" data-translate="community_milestones_heading">Community Milestones</h3>
                     
                     <div class="space-y-3">
                         <div class="flex items-center space-x-3">
@@ -369,8 +369,8 @@
                                 </svg>
                             </div>
                             <div>
-                                <p class="text-text-primary font-medium text-sm">1,000 Meditations</p>
-                                <p class="text-text-secondary text-xs">Completed this month</p>
+                                <p class="text-text-primary font-medium text-sm" data-translate="meditations_count">1,000 Meditations</p>
+                                <p class="text-text-secondary text-xs" data-translate="meditations_period">Completed this month</p>
                             </div>
                         </div>
                         
@@ -381,8 +381,8 @@
                                 </svg>
                             </div>
                             <div>
-                                <p class="text-text-primary font-medium text-sm">250 New Souls</p>
-                                <p class="text-text-secondary text-xs">Joined this week</p>
+                                <p class="text-text-primary font-medium text-sm" data-translate="new_souls_count">250 New Souls</p>
+                                <p class="text-text-secondary text-xs" data-translate="new_souls_period">Joined this week</p>
                             </div>
                         </div>
                     </div>
@@ -390,28 +390,28 @@
 
                 <!-- Quick Actions -->
                 <div class="card">
-                    <h3 class="font-crimson text-lg font-semibold text-primary mb-4">Quick Actions</h3>
+                    <h3 class="font-crimson text-lg font-semibold text-primary mb-4" data-translate="quick_actions_heading">Quick Actions</h3>
                     
                     <div class="space-y-2">
                         <a href="practice_studio.html" class="flex items-center space-x-3 p-2 rounded-lg hover:bg-primary-50 transition-colors">
                             <svg class="w-5 h-5 text-primary" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"/>
                             </svg>
-                            <span class="text-text-primary text-sm">Start Practice</span>
+                            <span class="text-text-primary text-sm" data-translate="start_practice_link">Start Practice</span>
                         </a>
                         
                         <a href="soul_profile.html" class="flex items-center space-x-3 p-2 rounded-lg hover:bg-primary-50 transition-colors">
                             <svg class="w-5 h-5 text-primary" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
                             </svg>
-                            <span class="text-text-primary text-sm">View Profile</span>
+                            <span class="text-text-primary text-sm" data-translate="view_profile_link">View Profile</span>
                         </a>
                         
                         <a href="workshop_gateway.html" class="flex items-center space-x-3 p-2 rounded-lg hover:bg-primary-50 transition-colors">
                             <svg class="w-5 h-5 text-primary" fill="currentColor" viewBox="0 0 20 20">
                                 <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
                             </svg>
-                            <span class="text-text-primary text-sm">Explore Workshops</span>
+                            <span class="text-text-primary text-sm" data-translate="explore_workshops_link">Explore Workshops</span>
                         </a>
                     </div>
                 </div>
@@ -426,35 +426,35 @@
                 <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/>
                 </svg>
-                <span class="text-xs mt-1">Feed</span>
+                <span class="text-xs mt-1" data-translate="nav_feed">Feed</span>
             </a>
             
             <a href="practice_studio.html" class="flex flex-col items-center p-2 text-text-secondary">
                 <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"/>
                 </svg>
-                <span class="text-xs mt-1">Practice</span>
+                <span class="text-xs mt-1" data-translate="nav_practice">Practice</span>
             </a>
             
             <a href="workshop_gateway.html" class="flex flex-col items-center p-2 text-text-secondary">
                 <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
                 </svg>
-                <span class="text-xs mt-1">Workshops</span>
+                <span class="text-xs mt-1" data-translate="nav_workshops">Workshops</span>
             </a>
             
             <a href="personal_growth_pathway.html" class="flex flex-col items-center p-2 text-text-secondary">
                 <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11.707 4.707a1 1 0 00-1.414-1.414L10 9.586 8.707 8.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                 </svg>
-                <span class="text-xs mt-1">Growth</span>
+                <span class="text-xs mt-1" data-translate="nav_growth">Growth</span>
             </a>
             
             <a href="soul_profile.html" class="flex flex-col items-center p-2 text-text-secondary">
                 <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
                 </svg>
-                <span class="text-xs mt-1">Profile</span>
+                <span class="text-xs mt-1" data-translate="nav_profile">Profile</span>
             </a>
         </div>
     </nav>
@@ -464,8 +464,8 @@
         <div class="comments-sheet">
             <!-- Modal Header -->
             <div class="flex items-center justify-between pb-4 border-b border-border-light mb-4">
-                <h3 class="font-crimson text-xl font-semibold text-primary">Comments</h3>
-                <button type="button" id="close-comments-modal-1" class="text-text-secondary hover:text-primary transition-colors" title="Close comments modal">
+                <h3 class="font-crimson text-xl font-semibold text-primary" data-translate="comments_heading">Comments</h3>
+                <button type="button" id="close-comments-modal-1" class="text-text-secondary hover:text-primary transition-colors" title="Close comments modal" data-translate="close_comments_modal_title">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                     </svg>
@@ -521,7 +521,7 @@
                                 id="modal-comment-input-1" 
                                 rows="3" 
                                 class="w-full bg-transparent border-none focus:ring-0 p-0 text-text-primary placeholder-text-secondary resize-none" 
-                                placeholder="Share your sacred thoughts..."></textarea>
+                                placeholder="Share your sacred thoughts..." data-translate="comment_placeholder"></textarea>
                             
                             <div class="flex items-center justify-between mt-2 pt-2 border-t border-border-light">
                                 <div class="flex items-center space-x-2 text-text-secondary">
@@ -532,7 +532,7 @@
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                                     </button>
                                 </div>
-                                <button type="button" id="post-modal-comment-btn-1" class="btn-primary px-6 py-2 text-sm font-semibold">Post</button>
+                                <button type="button" id="post-modal-comment-btn-1" class="btn-primary px-6 py-2 text-sm font-semibold" data-translate="post_btn">Post</button>
                             </div>
                         </div>
                     </div>
@@ -544,10 +544,10 @@
     <!-- Mobile Menu Overlay (newly added) -->
     <div id="mobile-menu-overlay" class="mobile-menu-overlay">
         <div class="mobile-menu-sheet">
-            <a href="settings.html">Settings</a>
-            <a href="help.html">Help & Support</a>
-            <a href="about.html">About</a>
-            <button id="close-mobile-menu" class="bg-primary text-white py-2 rounded-lg font-medium">Close</button>
+            <a href="settings.html" data-translate="settings_link">Settings</a>
+            <a href="help.html" data-translate="help_support_link">Help & Support</a>
+            <a href="about.html" data-translate="about_link">About</a>
+            <button id="close-mobile-menu" class="bg-primary text-white py-2 rounded-lg font-medium" data-translate="close_btn">Close</button>
         </div>
     </div>
 
@@ -1078,7 +1078,7 @@
             const closeNewPostModalBtn = document.getElementById('close-new-post-modal');
             const submitNewPostBtn = document.getElementById('submit-new-post');
             const newPostContentInput = document.getElementById('new-post-content');
-            const mainFeed = document.querySelector('main.lg\:col-span-3.space-y-6');
+            const mainFeed = document.querySelector('main.lg\:col-span-3.space-y\-6');
 
             if (openNewPostModalBtn) {
                 openNewPostModalBtn.addEventListener('click', () => {
@@ -1204,9 +1204,8 @@
             }
         });
     </script>
-<script id="dhws-dataInjector" src="../public/dhws-data-injector.js"></script>
     <!-- Floating Action Button for Mobile -->
-    <button type="button" id="open-new-post-modal" class="md:hidden fixed bottom-20 right-4 w-14 h-14 bg-accent text-primary rounded-full shadow-sacred-strong hover:shadow-contemplative transition-all duration-300 flex items-center justify-center" title="Add new post">
+    <button type="button" id="open-new-post-modal" class="md:hidden fixed bottom-20 right-4 w-14 h-14 bg-accent text-primary rounded-full shadow-sacred-strong hover:shadow-contemplative transition-all duration-300 flex items-center justify-center z-40" data-translate="add_new_post_title" title="Add new post">
         <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
             <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/>
         </svg>
@@ -1217,8 +1216,8 @@
         <div class="comments-sheet">
             <!-- Modal Header -->
             <div class="flex items-center justify-between pb-4 border-b border-border-light mb-4">
-                <h3 class="font-crimson text-xl font-semibold text-primary">Create New Post</h3>
-                <button type="button" id="close-new-post-modal" class="text-text-secondary hover:text-primary transition-colors" title="Close new post modal">
+                <h3 class="font-crimson text-xl font-semibold text-primary" data-translate="create_new_post_heading">Create New Post</h3>
+                <button type="button" id="close-new-post-modal" class="text-text-secondary hover:text-primary transition-colors" title="Close new post modal" data-translate="close_new_post_modal_title">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                     </svg>
@@ -1235,7 +1234,7 @@
                                 id="new-post-content" 
                                 rows="5" 
                                 class="w-full bg-transparent border-none focus:ring-0 p-0 text-text-primary placeholder-text-secondary resize-none" 
-                                placeholder="Share your sacred thoughts and insights with the community..."></textarea>
+                                placeholder="Share your sacred thoughts and insights with the community..." data-translate="new_post_placeholder"></textarea>
                             
                             <div class="flex items-center justify-between mt-2 pt-2 border-t border-border-light">
                                 <div class="flex items-center space-x-2 text-text-secondary">
@@ -1246,7 +1245,7 @@
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                                     </button>
                                 </div>
-                                <button type="button" id="submit-new-post" class="btn-primary px-6 py-2 text-sm font-semibold">Post</button>
+                                <button type="button" id="submit-new-post" class="btn-primary px-6 py-2 text-sm font-semibold" data-translate="post_btn">Post</button>
                             </div>
                         </div>
                     </div>
@@ -1255,5 +1254,7 @@
         </div>
     </div>
 
+    <script src="../js/translations.js"></script>
+    <script src="../js/language.js"></script>
 </body>
 </html>

@@ -101,7 +101,7 @@
                 <div class="card bg-gradient-to-r from-primary-50 to-secondary-50 border-none">
                     <div class="flex flex-col md:flex-row items-start md:items-center space-y-4 md:space-y-0 md:space-x-6">
                         <div class="relative">
-                            <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Sarah's Profile" class="w-24 h-24 md:w-32 md:h-32 rounded-full object-cover border-4 border-white shadow-sacred" onerror="this.src='https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'; this.onerror=null;" />
+                            <img id="profile-main-image" src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Sarah's Profile" class="w-24 h-24 md:w-32 md:h-32 rounded-full object-cover border-4 border-white shadow-sacred" onerror="this.src='https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'; this.onerror=null;" />
                             <div class="absolute -bottom-2 -right-2 w-8 h-8 bg-success rounded-full border-2 border-white flex items-center justify-center">
                                 <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
@@ -419,6 +419,50 @@
         </div>
     </div>
 
+    <!-- Edit Profile Modal -->
+    <div id="edit-profile-modal" class="fixed inset-0 z-[101] hidden items-center justify-center bg-black/50 backdrop-blur-sm">
+        <div class="card bg-white w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto p-6 rounded-lg shadow-lg">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="font-crimson text-2xl font-semibold text-primary">Edit Your Profile</h3>
+                <button id="close-modal-btn" type="""button" class="text-gray-400 hover:text-primary" aria-label="Close modal">
+                    <svg class="""w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                    </svg>
+                </button>
+            </div>
+
+            <form id="edit-profile-form" class="space-y-4">
+                <div>
+                    <label for="profile-pic-url" class="block text-sm font-medium text-text-primary mb-1">Profile Picture URL</label>
+                    <input type="url" id="profile-pic-url" class="input w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary focus:border-primary" value="https://images.unsplash.com/photo-1544005313-94ddf02866df2?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D">
+                </div>
+                <div>
+                    <label for="full-name" class="block text-sm font-medium text-text-primary mb-1">Full Name</label>
+                    <input type="text" id="full-name" class="input w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary focus:border-primary" value="Sarah Chen">
+                </div>
+                <div>
+                    <label for="headline" class="block text-sm font-medium text-text-primary mb-1">Headline</label>
+                    <input type="text" id="headline" class="input w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary focus:border-primary" value="Seeker of Light & Community Builder">
+                </div>
+                <div>
+                    <label for="spiritual-journey" class="block text-sm font-medium text-text-primary mb-1">My Spiritual Journey</label>
+                    <textarea id="spiritual-journey" rows="5" class="input w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary focus:border-primary">My awakening began during a challenging period in my corporate career when I felt completely disconnected from my authentic self. A chance encounter with meditation during a wellness retreat opened a doorway I never knew existed.
+What started as stress relief evolved into a profound journey of self-discovery. I've explored various practices from mindfulness meditation to energy healing, always seeking that deeper connection to my inner wisdom and the universal consciousness that binds us all.
+Today, I'm passionate about creating authentic connections within spiritual communities and supporting others on their own paths of awakening. Every day brings new opportunities for growth and service.</textarea>
+                </div>
+
+                <div class="flex justify-end space-x-4 pt-4">
+                    <button id="cancel-edit-btn" type="button" class="bg-gray-200 text-text-secondary px-4 py-2 rounded-lg hover:bg-gray-300 transition-all duration-300 font-medium text-sm">
+                        Cancel
+                    </button>
+                    <button type="submit" class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition-all duration-300 font-medium text-sm">
+                        Save Changes
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- Mobile Bottom Navigation -->
     <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-border-light">
         <div class="flex items-center justify-around py-2">
@@ -470,7 +514,6 @@
     </div>
 
     <button type="button" class="md:hidden fixed bottom-20 right-4 w-14 h-14 bg-primary text-white rounded-full shadow-sacred-strong hover:shadow-contemplative transition-all duration-300 flex items-center justify-center" title="Edit Profile">
-    <button class="md:hidden fixed bottom-20 right-4 w-14 h-14 bg-primary text-white rounded-full shadow-sacred-strong hover:shadow-contemplative transition-all duration-300 flex items-center justify-center" title="Edit Profile">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
         </svg>
@@ -558,7 +601,66 @@
                 }
             });
         }
+
+        // Edit Profile Modal Logic
+        const editProfileModal = document.getElementById('edit-profile-modal');
+        const editProfileBtns = document.querySelectorAll('[title="Edit Profile"]');
+        const closeModalBtn = document.getElementById('close-modal-btn');
+        const cancelEditBtn = document.getElementById('cancel-edit-btn');
+        const editProfileForm = document.getElementById('edit-profile-form');
+
+        function openModal() {
+            if (editProfileModal) {
+                editProfileModal.classList.remove('hidden');
+                editProfileModal.classList.add('flex');
+            }
+        }
+
+        function closeModal() {
+            if (editProfileModal) {
+                editProfileModal.classList.add('hidden');
+                editProfileModal.classList.remove('flex');
+            }
+        }
+
+        editProfileBtns.forEach(btn => {
+            btn.addEventListener('click', openModal);
+        });
+
+        if (closeModalBtn) {
+            closeModalBtn.addEventListener('click', closeModal);
+        }
+
+        if (cancelEditBtn) {
+            cancelEditBtn.addEventListener('click', closeModal);
+        }
+
+        if (editProfileModal) {
+            editProfileModal.addEventListener('click', (e) => {
+                if (e.target === editProfileModal) {
+                    closeModal();
+                }
+            });
+        }
+
+        if (editProfileForm) {
+            editProfileForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const formData = {
+                    profilePicUrl: document.getElementById('profile-pic-url').value,
+                    fullName: document.getElementById('full-name').value,
+                    headline: document.getElementById('headline').value,
+                    spiritualJourney: document.getElementById('spiritual-journey').value,
+                };
+                
+                document.querySelector('h2.font-crimson').textContent = formData.fullName;
+                document.querySelector('p.text-text-secondary').textContent = formData.headline;
+                document.querySelector('.prose p').textContent = formData.spiritualJourney;
+                document.getElementById('profile-main-image').src = formData.profilePicUrl;
+
+                closeModal();
+            });
+        }
     </script>
-<script id="dhws-dataInjector" src="../public/dhws-data-injector.js"></script>
 </body>
 </html>
