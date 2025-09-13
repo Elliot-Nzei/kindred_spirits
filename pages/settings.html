@@ -62,7 +62,7 @@
         <div class="max-w-6xl mx-auto px-4 py-3">
             <div class="flex items-center justify-between">
                 <!-- Logo -->
-                <a href="../index.html" class="flex items-center space-x-2">
+                <a href="community_feed_dashboard.html" class="flex items-center space-x-2">
                     <img src="../img/logo_only.jpg" alt="Metanoia Logo" class="w-8 h-8 rounded-full object-cover">
                     <h1 class="font-crimson text-xl font-semibold text-primary">Metanoia</h1>
                 </a>
@@ -201,7 +201,8 @@
             <div class="card bg-red-50 border-red-200">
                 <h3 class="font-crimson text-xl font-semibold text-red-700 mb-4">Danger Zone</h3>
                 <p class="text-red-600 text-sm mb-4">Proceed with caution. These actions are irreversible.</p>
-                <div class="flex justify-end">
+                <div class="flex justify-end space-x-4">
+                    <button id="logout-button" class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-all duration-300 font-medium text-sm">Logout</button>
                     <button class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-all duration-300 font-medium text-sm">Delete Account</button>
                 </div>
             </div>
@@ -286,8 +287,19 @@
                 }
             });
         }
+
+        // Logout logic
+        const logoutButton = document.getElementById('logout-button');
+        if (logoutButton) {
+            logoutButton.addEventListener('click', () => {
+                window.logout();
+            });
+        }
     </script>
     <script src="../js/translations.js"></script>
     <script src="../js/language.js"></script>
+    <div class="text-center py-6">
+        <a href="community_feed_dashboard.html" class="bg-primary text-white px-6 py-3 rounded-lg hover:bg-primary-700 transition-all duration-300 font-medium text-lg">Back to Dashboard</a>
+    </div>
 </body>
 </html>

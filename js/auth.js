@@ -55,6 +55,34 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Authentication Functions ---
     const API_BASE_URL = 'http://127.0.0.1:8000'; // Replace with your backend URL
 
+    async function fetchUserProfileAndPersonalize() {
+        const authToken = window.getAuthToken();
+        if (authToken) {
+            try {
+                const response = await fetch(`${API_BASE_URL}/users/me`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+
+                if (response.ok) {
+                    const user = await response.json();
+                    const userFullNameSpan = document.getElementById('user-full-name');
+                    if (userFullNameSpan && user.full_name) {
+                        userFullNameSpan.textContent = `Welcome, ${user.full_name}!`;
+                    }
+                } else {
+                    console.error('Failed to fetch user profile:', response.statusText);
+                    // Optionally, log out the user if the token is invalid
+                    // window.logout();
+                }
+            } catch (error) {
+                console.error('Error fetching user profile:', error);
+            }
+        }
+    }
+
     async function loginUser(username, password) {
         try {
             const response = await fetch(`${API_BASE_URL}/api/login`, {
@@ -75,6 +103,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const data = await response.json();
             localStorage.setItem('authToken', data.access_token);
+            await fetchUserProfileAndPersonalize(); // Personalize before redirect
             console.log('Redirecting to:', '/pages/community_feed_dashboard.html');
             window.location.replace('/pages/community_feed_dashboard.html'); // Redirect to dashboard
         } catch (error) {
@@ -105,6 +134,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // After successful registration, automatically log in the user
             await loginUser(username, password); // This will handle redirection
+            await fetchUserProfileAndPersonalize(); // Personalize after login
         } catch (error) {
             console.error('Registration error:', error.message);
             registerError.textContent = error.message;
@@ -152,4 +182,8 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.removeItem('authToken');
         window.location.href = 'index.html';
     };
+
+    // Call on page load to personalize if already logged in
+    fetchUserProfileAndPersonalize();
+});
 });
