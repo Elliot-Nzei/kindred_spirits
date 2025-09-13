@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Help & Support - Metanoia</title>
+    <link rel="stylesheet" href="../css/main.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <style>
+        @media (max-width: 767px) {
+            .mobile-bottom-padding {
+                padding-bottom: 5.5rem !important;
+            }
+        }
+        /* Mobile menu overlay styles */
+        .mobile-menu-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.4);
+            z-index: 100;
+        }
+        .mobile-menu-overlay.active {
+            display: flex;
+            align-items: flex-end;
+        }
+        .mobile-menu-sheet {
+            background: #fff;
+            width: 100%;
+            border-top-left-radius: 1.25rem;
+            border-top-right-radius: 1.25rem;
+            box-shadow: 0 -2px 16px rgba(0,0,0,0.08);
+            padding: 2rem 1.5rem 2.5rem 1.5rem;
+            animation: slideUp .25s cubic-bezier(.4,0,.2,1);
+        }
+        @keyframes slideUp {
+            from { transform: translateY(100%);}
+            to { transform: translateY(0);}
+        }
+        .mobile-menu-sheet a {
+            display: block;
+            padding: 1rem 0;
+            color: #2D5A3D;
+            font-weight: 500;
+            border-bottom: 1px solid #F0EDE8;
+            text-align: center;
+            text-decoration: none;
+        }
+        .mobile-menu-sheet a:last-child {
+            border-bottom: none;
+        }
+        .mobile-menu-sheet button {
+            margin-top: 1.5rem;
+            width: 100%;
+        }
+    </style>
+</head>
+<body class="bg-background min-h-screen">
+    <!-- Header with Floating Elements -->
+    <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-border-light">
+        <div class="max-w-6xl mx-auto px-4 py-3">
+            <div class="flex items-center justify-between">
+                <!-- Logo -->
+                <a href="../index.html" class="flex items-center space-x-2">
+                    <img src="../img/logo_only.jpg" alt="Metanoia Logo" class="w-8 h-8 rounded-full object-cover">
+                    <h1 class="font-crimson text-xl font-semibold text-primary">Metanoia</h1>
+                </a>
+
+                <!-- Page Title -->
+                <h2 class="font-crimson text-xl font-semibold text-primary">Help & Support</h2>
+
+                <!-- Mobile Menu Button -->
+                <button id="mobile-menu-btn" type="button" class="md:hidden p-2 text-primary" title="Open menu" aria-label="More options">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <circle cx="5" cy="12" r="2" />
+                        <circle cx="12" cy="12" r="2" />
+                        <circle cx="19" cy="12" r="2" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div class="max-w-4xl mx-auto px-4 py-6 mobile-bottom-padding">
+        <div class="space-y-6">
+            <!-- FAQ Section -->
+            <div class="card card-hover">
+                <h3 class="font-crimson text-xl font-semibold text-primary mb-4">Frequently Asked Questions</h3>
+                <div class="space-y-4">
+                    <div>
+                        <h4 class="font-medium text-primary mb-1">How do I reset my password?</h4>
+                        <p class="text-text-secondary text-sm">You can reset your password from the Account Settings section of your Soul Profile. Look for the "Change Password" option.</p>
+                    </div>
+                    <div>
+                        <h4 class="font-medium text-primary mb-1">Where can I find guided meditations?</h4>
+                        <p class="text-text-secondary text-sm">Our guided meditations are available in the Practice Studio. You can filter by duration, type, and intention.</p>
+                    </div>
+                    <div>
+                        <h4 class="font-medium text-primary mb-1">How do I connect with other members?</h4>
+                        <p class="text-text-secondary text-sm">Visit the Community Feed Dashboard to see posts from other members. You can send connection requests from their Soul Profile pages.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contact Us Section -->
+            <div class="card card-hover">
+                <h3 class="font-crimson text-xl font-semibold text-primary mb-4">Contact Us</h3>
+                <p class="text-text-secondary text-sm mb-4">If you can't find what you're looking for, please reach out to our support team.</p>
+                <form class="space-y-4">
+                    <div>
+                        <label for="contact-name" class="block text-sm font-medium text-text-primary mb-1">Your Name</label>
+                        <input type="text" id="contact-name" class="input w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary focus:border-primary">
+                    </div>
+                    <div>
+                        <label for="contact-email" class="block text-sm font-medium text-text-primary mb-1">Your Email</label>
+                        <input type="email" id="contact-email" class="input w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary focus:border-primary">
+                    </div>
+                    <div>
+                        <label for="contact-message" class="block text-sm font-medium text-text-primary mb-1">Your Message</label>
+                        <textarea id="contact-message" rows="5" class="input w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary focus:border-primary"></textarea>
+                    </div>
+                    <div class="flex justify-end">
+                        <button type="submit" class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition-all duration-300 font-medium text-sm">Send Message</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Resources Section -->
+            <div class="card card-hover">
+                <h3 class="font-crimson text-xl font-semibold text-primary mb-4">Additional Resources</h3>
+                <ul class="space-y-2 text-text-secondary text-sm">
+                    <li><a href="#" class="text-primary hover:underline">Community Guidelines</a></li>
+                    <li><a href="#" class="text-primary hover:underline">Terms of Service</a></li>
+                    <li><a href="#" class="text-primary hover:underline">Privacy Policy</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Bottom Navigation -->
+    <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-surface border-t border-border-light z-50">
+        <div class="flex items-center justify-around py-2">
+            <a href="community_feed_dashboard.html" class="flex flex-col items-center p-2 text-text-secondary">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/>
+                </svg>
+                <span class="text-xs mt-1">Feed</span>
+            </a>
+            
+            <a href="practice_studio.html" class="flex flex-col items-center p-2 text-text-secondary">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"/>
+                </svg>
+                <span class="text-xs mt-1">Practice</span>
+            </a>
+            
+            <a href="workshop_gateway.html" class="flex flex-col items-center p-2 text-text-secondary">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                </svg>
+                <span class="text-xs mt-1">Workshops</span>
+            </a>
+            
+            <a href="personal_growth_pathway.html" class="flex flex-col items-center p-2 text-text-secondary">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11.707 4.707a1 1 0 00-1.414-1.414L10 9.586 8.707 8.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                </svg>
+                <span class="text-xs mt-1">Growth</span>
+            </a>
+            
+            <a href="soul_profile.html" class="flex flex-col items-center p-2 text-text-secondary">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
+                </svg>
+                <span class="text-xs mt-1">Profile</span>
+            </a>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu Overlay -->
+    <div id="mobile-menu-overlay" class="mobile-menu-overlay">
+        <div class="mobile-menu-sheet">
+            <a href="soul_settings.html">Settings</a>
+            <a href="help_support.html">Help & Support</a>
+            <a href="about.html">About</a>
+            <button id="close-mobile-menu" class="bg-primary text-white py-2 rounded-lg font-medium">Close</button>
+        </div>
+    </div>
+
+    <script>
+        // Mobile menu logic
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenuOverlay = document.getElementById('mobile-menu-overlay');
+        const closeMobileMenu = document.getElementById('close-mobile-menu');
+
+        if (mobileMenuBtn && mobileMenuOverlay && closeMobileMenu) {
+            mobileMenuBtn.addEventListener('click', () => {
+                mobileMenuOverlay.classList.add('active');
+            });
+            closeMobileMenu.addEventListener('click', () => {
+                mobileMenuOverlay.classList.remove('active');
+            });
+            mobileMenuOverlay.addEventListener('click', (e) => {
+                if (e.target === mobileMenuOverlay) {
+                    mobileMenuOverlay.classList.remove('active');
+                }
+            });
+        }
+    </script>
+</body>
+</html>

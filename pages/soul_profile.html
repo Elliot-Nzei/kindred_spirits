@@ -433,8 +433,8 @@
 
             <form id="edit-profile-form" class="space-y-4">
                 <div>
-                    <label for="profile-pic-url" class="block text-sm font-medium text-text-primary mb-1">Profile Picture URL</label>
-                    <input type="url" id="profile-pic-url" class="input w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary focus:border-primary" value="https://images.unsplash.com/photo-1544005313-94ddf02866df2?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D">
+                    <label for="profile-pic-upload" class="block text-sm font-medium text-text-primary mb-1">Upload Profile Picture</label>
+                    <input type="file" id="profile-pic-upload" class="input w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary focus:border-primary" accept="image/*">
                 </div>
                 <div>
                     <label for="full-name" class="block text-sm font-medium text-text-primary mb-1">Full Name</label>
@@ -507,7 +507,7 @@ Today, I'm passionate about creating authentic connections within spiritual comm
     <div id="mobile-menu-overlay" class="mobile-menu-overlay">
         <div class="mobile-menu-sheet">
             <a href="settings.html">Settings</a>
-            <a href="help.html">Help & Support</a>
+            <a href="help_support.html">Help & Support</a>
             <a href="about.html">About</a>
             <button id="close-mobile-menu" class="bg-primary text-white py-2 rounded-lg font-medium">Close</button>
         </div>
@@ -646,8 +646,10 @@ Today, I'm passionate about creating authentic connections within spiritual comm
         if (editProfileForm) {
             editProfileForm.addEventListener('submit', (e) => {
                 e.preventDefault();
+                const profilePicInput = document.getElementById('profile-pic-upload');
+                const profileMainImage = document.getElementById('profile-main-image');
+
                 const formData = {
-                    profilePicUrl: document.getElementById('profile-pic-url').value,
                     fullName: document.getElementById('full-name').value,
                     headline: document.getElementById('headline').value,
                     spiritualJourney: document.getElementById('spiritual-journey').value,
@@ -656,7 +658,14 @@ Today, I'm passionate about creating authentic connections within spiritual comm
                 document.querySelector('h2.font-crimson').textContent = formData.fullName;
                 document.querySelector('p.text-text-secondary').textContent = formData.headline;
                 document.querySelector('.prose p').textContent = formData.spiritualJourney;
-                document.getElementById('profile-main-image').src = formData.profilePicUrl;
+
+                if (profilePicInput.files && profilePicInput.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        profileMainImage.src = e.target.result;
+                    };
+                    reader.readAsDataURL(profilePicInput.files[0]);
+                }
 
                 closeModal();
             });
