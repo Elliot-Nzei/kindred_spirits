@@ -3,82 +3,10 @@ PS C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits> make run-backend
 backend\venv\Scripts\uvicorn backend.main:app --reload
 INFO:     Will watch for changes in these directories: ['C:\\Users\\USER\\Documents\\PROJECTS_2025\\kindred_spirits']
 INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
-INFO:     Started reloader process [14168] using StatReload
-C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\pydantic\_internal\_config.py:373: UserWarning: Valid config keys have changed in V2:
-* 'orm_mode' has been renamed to 'from_attributes'
-  warnings.warn(message, UserWarning)
-Form data requires "python-multipart" to be installed. 
-You can install "python-multipart" with:
-
-pip install python-multipart
-
-Process SpawnProcess-1:
-Traceback (most recent call last):
-  File "C:\Program Files\Python311\Lib\multiprocessing\process.py", line 314, in _bootstrap
-    self.run()
-  File "C:\Program Files\Python311\Lib\multiprocessing\process.py", line 108, in run
-    self._target(*self._args, **self._kwargs)
-  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\uvicorn\_subprocess.py", line 80, in subprocess_started    
-    target(sockets=sockets)
-  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\uvicorn\server.py", line 67, in run
-    return asyncio.run(self.serve(sockets=sockets))
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Program Files\Python311\Lib\asyncio\runners.py", line 190, in run
-    return runner.run(main)
-           ^^^^^^^^^^^^^^^^
-  File "C:\Program Files\Python311\Lib\asyncio\runners.py", line 118, in run
-    return self._loop.run_until_complete(task)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Program Files\Python311\Lib\asyncio\base_events.py", line 654, in run_until_complete
-    return future.result()
-           ^^^^^^^^^^^^^^^
-  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\uvicorn\server.py", line 71, in serve
-    await self._serve(sockets)
-  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\uvicorn\server.py", line 78, in _serve
-    config.load()
-  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\uvicorn\config.py", line 436, in load
-    self.loaded_app = import_from_string(self.app)
-                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\uvicorn\importer.py", line 19, in import_from_string       
-    module = importlib.import_module(module_str)
-             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Program Files\Python311\Lib\importlib\__init__.py", line 126, in import_module
-    return _bootstrap._gcd_import(name[level:], package, level)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "<frozen importlib._bootstrap>", line 1204, in _gcd_import
-  File "<frozen importlib._bootstrap>", line 1176, in _find_and_load
-  File "<frozen importlib._bootstrap>", line 1147, in _find_and_load_unlocked
-  File "<frozen importlib._bootstrap>", line 690, in _load_unlocked
-  File "<frozen importlib._bootstrap_external>", line 940, in exec_module
-  File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
-  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\main.py", line 151, in <module>
-    @app.post("/token", response_model=Token)
-     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\fastapi\routing.py", line 995, in decorator
-    self.add_api_route(
-  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\fastapi\routing.py", line 934, in add_api_route
-    route = route_class(
-            ^^^^^^^^^^^^
-  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\fastapi\routing.py", line 555, in __init__
-    self.dependant = get_dependant(path=self.path_format, call=self.endpoint)
-                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\fastapi\dependencies\utils.py", line 292, in get_dependant 
-    sub_dependant = get_param_sub_dependant(
-                    ^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\fastapi\dependencies\utils.py", line 126, in get_param_sub_dependant
-    return get_sub_dependant(
-           ^^^^^^^^^^^^^^^^^^
-  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\fastapi\dependencies\utils.py", line 162, in get_sub_dependant
-    sub_dependant = get_dependant(
-                    ^^^^^^^^^^^^^^
-  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\fastapi\dependencies\utils.py", line 285, in get_dependant 
-    param_details = analyze_param(
-                    ^^^^^^^^^^^^^^
-  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\fastapi\dependencies\utils.py", line 482, in analyze_param
-    ensure_multipart_is_installed()
-  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\fastapi\dependencies\utils.py", line 115, in ensure_multipart_is_installed
-    raise RuntimeError(multipart_not_installed_error) from None
-RuntimeError: Form data requires "python-multipart" to be installed. 
-You can install "python-multipart" with:
-
-pip install python-multipart
+INFO:     Started reloader process [6864] using StatReload
+INFO:     Started server process [20880]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     127.0.0.1:52289 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52288 - "POST /api/register HTTP/1.1" 422 Unprocessable Entity
+INFO:     127.0.0.1:52293 - "POST /api/register HTTP/1.1" 422 Unprocessable Entity

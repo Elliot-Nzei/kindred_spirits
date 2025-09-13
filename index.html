@@ -664,42 +664,75 @@
         }
 
         // Form submissions
-        loginForm.addEventListener('submit', (e) => {
+        loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            // Add your login logic here
-            console.log('Login form submitted');
-            
-            // Example: Show error message
-            // document.getElementById('loginError').classList.add('show');
-            
-            // Example: Redirect on success
-            // window.location.href = '/dashboard';
+            // Get form values
+            const usernameOrEmail = loginForm.querySelector('input[type="text"]').value;
+            const password = document.getElementById('loginPassword').value;
+
+            // Send login request to backend
+            try {
+                const res = await fetch('/api/login', { // <-- Update URL if needed
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: usernameOrEmail, password })
+                });
+                const data = await res.json();
+                if (res.ok && data.success) {
+                    // Redirect or show success
+                    window.location.href = '/dashboard'; // <-- Update as needed
+                } else {
+                    document.getElementById('loginError').textContent = data.message || 'Invalid username or password';
+                    document.getElementById('loginError').classList.add('show');
+                }
+            } catch (err) {
+                document.getElementById('loginError').textContent = 'Network error. Please try again.';
+                document.getElementById('loginError').classList.add('show');
+            }
         });
 
-        registerForm.addEventListener('submit', (e) => {
+        registerForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            
+
+            const username = registerForm.querySelector('input[placeholder="Username"]').value;
+            const email = registerForm.querySelector('input[type="email"]').value;
             const password = document.getElementById('registerPassword').value;
             const confirmPassword = document.getElementById('confirmPassword').value;
-            
+
             if (password !== confirmPassword) {
+                document.getElementById('registerError').textContent = 'Passwords do not match';
                 document.getElementById('registerError').classList.add('show');
                 document.getElementById('registerSuccess').classList.remove('show');
                 return;
             }
-            
-            // Add your registration logic here
-            console.log('Register form submitted');
-            document.getElementById('registerError').classList.remove('show');
-            document.getElementById('registerSuccess').classList.add('show');
-            
-            // Clear form after successful registration
-            setTimeout(() => {
-                registerForm.reset();
+
+            // Send registration request to backend
+            try {
+                const res = await fetch('/api/register', { // <-- Update URL if needed
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, email, password })
+                });
+                const data = await res.json();
+                if (res.ok && data.success) {
+                    document.getElementById('registerError').classList.remove('show');
+                    document.getElementById('registerSuccess').textContent = data.message || 'Account created successfully!';
+                    document.getElementById('registerSuccess').classList.add('show');
+                    setTimeout(() => {
+                        registerForm.reset();
+                        document.getElementById('registerSuccess').classList.remove('show');
+                        loginTab.click();
+                    }, 2000);
+                } else {
+                    document.getElementById('registerError').textContent = data.message || 'Registration failed';
+                    document.getElementById('registerError').classList.add('show');
+                    document.getElementById('registerSuccess').classList.remove('show');
+                }
+            } catch (err) {
+                document.getElementById('registerError').textContent = 'Network error. Please try again.';
+                document.getElementById('registerError').classList.add('show');
                 document.getElementById('registerSuccess').classList.remove('show');
-                // Switch to login tab
-                loginTab.click();
-            }, 2000);
+            }
         });
 
         // Clear error messages on input
