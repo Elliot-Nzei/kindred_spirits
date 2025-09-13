@@ -40,6 +40,50 @@
         .emoji-btn:hover {
             transform: scale(1.2);
         }
+        /* Mobile menu overlay styles */
+        .mobile-menu-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.4);
+            z-index: 100;
+        }
+        .mobile-menu-overlay.active {
+            display: flex;
+            align-items: flex-end;
+        }
+        .mobile-menu-sheet {
+            background: #fff;
+            width: 100%;
+            border-top-left-radius: 1.25rem;
+            border-top-right-radius: 1.25rem;
+            box-shadow: 0 -2px 16px rgba(0,0,0,0.08);
+            padding: 2rem 1.5rem 2.5rem 1.5rem;
+            animation: slideUp .25s cubic-bezier(.4,0,.2,1);
+        }
+        @keyframes slideUp {
+            from { transform: translateY(100%);}
+            to { transform: translateY(0);}
+        }
+        .mobile-menu-sheet a {
+            display: block;
+            padding: 1rem 0;
+            color: #2D5A3D;
+            font-weight: 500;
+            border-bottom: 1px solid #F0EDE8;
+            text-align: center;
+            text-decoration: none;
+        }
+        .mobile-menu-sheet a:last-child {
+            border-bottom: none;
+        }
+        .mobile-menu-sheet button {
+            margin-top: 1.5rem;
+            width: 100%;
+        }
+        .text-red-love {
+            color: red;
+        }
     </style>
 </head>
 <body class="bg-background min-h-screen">
@@ -49,7 +93,10 @@
             <div class="flex items-center justify-between">
                 <!-- Logo -->
                 <a href="../index.html" class="flex items-center space-x-2">
-                    <img src="../img/logo_only.jpg" alt="Metanoia Logo" class="w-8 h-8 rounded-full object-cover">
+                    <svg class="w-8 h-8 text-primary" viewBox="0 0 32 32" fill="currentColor">
+                        <path d="M16 2L20.5 10.5L30 12L22 20L24 30L16 25L8 30L10 20L2 12L11.5 10.5L16 2Z"/>
+                        <circle cx="16" cy="16" r="4" fill="white"/>
+                    </svg>
                     <h1 class="font-crimson text-xl font-semibold text-primary">Metanoia</h1>
                 </a>
 
@@ -66,10 +113,12 @@
                     </button>
                 </div>
 
-                <!-- Mobile Menu Button -->
-                <button type="button" class="md:hidden p-2 text-primary" title="Open menu">
+                <!-- Mobile Menu Button (moved here from tab bar) -->
+                <button id="mobile-menu-btn" type="button" class="md:hidden p-2 text-primary" title="Open menu" aria-label="More options">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                        <circle cx="5" cy="12" r="2" />
+                        <circle cx="12" cy="12" r="2" />
+                        <circle cx="19" cy="12" r="2" />
                     </svg>
                 </button>
             </div>
@@ -114,53 +163,14 @@
                     <!-- Interaction Bar -->
                     <div class="flex items-center justify-between pt-3 border-t border-border-light">
                         <div class="flex items-center space-x-4">
-                            <div class="relative" x-data="{ open: false, currentReaction: 'none', reactions: { 'like': 0, 'love': 0, 'laugh': 0, 'care': 0, 'sad': 0, 'angry': 0 } }" x-init="
-                                // Initialize reactions from a dummy source or fetch from backend
-                                // For now, let's set some dummy initial values
-                                if (Math.random() > 0.5) {
-                                    reactions.like = Math.floor(Math.random() * 20) + 5;
-                                    reactions.love = Math.floor(Math.random() * 10) + 2;
-                                }
-                                if (Math.random() > 0.7) {
-                                    currentReaction = 'like';
-                                }
-                            ">
-                                <button @click="open = !open" type="button" class="reaction-btn flex items-center space-x-2 text-text-secondary hover:text-primary transition-colors" :class="{'text-primary': currentReaction !== 'none'}">
-                                    <template x-if="currentReaction === 'none'">
-                                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"/>
-                                        </svg>
-                                    </template>
-                                    <template x-if="currentReaction === 'like'">👍</template>
-                                    <template x-if="currentReaction === 'love'">❤️</template>
-                                    <template x-if="currentReaction === 'laugh'">😂</template>
-                                    <template x-if="currentReaction === 'care'">🤗</template>
-                                    <template x-if="currentReaction === 'sad'">😢</template>
-                                    <template x-if="currentReaction === 'angry'">😡</template>
-                                    <span class="text-sm" x-text="Object.values(reactions).reduce((a, b) => a + b, 0)"></span>
-                                </button>
-                                <div x-show="open" @click.away="open = false" class="absolute bottom-full flex space-x-2 bg-white p-2 rounded-full shadow-lg z-10">
-                                    <button class="emoji-btn" data-emoji="like" @click="currentReaction = 'like'; reactions.like++; open = false; addNotification('like', postId);">👍</button>
-                                    <button class="emoji-btn" data-emoji="love" @click="currentReaction = 'love'; reactions.love++; open = false; addNotification('love', postId);">❤️</button>
-                                    <button class="emoji-btn" data-emoji="laugh" @click="currentReaction = 'laugh'; reactions.laugh++; open = false; addNotification('laugh', postId);">😂</button>
-                                    <button class="emoji-btn" data-emoji="care" @click="currentReaction = 'care'; reactions.care++; open = false; addNotification('care', postId);">🤗</button>
-                                    <button class="emoji-btn" data-emoji="sad" @click="currentReaction = 'sad'; reactions.sad++; open = false; addNotification('sad', postId);">😢</button>
-                                    <button class="emoji-btn" data-emoji="angry" @click="currentReaction = 'angry'; reactions.angry++; open = false; addNotification('angry', postId);">😡</button>
-                                </div>
-                            </div>
-                            <div class="reaction-summary flex items-center space-x-2 text-text-secondary text-sm">
-                                <template x-for="(count, emoji) in reactions" :key="emoji">
-                                    <span x-show="count > 0" class="flex items-center space-x-1">
-                                        <template x-if="emoji === 'like'">👍</template>
-                                        <template x-if="emoji === 'love'">❤️</template>
-                                        <template x-if="emoji === 'laugh'">😂</template>
-                                        <template x-if="emoji === 'care'">🤗</template>
-                                        <template x-if="emoji === 'sad'">😢</template>
-                                        <template x-if="emoji === 'angry'">😡</template>
-                                        <span x-text="count"></span>
-                                    </span>
-                                </template>
-                            </div>
+                            <button type="button" class="reaction-btn flex items-center space-x-2 text-text-secondary hover:text-primary transition-colors">
+                                <span class="reaction-icon">
+                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"/>
+                                    </svg>
+                                </span>
+                                <span class="text-sm reaction-count">0</span>
+                            </button>
                             <button type="button" class="flex items-center space-x-2 text-text-secondary hover:text-primary transition-colors open-comments-modal-btn" data-post-id="post1">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
@@ -235,22 +245,14 @@
                     <!-- Interaction Bar -->
                     <div class="flex items-center justify-between pt-3 border-t border-border-light">
                         <div class="flex items-center space-x-4">
-                            <div class="relative" x-data="{ open: false }">
-                                <button @click="open = !open" type="button" class="like-btn flex items-center space-x-2 text-text-secondary hover:text-primary transition-colors" data-post-id="post2">
+                            <button type="button" class="reaction-btn flex items-center space-x-2 text-text-secondary hover:text-primary transition-colors" data-post-id="post2">
+                                <span class="reaction-icon">
                                     <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                                         <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"/>
                                     </svg>
-                                    <span class="text-sm">18</span>
-                                </button>
-                                <div x-show="open" @click.away="open = false" class="absolute bottom-full flex space-x-2 bg-white p-2 rounded-full shadow-lg">
-                                    <button class="emoji-btn" data-emoji="like">👍</button>
-                                    <button class="emoji-btn" data-emoji="love">❤️</button>
-                                    <button class="emoji-btn" data-emoji="laugh">😂</button>
-                                    <button class="emoji-btn" data-emoji="care">🤗</button>
-                                    <button class="emoji-btn" data-emoji="sad">😢</button>
-                                    <button class="emoji-btn" data-emoji="angry">😡</button>
-                                </div>
-                            </div>
+                                </span>
+                                <span class="text-sm reaction-count">0</span>
+                            </button>
                             <button class="flex items-center space-x-2 text-text-secondary hover:text-primary transition-colors open-comments-modal-btn" data-post-id="post2">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
@@ -430,6 +432,145 @@
             <!-- Modal Header -->
             <div class="flex items-center justify-between pb-4 border-b border-border-light mb-4">
                 <h3 class="font-crimson text-xl font-semibold text-primary">Comments</h3>
+                <button type="button" id="close-comments-modal-1" class="text-text-secondary hover:text-primary transition-colors" title="Close comments modal">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Comments List -->
+            <div 
+                id="modal-comments-list" 
+                class="space-y-4 mb-4 pr-2 flex-1 modal-comments-list"
+            >
+                <!-- Dummy Comment 1 -->
+                <div class="comment-item p-3 bg-surface rounded-lg border border-border-light">
+                    <div class="flex items-center space-x-2 mb-1">
+                        <img src="https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Maya's Profile" class="w-8 h-8 rounded-full object-cover" />
+                        <span class="font-medium text-text-primary text-sm">Maya Chen</span>
+                        <span class="text-text-secondary text-xs">3h ago</span>
+                    </div>
+                    <p class="text-text-primary text-sm">This is so inspiring! Thank you for sharing your journey, Sarah. 🙏</p>
+                    <button type="button" class="reply-btn text-primary text-xs mt-2 hover:underline">Reply</button>
+                </div>
+
+                <!-- Dummy Reply 1 -->
+                <div class="comment-item ml-8 p-3 bg-primary-50 rounded-lg border border-primary-200">
+                    <div class="flex items-center space-x-2 mb-1">
+                        <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Sarah's Profile" class="w-8 h-8 rounded-full object-cover" />
+                        <span class="font-medium text-text-primary text-sm">Sarah Chen</span>
+                        <span class="text-text-secondary text-xs">2h ago</span>
+                    </div>
+                    <p class="text-text-primary text-sm">@MayaChen So glad it resonates with you! Your support means a lot. ✨</p>
+                    <button class="reply-btn text-primary text-xs mt-2 hover:underline">Reply</button>
+                </div>
+
+                <!-- Dummy Comment 2 -->
+                <div class="comment-item p-3 bg-surface rounded-lg border border-border-light">
+                    <div class="flex items-center space-x-2 mb-1">
+                        <img src="https://images.pexels.com/photos/1681010/pexels-photo-1681010.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Alex's Profile" class="w-8 h-8 rounded-full object-cover" />
+                        <span class="font-medium text-text-primary text-sm">Alex Rivera</span>
+                        <span class="text-text-secondary text-xs">1h ago</span>
+                    </div>
+                    <p class="text-text-primary text-sm">Beautiful reflection, Sarah! Keep shining your light. 💖</p>
+                    <button class="reply-btn text-primary text-xs mt-2 hover:underline">Reply</button>
+                </div>
+            </div>
+
+            <!-- Comment Input -->
+            <div class="pt-4 border-t border-border-light">
+                <div class="bg-surface rounded-xl p-4 shadow-sm">
+                    <div class="flex items-start space-x-3">
+                        <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Current User's Profile" class="w-10 h-10 rounded-full object-cover border-2 border-white" />
+                        <div class="flex-1">
+                            <textarea 
+                                id="modal-comment-input-1" 
+                                rows="3" 
+                                class="w-full bg-transparent border-none focus:ring-0 p-0 text-text-primary placeholder-text-secondary resize-none" 
+                                placeholder="Share your sacred thoughts..."></textarea>
+                            
+                            <div class="flex items-center justify-between mt-2 pt-2 border-t border-border-light">
+                                <div class="flex items-center space-x-2 text-text-secondary">
+                                    <button class="hover:bg-primary-100 p-2 rounded-full transition-colors" title="Add emoji">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                    </button>
+                                    <button class="hover:bg-primary-100 p-2 rounded-full transition-colors" title="Attach file">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                    </button>
+                                </div>
+                                <button type="button" id="post-modal-comment-btn-1" class="btn-primary px-6 py-2 text-sm font-semibold">Post</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Bottom Navigation -->
+    <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-surface border-t border-border-light z-50">
+        <div class="flex items-center justify-around py-2">
+            <a href="community_feed_dashboard.html" class="flex flex-col items-center p-2 text-primary">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/>
+                </svg>
+                <span class="text-xs mt-1">Feed</span>
+            </a>
+            
+            <a href="practice_studio.html" class="flex flex-col items-center p-2 text-text-secondary">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"/>
+                </svg>
+                <span class="text-xs mt-1">Practice</span>
+            </a>
+            
+            <a href="workshop_gateway.html" class="flex flex-col items-center p-2 text-text-secondary">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                </svg>
+                <span class="text-xs mt-1">Workshops</span>
+            </a>
+            
+            <a href="personal_growth_pathway.html" class="flex flex-col items-center p-2 text-text-secondary">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11.707 4.707a1 1 0 00-1.414-1.414L10 9.586 8.707 8.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                </svg>
+                <span class="text-xs mt-1">Growth</span>
+            </a>
+            
+            <a href="soul_profile.html" class="flex flex-col items-center p-2 text-text-secondary">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
+                </svg>
+                <span class="text-xs mt-1">Profile</span>
+            </a>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu Overlay (newly added) -->
+    <div id="mobile-menu-overlay" class="mobile-menu-overlay">
+        <div class="mobile-menu-sheet">
+            <a href="settings.html">Settings</a>
+            <a href="help.html">Help & Support</a>
+            <a href="about.html">About</a>
+            <button id="close-mobile-menu" class="bg-primary text-white py-2 rounded-lg font-medium">Close</button>
+        </div>
+    </div>
+
+    <!-- Floating Action Button for Mobile -->
+    <button type="button" class="md:hidden fixed bottom-20 right-4 w-14 h-14 bg-accent text-primary rounded-full shadow-sacred-strong hover:shadow-contemplative transition-all duration-300 flex items-center justify-center" title="Add new post">
+        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/>
+        </svg>
+    </button>
+
+    <!-- Comments Modal -->
+    <div id="comments-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4 relative shadow-sacred-strong flex flex-col max-h-[90vh] modal-content">
+            <!-- Modal Header -->
+            <div class="flex items-center justify-between pb-4 border-b border-border-light mb-4">
+                <h3 class="font-crimson text-xl font-semibold text-primary">Comments</h3>
                 <button type="button" id="close-comments-modal" class="text-text-secondary hover:text-primary transition-colors" title="Close comments modal">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
@@ -522,62 +663,21 @@
             return Math.floor(seconds) + "s ago";
         }
 
-        // Like and Notification System
-        const likeButtons = document.querySelectorAll('.like-btn');
         const notificationsList = document.getElementById('notifications-list');
         let notifications = {};
 
-        // Dummy reactor data for demonstration
         const dummyReactors = {
             'post1': { name: 'Maya Chen', avatar: 'https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg' },
             'post2': { name: 'Alex Rivera', avatar: 'https://images.pexels.com/photos/1681010/pexels-photo-1681010.jpeg' },
             'default': { name: 'A Metanoia Soul', avatar: 'https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' }
         };
 
-        // Fetch notifications from JSON file
         fetch('../data/notifications.json')
             .then(response => response.json())
             .then(data => {
                 notifications = data;
                 updateNotificationsList();
             });
-
-        likeButtons.forEach(btn => {
-            const postId = btn.dataset.postId;
-            let liked = false;
-
-            btn.addEventListener('click', () => {
-                liked = !liked;
-                const likeCountSpan = btn.querySelector('span');
-                let likeCount = parseInt(likeCountSpan.textContent);
-
-                if (liked) {
-                    likeCount++;
-                    addNotification('like', postId);
-                } else {
-                    likeCount--;
-                    removeNotification('like', postId);
-                }
-
-                likeCountSpan.textContent = likeCount;
-                btn.classList.toggle('text-primary', liked);
-                btn.classList.toggle('text-text-secondary', !liked);
-            });
-
-            const emojiBtns = btn.parentElement.querySelectorAll('.emoji-btn');
-            emojiBtns.forEach(emojiBtn => {
-                emojiBtn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    const emoji = emojiBtn.dataset.emoji;
-                    addNotification(emoji, postId);
-                    const likeCountSpan = btn.querySelector('span');
-                    let likeCount = parseInt(likeCountSpan.textContent);
-                    likeCount++;
-                    likeCountSpan.textContent = likeCount;
-                    btn.parentElement.querySelector('[x-data]').__x.$data.open = false;
-                });
-            });
-        });
 
         function addNotification(type, postId) {
             if (!notifications[postId]) {
@@ -586,8 +686,6 @@
             const reactor = dummyReactors[postId] || dummyReactors['default'];
             notifications[postId].push({ type: type, user: reactor.name, avatar: reactor.avatar, timestamp: new Date(), postId: postId });
             updateNotificationsList();
-            // Here you would typically save the notifications to the server
-            // For this example, we're just updating the local object
         }
 
         function removeNotification(type, postId) {
@@ -597,12 +695,42 @@
             }
         }
 
-        mobileNotificationsList.innerHTML = '';
+        // This function is not defined in the original code, adding a placeholder
+        function updateNotificationsList() {
+            if (!notificationsList) return;
+            notificationsList.innerHTML = '';
+            let allNotifications = [];
+            for (const postId in notifications) {
+                notifications[postId].forEach(notification => {
+                    if (!notification.postId) {
+                        notification.postId = postId; 
+                    }
+                    allNotifications.push(notification);
+                });
+            }
 
-        document.getElementById('view-all-notifications').addEventListener('click', () => {
-            // This event listener is now redundant as the button has an onclick handler
-            // It's kept here for clarity, but its functionality is now handled by the HTML href
-        });
+            allNotifications.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+            allNotifications.slice(0, 5).forEach(notification => { // Show only latest 5 notifications
+                const notificationElement = document.createElement('div');
+                notificationElement.className = 'flex items-center space-x-3 p-2 bg-surface rounded-lg';
+                notificationElement.innerHTML = `
+                    <img src="${notification.avatar || dummyReactors.default.avatar}" alt="${notification.user || dummyReactors.default.name}'s avatar" class="w-8 h-8 rounded-full object-cover" />
+                    <div>
+                        <p class="text-text-primary text-sm"><span class="font-medium">${notification.user || dummyReactors.default.name}</span> ${notification.type}d your post</p>
+                        <p class="text-text-secondary text-xs">${timeAgo(notification.timestamp)}</p>
+                    </div>
+                `;
+                notificationsList.appendChild(notificationElement);
+            });
+
+            if (allNotifications.length > 0) {
+                document.getElementById('view-all-notifications').classList.remove('hidden');
+            } else {
+                document.getElementById('view-all-notifications').classList.add('hidden');
+            }
+        }
+
 
         // Pull to refresh functionality
         let startY = 0;
@@ -627,7 +755,6 @@
 
         document.addEventListener('touchend', () => {
             if (pullDistance > refreshThreshold) {
-                // Refresh content
                 window.location.reload();
             }
             startY = 0;
@@ -658,16 +785,27 @@
 
         // Comments Modal Functionality
         const commentsModal = document.getElementById('comments-modal');
-        const openCommentsModalBtn = document.getElementById('open-comments-modal');
-        const closeCommentsModalBtn = document.getElementById('close-comments-modal');
-        const modalCommentInput = document.getElementById('modal-comment-input');
-        const postModalCommentBtn = document.getElementById('post-modal-comment-btn');
+        const openCommentsModalBtns = document.querySelectorAll('.open-comments-modal-btn'); // Changed to querySelectorAll
+        const closeCommentsModalBtn = document.getElementById('close-comments-modal-1');
+        // Use the correct textarea depending on which modal is open
+        function getActiveModalCommentInput() {
+            // Try to find the visible modal's textarea
+            const modal1 = document.getElementById('modal-comment-input-1');
+            const modal2 = document.getElementById('modal-comment-input-2');
+            if (modal1 && !modal1.closest('.hidden')) return modal1;
+            if (modal2 && !modal2.closest('.hidden')) return modal2;
+            // fallback
+            return modal1 || modal2;
+        }
+        // Remove old reference
+        // const modalCommentInput = document.getElementById('modal-comment-input');
+        const postModalCommentBtn1 = document.getElementById('post-modal-comment-btn-1');
+        const postModalCommentBtn2 = document.getElementById('post-modal-comment-btn-2');
         const modalCommentsList = document.getElementById('modal-comments-list');
-        const mainCommentCount = document.querySelector('.comment-count');
+        // const mainCommentCount = document.querySelector('.comment-count'); // This is now handled by updateAllCommentCounts
 
         let commentsDataByPost = {};
 
-        // Fetch comments from JSON file
         fetch('../data/comments.json')
             .then(response => response.json())
             .then(data => {
@@ -677,9 +815,8 @@
 
         let currentPostId = null;
         let replyingToCommentId = null;
-        let nextCommentId = 100; // Unique across all posts
+        let nextCommentId = 100;
 
-        // Function to render comments recursively, cropping replies to 3 and toggling view/hide
         function renderComments(comments, parentElement, level = 0) {
             comments.forEach(comment => {
                 const commentDiv = document.createElement('div');
@@ -709,10 +846,8 @@
                     const visibleReplies = comment.replies.slice(0, initialRepliesToShow);
                     const hiddenReplies = comment.replies.slice(initialRepliesToShow);
 
-                    // Render first 3 replies
                     renderComments(visibleReplies, repliesContainer, level + 1);
 
-                    // If there are more than 3, add a view/hide button and hidden container
                     if (hiddenReplies.length > 0) {
                         const viewAllBtn = document.createElement('button');
                         viewAllBtn.className = 'view-all-replies text-primary text-xs mt-2 ml-8 hover:underline';
@@ -724,146 +859,234 @@
                         hiddenRepliesContainer.className = 'hidden-replies-container hidden';
                         repliesContainer.appendChild(hiddenRepliesContainer);
 
-                        // Render hidden replies inside hidden container
                         renderComments(hiddenReplies, hiddenRepliesContainer, level + 1);
                     }
                 }
             });
-        }
-
-        // Open modal for the correct post
-        document.querySelectorAll('.open-comments-modal-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                currentPostId = btn.getAttribute('data-post-id');
-                commentsModal.classList.remove('hidden');
-                modalCommentsList.innerHTML = '';
-                renderComments(commentsDataByPost[currentPostId] || [], modalCommentsList);
-            });
-        });
+        } // <-- Add this closing brace to properly close renderComments
 
         closeCommentsModalBtn.addEventListener('click', () => {
             commentsModal.classList.add('hidden');
             replyingToCommentId = null;
-            modalCommentInput.value = '';
+            const modalCommentInput = getActiveModalCommentInput();
+            if (modalCommentInput) modalCommentInput.value = '';
             currentPostId = null;
         });
-
         commentsModal.addEventListener('click', (e) => {
             if (e.target === commentsModal) {
                 commentsModal.classList.add('hidden');
                 replyingToCommentId = null;
-                modalCommentInput.value = '';
+                const modalCommentInput = getActiveModalCommentInput();
+                if (modalCommentInput) modalCommentInput.value = '';
                 currentPostId = null;
             }
         });
 
-        postModalCommentBtn.addEventListener('click', () => {
-            const commentText = modalCommentInput.value.trim();
-            if (commentText && currentPostId) {
-                const newComment = {
-                    id: nextCommentId++,
-                    author: 'Current User',
-                    avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-                    time: 'just now',
-                    text: commentText,
-                    replies: []
-                };
+        // Attach event listeners to both post buttons
+        [postModalCommentBtn1, postModalCommentBtn2].forEach(btn => {
+            if (btn) {
+                btn.addEventListener('click', () => {
+                    const modalCommentInput = getActiveModalCommentInput();
+                    const commentText = modalCommentInput.value.trim();
+                    if (commentText && currentPostId) {
+                        const newComment = {
+                            id: nextCommentId++,
+                            author: 'Current User',
+                            avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+                            time: 'just now',
+                            text: commentText,
+                            replies: []
+                        };
 
-                if (replyingToCommentId) {
-                    function addReplyToComment(comments, reply, parentId) {
-                        for (let i = 0; i < comments.length; i++) {
-                            if (comments[i].id === parentId) {
-                                comments[i].replies.push(reply);
-                                return true;
+                        if (replyingToCommentId) {
+                            function addReplyToComment(comments, reply, parentId) {
+                                for (let i = 0; i < comments.length; i++) {
+                                    if (comments[i].id === parentId) {
+                                        comments[i].replies.push(reply);
+                                        return true;
+                                    }
+                                    if (comments[i].replies && comments[i].replies.length > 0) {
+                                        if (addReplyToComment(comments[i].replies, reply, parentId)) {
+                                            return true;
+                                        }
+                                    }
+                                }
+                                return false;
                             }
-                            if (comments[i].replies && comments[i].replies.length > 0) {
-                                if (addReplyToComment(comments[i].replies, reply, parentId)) {
-                                    return true;
-                            }
+                            addReplyToComment(commentsDataByPost[currentPostId], newComment, replyingToCommentId);
+                        } else {
+                            if (!commentsDataByPost[currentPostId]) commentsDataByPost[currentPostId] = [];
+                            commentsDataByPost[currentPostId].unshift(newComment);
                         }
+
+                        modalCommentInput.value = '';
+                        replyingToCommentId = null;
+                        modalCommentsList.innerHTML = '';
+                        renderComments(commentsDataByPost[currentPostId], modalCommentsList);
+
+                        let countSpan = document.querySelector(`.comment-count[data-post-id="${currentPostId}"]`);
+                        if (countSpan) {
+                            let currentCount = parseInt(countSpan.textContent) || 0;
+                            countSpan.textContent = currentCount + 1;
+                        }
+                        addNotification('comment', currentPostId); // Notify on new comment
                     }
-                    return false;
+                });
+            }
+        });
+
+        modalCommentsList.addEventListener('click', (e) => {
+            if (e.target.classList.contains('reply-btn')) {
+                const commentId = parseInt(e.target.dataset.commentId);
+                const author = e.target.dataset.author;
+                replyingToCommentId = commentId;
+                const modalCommentInput = getActiveModalCommentInput();
+                if (modalCommentInput) {
+                    modalCommentInput.value = `@${author} `;
+                    modalCommentInput.focus();
                 }
-                addReplyToComment(commentsDataByPost[currentPostId], newComment, replyingToCommentId);
-            } else {
-                if (!commentsDataByPost[currentPostId]) commentsDataByPost[currentPostId] = [];
-                commentsDataByPost[currentPostId].unshift(newComment);
+            } else if (e.target.classList.contains('view-all-replies')) {
+                const repliesContainer = e.target.closest('.replies-container');
+                const hiddenRepliesContainer = repliesContainer.querySelector('.hidden-replies-container');
+                if (hiddenRepliesContainer) {
+                    hiddenRepliesContainer.classList.toggle('hidden');
+                    if (hiddenRepliesContainer.classList.contains('hidden')) {
+                        const totalReplies = hiddenRepliesContainer.children.length + repliesContainer.querySelectorAll('.comment-item').length - hiddenRepliesContainer.children.length;
+                        e.target.textContent = `View all ${totalReplies} replies`;
+                    } else {
+                        e.target.textContent = 'Hide replies';
+                    }
+                }
             }
+        });
 
-            modalCommentInput.value = '';
-            replyingToCommentId = null;
-            modalCommentsList.innerHTML = '';
-            renderComments(commentsDataByPost[currentPostId], modalCommentsList);
-
-            // Update comment count for this post only
-            let countSpan = document.querySelector(`.comment-count[data-post-id="${currentPostId}"]`);
-            if (countSpan) {
-                let currentCount = parseInt(countSpan.textContent) || 0;
-                countSpan.textContent = currentCount + 1;
-            }
+        function countAllComments(comments) {
+            let count = 0;
+            comments.forEach(comment => {
+                count += 1;
+                if (comment.replies && comment.replies.length > 0) {
+                    count += countAllComments(comment.replies);
+                }
+            });
+            return count;
         }
-    });
 
-    modalCommentsList.addEventListener('click', (e) => {
-        if (e.target.classList.contains('reply-btn')) {
-            const commentId = parseInt(e.target.dataset.commentId);
-            const author = e.target.dataset.author;
-            replyingToCommentId = commentId;
-            modalCommentInput.value = `@${author} `;
-            modalCommentInput.focus();
-        } else if (e.target.classList.contains('view-all-replies')) {
-            const repliesContainer = e.target.closest('.replies-container');
-            const hiddenRepliesContainer = repliesContainer.querySelector('.hidden-replies-container');
-            if (hiddenRepliesContainer) {
-                hiddenRepliesContainer.classList.toggle('hidden');
-                if (hiddenRepliesContainer.classList.contains('hidden')) {
-                    // Show cropped view
-                    const totalReplies = hiddenRepliesContainer.children.length + repliesContainer.querySelectorAll('.comment-item').length - hiddenRepliesContainer.children.length;
-                    e.target.textContent = `View all ${totalReplies} replies`;
+        function updateAllCommentCounts() {
+            document.querySelectorAll('.comment-count').forEach(countSpan => {
+                const postId = countSpan.dataset.postId;
+                if (commentsDataByPost[postId]) {
+                    const totalCount = countAllComments(commentsDataByPost[postId]);
+                    countSpan.textContent = totalCount;
                 } else {
-                    e.target.textContent = 'Hide replies';
+                    countSpan.textContent = '0';
                 }
-            }
+            });
         }
-    });
 
-    // Helper to count all comments and replies recursively
-    function countAllComments(comments) {
-        let count = 0;
-        comments.forEach(comment => {
-            count += 1;
-            if (comment.replies && comment.replies.length > 0) {
-                count += countAllComments(comment.replies);
+        document.addEventListener('DOMContentLoaded', updateAllCommentCounts);
+
+        // --- Simplified Reaction System ---
+
+        const userReactions = {}; // { postId: 'love' | 'none' }
+        const postReactions = {}; // { postId: { love: 0 } }
+
+        function getMainReactionBtn(postId) {
+            const article = document.querySelector(`article[data-post-id="${postId}"]`);
+            if (article) {
+                return article.querySelector('.reaction-btn');
+            }
+            return null;
+        }
+
+        function updateReactionUI(postId) {
+            const mainBtn = getMainReactionBtn(postId);
+            if (!mainBtn) return;
+
+            const reactionIconSpan = mainBtn.querySelector('.reaction-icon');
+            const reactionCountSpan = mainBtn.querySelector('.reaction-count');
+
+            const currentReaction = userReactions[postId];
+            const reactions = postReactions[postId];
+
+            if (currentReaction === 'love') {
+                reactionIconSpan.classList.add('text-red-love');
+            } else {
+                reactionIconSpan.classList.remove('text-red-love');
+            }
+
+            const totalReactions = reactions.love || 0;
+            reactionCountSpan.textContent = totalReactions;
+        }
+
+        function toggleLoveReaction(postId) {
+            const prevReaction = userReactions[postId];
+
+            if (prevReaction === 'love') {
+                userReactions[postId] = 'none';
+                postReactions[postId].love--;
+                removeNotification('love', postId);
+            } else {
+                userReactions[postId] = 'love';
+                postReactions[postId].love++;
+                addNotification('love', postId);
+            }
+            updateReactionUI(postId);
+        }
+
+        document.querySelectorAll('article[data-post-id]').forEach(article => {
+            const postId = article.getAttribute('data-post-id');
+            postReactions[postId] = { love: 0 };
+            userReactions[postId] = 'none';
+
+            const mainBtn = getMainReactionBtn(postId);
+            if (!mainBtn) return;
+            
+            // Simulate initial reactions for demonstration
+            if (Math.random() > 0.5) {
+                postReactions[postId].love = Math.floor(Math.random() * 10) + 2;
+            }
+            if (Math.random() > 0.7) {
+                userReactions[postId] = 'love';
+                postReactions[postId].love++;
+            }
+            updateReactionUI(postId);
+
+            mainBtn.addEventListener('click', () => {
+                toggleLoveReaction(postId);
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('article[data-post-id]').forEach(article => {
+                const postId = article.getAttribute('data-post-id');
+                if (!postReactions[postId]) {
+                    postReactions[postId] = { love: 0 };
+                    userReactions[postId] = 'none';
+                }
+                updateReactionUI(postId);
+            });
+        });
+
+        // Mobile menu logic (works with moved button)
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+            const mobileMenuOverlay = document.getElementById('mobile-menu-overlay');
+            const closeMobileMenu = document.getElementById('close-mobile-menu');
+
+            if (mobileMenuBtn && mobileMenuOverlay && closeMobileMenu) {
+                mobileMenuBtn.addEventListener('click', () => {
+                    mobileMenuOverlay.classList.add('active');
+                });
+                closeMobileMenu.addEventListener('click', () => {
+                    mobileMenuOverlay.classList.remove('active');
+                });
+                mobileMenuOverlay.addEventListener('click', (e) => {
+                    if (e.target === mobileMenuOverlay) {
+                        mobileMenuOverlay.classList.remove('active');
+                    }
+                });
             }
         });
-        return count;
-    }
-
-    // Update comment count for all posts
-    function updateAllCommentCounts() {
-        Object.keys(commentsDataByPost).forEach(postId => {
-            const countSpan = document.querySelector(`.comment-count[data-post-id="${postId}"]`);
-            if (countSpan) {
-                const totalCount = countAllComments(commentsDataByPost[postId] || []);
-                countSpan.textContent = totalCount;
-            }
-        });
-    }
-
-    // Call updateAllCommentCounts after any comment/reply is added
-    postModalCommentBtn.addEventListener('click', () => {
-        // ...existing code for adding comment/reply...
-        modalCommentInput.value = '';
-        replyingToCommentId = null;
-        modalCommentsList.innerHTML = '';
-        renderComments(commentsDataByPost[currentPostId], modalCommentsList);
-
-        // Update all comment counts
-        updateAllCommentCounts();
-    });
-
-    // On initial load, set correct counts
-    document.addEventListener('DOMContentLoaded', updateAllCommentCounts);
     </script>
 <script id="dhws-dataInjector" src="../public/dhws-data-injector.js"></script>
 </body>

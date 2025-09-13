@@ -34,7 +34,7 @@
                 </div>
 
                 <!-- Mobile Menu Button -->
-                <button type="button" class="md:hidden p-2 text-primary" title="Open menu">
+                <button id="mobile-menu-btn" type="button" class="md:hidden p-2 text-primary" title="Open menu">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
                     </svg>
@@ -630,5 +630,35 @@
         }, 4000);
     </script>
 <script id="dhws-dataInjector" src="../public/dhws-data-injector.js"></script>
+</body>
+</html> <div id="mobile-menu-overlay" class="mobile-menu-overlay">
+        <div class="mobile-menu-sheet">
+            <a href="settings.html">Settings</a>
+            <a href="help.html">Help & Support</a>
+            <a href="about.html">About</a>
+            <button id="close-mobile-menu" class="bg-primary text-white py-2 rounded-lg font-medium">Close</button>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+            const mobileMenuOverlay = document.getElementById('mobile-menu-overlay');
+            const closeMobileMenu = document.getElementById('close-mobile-menu');
+
+            if (mobileMenuBtn && mobileMenuOverlay && closeMobileMenu) {
+                mobileMenuBtn.addEventListener('click', () => {
+                    mobileMenuOverlay.classList.add('active');
+                });
+                closeMobileMenu.addEventListener('click', () => {
+                    mobileMenuOverlay.classList.remove('active');
+                });
+                mobileMenuOverlay.addEventListener('click', (e) => {
+                    if (e.target === mobileMenuOverlay) {
+                        mobileMenuOverlay.classList.remove('active');
+                    }
+                });
+            }
+        });
+    </script>
 </body>
 </html>

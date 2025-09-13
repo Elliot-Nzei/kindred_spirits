@@ -1,114 +1,116 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>All Notifications - Metanoia</title>
-    <link rel="stylesheet" href="../css/main.css" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>All Notifications - Metanoia</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-background min-h-screen">
-    <!-- Header -->
-    <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-border-light">
-        <div class="max-w-6xl mx-auto px-4 py-3">
-            <div class="flex items-center justify-between">
-                <!-- Logo -->
-                <a href="../index.html" class="flex items-center space-x-2">
-                    <img src="../img/logo_only.jpg" alt="Metanoia Logo" class="w-8 h-8 rounded-full object-cover">
-                    <h1 class="font-crimson text-xl font-semibold text-primary">Metanoia</h1>
-                </a>
-                <!-- Back Button or other navigation -->
-                <a href="community_feed_dashboard.html" class="text-text-secondary hover:text-primary transition-colors flex items-center space-x-1">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-                    </svg>
-                    <span>Back</span>
-                </a>
-            </div>
-        </div>
-    </header>
+<body class="bg-gray-50 font-inter min-h-screen">
 
-    <main class="max-w-3xl mx-auto px-4 py-8">
-        <h2 class="font-crimson text-3xl font-semibold text-primary mb-6">All Notifications</h2>
-        <div id="all-notifications-list" class="space-y-4">
-            <!-- Notifications will be dynamically inserted here -->
-        </div>
-    </main>
+  <!-- Header -->
+  <header class="sticky top-0 z-50 bg-white/90 backdrop-blur-sm border-b border-gray-200 shadow-sm">
+    <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
+      <!-- Logo -->
+        <a href="../index.html" class="flex items-center space-x-2">
+            <img src="../img/logo_only.jpg" alt="Metanoia Logo" class="w-8 h-8 rounded-full object-cover">
+            <h1 class="font-crimson text-xl font-semibold text-primary">Metanoia</h1>
+        </a>
+      <!-- Back -->
+      <a href="community_feed_dashboard.html" class="flex items-center space-x-1 text-gray-600 hover:text-green-700 transition-colors">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+        </svg>
+        <span class="hidden sm:inline">Back</span>
+      </a>
+    </div>
+  </header>
 
-    <script>
-        function timeAgo(timestamp) {
-            const seconds = Math.floor((new Date() - new Date(timestamp)) / 1000);
-            let interval = seconds / 31536000;
-            if (interval > 1) return Math.floor(interval) + "y ago";
-            interval = seconds / 2592000;
-            if (interval > 1) return Math.floor(interval) + "mo ago";
-            interval = seconds / 86400;
-            if (interval > 1) return Math.floor(interval) + "d ago";
-            interval = seconds / 3600;
-            if (interval > 1) return Math.floor(interval) + "h ago";
-            interval = seconds / 60;
-            if (interval > 1) return Math.floor(interval) + "m ago";
-            return Math.floor(seconds) + "s ago";
+  <!-- Main -->
+  <main class="max-w-3xl mx-auto px-4 py-8">
+    <h2 class="text-2xl sm:text-3xl font-bold text-gray-800 mb-6">Notifications</h2>
+    <div id="all-notifications-list" class="space-y-4">
+      <!-- Notifications inserted dynamically -->
+    </div>
+  </main>
+
+  <!-- Notification Template Example (JS will fill in) -->
+  <template id="notification-template">
+    <div class="flex items-start space-x-3 p-4 rounded-2xl bg-white shadow-sm border border-gray-100 hover:shadow-md transition cursor-pointer">
+      <img class="w-12 h-12 rounded-full object-cover ring-2 ring-green-100" />
+      <div class="flex-1">
+        <p class="text-gray-800 text-sm sm:text-base">
+          <span class="font-semibold"></span> <span class="notification-text"></span>
+        </p>
+        <p class="text-gray-500 text-xs sm:text-sm mt-1"></p>
+      </div>
+    </div>
+  </template>
+
+  <script>
+    function timeAgo(timestamp) {
+      const seconds = Math.floor((new Date() - new Date(timestamp)) / 1000);
+      let interval = seconds / 31536000;
+      if (interval > 1) return Math.floor(interval) + "y ago";
+      interval = seconds / 2592000;
+      if (interval > 1) return Math.floor(interval) + "mo ago";
+      interval = seconds / 86400;
+      if (interval > 1) return Math.floor(interval) + "d ago";
+      interval = seconds / 3600;
+      if (interval > 1) return Math.floor(interval) + "h ago";
+      interval = seconds / 60;
+      if (interval > 1) return Math.floor(interval) + "m ago";
+      return Math.floor(seconds) + "s ago";
+    }
+
+    const allNotificationsList = document.getElementById("all-notifications-list");
+    const template = document.getElementById("notification-template");
+
+    const dummyReactors = {
+      post1: { name: "Maya Chen", avatar: "https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg" },
+      post2: { name: "Alex Rivera", avatar: "https://images.pexels.com/photos/1681010/pexels-photo-1681010.jpeg" },
+      default: { name: "A Metanoia Soul", avatar: "https://images.unsplash.com/photo-1584824486509-112e4181ff6b" }
+    };
+
+    fetch("../data/notifications.json")
+      .then((res) => res.json())
+      .then((data) => {
+        let notifications = [];
+        for (const postId in data) {
+          data[postId].forEach((n) => {
+            if (!n.postId) n.postId = postId;
+            notifications.push(n);
+          });
         }
+        notifications.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
 
-        const allNotificationsList = document.getElementById('all-notifications-list');
-        let notifications = {};
+        notifications.forEach((n) => {
+          const clone = template.content.cloneNode(true);
+          const img = clone.querySelector("img");
+          const nameEl = clone.querySelector("span.font-semibold");
+          const textEl = clone.querySelector(".notification-text");
+          const timeEl = clone.querySelector("p.text-gray-500");
 
-        // Dummy reactor data for demonstration
-        const dummyReactors = {
-            'post1': { name: 'Maya Chen', avatar: 'https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg' },
-            'post2': { name: 'Alex Rivera', avatar: 'https://images.pexels.com/photos/1681010/pexels-photo-1681010.jpeg' },
-            'default': { name: 'A Metanoia Soul', avatar: 'https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' }
-        };
+          const user = n.user || dummyReactors.default.name;
+          const avatar = n.avatar || dummyReactors.default.avatar;
 
-        // Fetch notifications from JSON file
-        fetch('../data/notifications.json')
-            .then(response => response.json())
-            .then(data => {
-                notifications = data;
-                renderAllNotifications();
-            });
+          img.src = avatar;
+          img.alt = `${user}'s avatar`;
+          nameEl.textContent = user;
+          textEl.textContent = `${n.type}d your post`;
+          timeEl.textContent = `Post ID: ${n.postId} • ${timeAgo(n.timestamp)}`;
 
-        function renderAllNotifications() {
-            allNotificationsList.innerHTML = '';
-            let allNotifications = [];
-            for (const postId in notifications) {
-                notifications[postId].forEach(notification => {
-                    // Ensure postId is attached to notification object for linking
-                    if (!notification.postId) {
-                        notification.postId = postId; 
-                    }
-                    allNotifications.push(notification);
-                });
-            }
+          clone.firstElementChild.addEventListener("click", () => {
+            alert(`Navigating to post: ${n.postId}`);
+          });
 
-            // Sort notifications by timestamp (latest first)
-            allNotifications.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-
-            allNotifications.forEach(notification => {
-                const notificationElement = document.createElement('div');
-                notificationElement.className = 'flex items-center space-x-3 p-3 rounded-lg border border-gray-200 bg-white shadow-sm hover:bg-gray-50 transition-colors cursor-pointer';
-                notificationElement.innerHTML = `
-                    <img src="${notification.avatar || dummyReactors.default.avatar}" alt="${notification.user || dummyReactors.default.name}'s avatar" class="w-10 h-10 rounded-full object-cover flex-shrink-0" />
-                    <div class="flex-1">
-                        <p class="text-gray-800 text-base">
-                            <span class="font-semibold">${notification.user || dummyReactors.default.name}</span> ${notification.type}d your post
-                        </p>
-                        <p class="text-gray-600 text-sm mt-0.5">
-                            <span class="font-medium">Post ID:</span> ${notification.postId} &bull; ${timeAgo(notification.timestamp)}
-                        </p>
-                    </div>
-                `;
-                notificationElement.addEventListener('click', () => {
-                    // In a real app, this would navigate to the specific post page
-                    // For now, we'll just log or alert
-                    alert(`Navigating to post: ${notification.postId}`);
-                    // window.location.href = `post_detail.html?id=${notification.postId}`;
-                });
-                allNotificationsList.appendChild(notificationElement);
-            });
-        }
-    </script>
+          allNotificationsList.appendChild(clone);
+        });
+      });
+  </script>
 </body>
 </html>
