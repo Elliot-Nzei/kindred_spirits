@@ -1,19 +1,19 @@
+// Function to apply translations
+function applyTranslations(lang) {
+    document.querySelectorAll('[data-translate]').forEach(element => {
+        const key = element.getAttribute('data-translate');
+        if (translations[lang] && translations[lang][key]) {
+            element.textContent = translations[lang][key];
+        }
+    });
+    // Update the lang attribute of the html tag
+    document.documentElement.lang = lang;
+    // The title element's data-translate attribute should be handled by the general loop.
+    // No special handling needed here.
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     const languageSwitch = document.getElementById('language-switch');
-
-    // Function to apply translations
-    function applyTranslations(lang) {
-        document.querySelectorAll('[data-translate]').forEach(element => {
-            const key = element.getAttribute('data-translate');
-            if (translations[lang] && translations[lang][key]) {
-                element.textContent = translations[lang][key];
-            }
-        });
-        // Update the lang attribute of the html tag
-        document.documentElement.lang = lang;
-        // The title element's data-translate attribute should be handled by the general loop.
-        // No special handling needed here.
-    }
 
     // Load saved language preference or default to 'en'
     let currentLang = localStorage.getItem('lang') || 'en';

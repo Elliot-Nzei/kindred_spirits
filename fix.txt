@@ -1,1 +1,30 @@
-good now @pages/settings.html in laptop mode add in a way for me to go back 
+settings.html:292 
+ Uncaught ReferenceError: setLanguage is not defined
+    at HTMLSelectElement.<anonymous> (settings.html:292:21)
+[NEW] Explain Console errors by using Copilot in Edge: click 
+ to explain an error. Learn more
+Don't show again
+settings.html:292 
+ Uncaught ReferenceError: setLanguage is not defined
+    at HTMLSelectElement.<anonymous> (settings.html:292:21)
+﻿
+
+Compatibility
+'-webkit-mask-image' is not supported by Firefox. Add 'mask-image' to support Firefox 53+.
+'user-select' is not supported by Safari. Add '-webkit-user-select' to support Safari 3+.
+'content-type' header charset value should be 'utf-8'.
+'min-height: auto' is not supported by Firefox 22+.
+'text-size-adjust' is not supported by Firefox, Safari.
+Performance
+Resource should use cache busting but URL does not match configured patterns.
+Response should not include unneeded headers: content-security-policy
+Response should not include unneeded headers: x-xss-protection
+Security
+Response should include 'x-content-type-options' header.
+The 'Expires' header should not be used, 'Cache-Control' should be preferred.
+The 'X-Frame-Options' header should not be used. A similar effect, with more consistent support and stronger checks, can be achieved with the 'Content-Security-Policy' header and 'frame-ancestors' directive.
+Other
+'box-sizing' should be listed after '-webkit-box-sizing'.
+'transform' should be listed after '-webkit-transform'.
+'transition' should be listed after '-webkit-transition'.
+A form field element should have an id or name attribute

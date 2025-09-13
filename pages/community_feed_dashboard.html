@@ -164,21 +164,22 @@
     </header>
 
     <div class="max-w-6xl mx-auto px-4 pt-6 pb-40 md:pb-6 mobile-bottom-padding">
+        <!-- Welcome Message -->
+        <div class="card bg-gradient-to-r from-primary-50 to-secondary-50 border-none mb-6">
+            <div class="flex items-center space-x-3 mb-4">
+                <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Vani's Profile" class="w-12 h-12 rounded-full object-cover" onerror="this.src='https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'; this.onerror=null;" />
+                <div>
+                    <h3 class="font-crimson text-lg font-semibold text-primary" data-translate="welcome_message">Good morning, Sarah ✨</h3>
+                    <p class="text-text-secondary text-sm" data-translate="community_tagline">Your spiritual community awaits</p>
+                </div>
+            </div>
+            <p class="text-text-primary font-medium" data-translate="daily_wisdom_quote">"Today, let your heart be your compass and your breath be your anchor."</p>
+            <p class="text-text-secondary text-sm mt-2" data-translate="daily_wisdom_author">- Daily wisdom from Vani</p>
+        </div>
+
         <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
             <!-- Main Feed -->
             <main class="lg:col-span-3 space-y-6">
-                <!-- Welcome Message -->
-                <div class="card bg-gradient-to-r from-primary-50 to-secondary-50 border-none">
-                    <div class="flex items-center space-x-3 mb-4">
-                        <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Vani's Profile" class="w-12 h-12 rounded-full object-cover" onerror="this.src='https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'; this.onerror=null;" />
-                        <div>
-                            <h3 class="font-crimson text-lg font-semibold text-primary" data-translate="welcome_message">Good morning, Sarah ✨</h3>
-                            <p class="text-text-secondary text-sm" data-translate="community_tagline">Your spiritual community awaits</p>
-                        </div>
-                    </div>
-                    <p class="text-text-primary font-medium" data-translate="daily_wisdom_quote">"Today, let your heart be your compass and your breath be your anchor."</p>
-                    <p class="text-text-secondary text-sm mt-2" data-translate="daily_wisdom_author">- Daily wisdom from Vani</p>
-                </div>
 
                 <!-- Community Post -->
                 <article class="card card-hover" data-post-id="post1">
@@ -532,9 +533,10 @@
                                     <button class="hover:bg-primary-100 p-2 rounded-full transition-colors" title="Add emoji">
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                                     </button>
-                                    <button class="hover:bg-primary-100 p-2 rounded-full transition-colors" title="Attach file">
+                                    <label for="comment-image-upload" class="cursor-pointer hover:bg-primary-100 p-2 rounded-full transition-colors" title="Attach image">
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                                    </button>
+                                        <input type="file" id="comment-image-upload" accept="image/*" class="hidden">
+                                    </label>
                                 </div>
                                 <button type="button" id="post-modal-comment-btn-1" class="btn-primary px-6 py-2 text-sm font-semibold" data-translate="post_btn">Post</button>
                             </div>
@@ -1122,7 +1124,13 @@
             if (submitNewPostBtn) {
                 submitNewPostBtn.addEventListener('click', async () => {
                     const postText = newPostContentInput.value.trim();
-                    if (postText) {
+                    const newPostImageInput = document.getElementById('new-post-image-upload');
+                    const newPostVideoInput = document.getElementById('new-post-video-upload');
+
+                    const selectedImageFile = newPostImageInput.files[0];
+                    const selectedVideoFile = newPostVideoInput.files[0];
+
+                    if (postText || selectedImageFile || selectedVideoFile) {
                         const newPostId = `post${Object.keys(commentsDataByPost).length + 1}`;
                         const newPost = {
                             id: 1,
@@ -1130,6 +1138,8 @@
                             avatar: 'https://images.unsplash.com/photo-1544005313-949944005313-94ddf0286df2?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
                             time: 'just now',
                             text: postText,
+                            image: selectedImageFile ? URL.createObjectURL(selectedImageFile) : null,
+                            video: selectedVideoFile ? URL.createObjectURL(selectedVideoFile) : null,
                             replies: []
                         };
 
@@ -1153,7 +1163,9 @@
                             </div>
                             
                             <div class="mb-4">
-                                <p class="text-text-primary mb-3">${newPost.text}</p>
+                                ${newPost.text ? `<p class="text-text-primary mb-3">${newPost.text}</p>` : ''}
+                                ${newPost.image ? `<img src="${newPost.image}" alt="New post image" class="w-full h-64 object-cover rounded-lg mb-3" loading="lazy" />` : ''}
+                                ${newPost.video ? `<video src="${newPost.video}" controls class="w-full h-64 object-cover rounded-lg mb-3"></video>` : ''}
                             </div>
 
                             <!-- Interaction Bar -->
@@ -1209,6 +1221,8 @@
                         
                         newPostModal.classList.remove('active');
                         newPostContentInput.value = '';
+                        newPostImageInput.value = ''; // Clear file input
+                        newPostVideoInput.value = ''; // Clear file input
                     }
                 });
             }
@@ -1251,12 +1265,18 @@
                                     <button class="hover:bg-primary-100 p-2 rounded-full transition-colors" title="Add emoji">
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                                     </button>
-                                    <button class="hover:bg-primary-100 p-2 rounded-full transition-colors" title="Attach image">
+                                    <label for="new-post-image-upload" class="cursor-pointer hover:bg-primary-100 p-2 rounded-full transition-colors" title="Attach image">
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                                    </button>
+                                        <input type="file" id="new-post-image-upload" accept="image/*" class="hidden">
+                                    </label>
+                                    <label for="new-post-video-upload" class="cursor-pointer hover:bg-primary-100 p-2 rounded-full transition-colors" title="Attach video (max 5 min)">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                                        <input type="file" id="new-post-video-upload" accept="video/*" class="hidden">
+                                    </label>
                                 </div>
                                 <button type="button" id="submit-new-post" class="btn-primary px-6 py-2 text-sm font-semibold" data-translate="post_btn">Post</button>
                             </div>
+                            <p class="text-xs text-text-secondary mt-1">Video uploads limited to 5 minutes.</p>
                         </div>
                     </div>
                 </div>
