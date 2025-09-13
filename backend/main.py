@@ -1,4 +1,5 @@
-from fastapi import FastAPI, Depends, HTTPException, status, Form
+from fastapi import FastAPI, Depends, HTTPException, status
+from pydantic import BaseModel, EmailStr
 from fastapi.responses import JSONResponse, FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
@@ -6,7 +7,14 @@ from sqlalchemy import create_engine, Column, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, Session
 from passlib.context import CryptContext
+from jose import JWTError, jwt
+from datetime import datetime, timedelta
 import os
+
+# --- JWT Configuration ---
+SECRET_KEY = "your-secret-key" # Change this in production
+ALGORITHM = "HS256"
+ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 # --- Database Configuration ---
 DATABASE_URL = "sqlite:///./sql_app.db"
@@ -22,6 +30,26 @@ def verify_password(plain_password, hashed_password):
 
 def get_password_hash(password):
     return pwd_context.hash(password)
+
+def create_access_token(data: dict, expires_delta: timedelta | None = None):
+    to_encode = data.copy()
+    if expires_delta:
+        expire = datetime.utcnow() + expires_delta
+    else:
+        expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    to_encode.update({"exp": expire})
+    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    return encoded_jwt
+
+# --- Pydantic Models ---
+class UserCreate(BaseModel):
+    username: str
+    email: EmailStr
+    password: str
+
+class UserLogin(BaseModel):
+    username: str
+    password: str
 
 # --- Database Model ---
 class User(Base):
@@ -58,25 +86,23 @@ def get_db():
 
 @app.post("/api/register")
 async def register_user(
-    username: str = Form(...),
-    email: str = Form(...),
-    password: str = Form(...),
+    user: UserCreate,
     db: Session = Depends(get_db)
 ):
     # Check if username or email already exists
-    if db.query(User).filter(User.username == username).first():
+    if db.query(User).filter(User.username == user.username).first():
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Username already registered"
         )
-    if db.query(User).filter(User.email == email).first():
+    if db.query(User).filter(User.email == user.email).first():
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Email already registered"
         )
 
-    hashed_password = get_password_hash(password)
-    new_user = User(username=username, email=email, hashed_password=hashed_password)
+    hashed_password = get_password_hash(user.password)
+    new_user = User(username=user.username, email=user.email, hashed_password=hashed_password)
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
@@ -84,17 +110,20 @@ async def register_user(
 
 @app.post("/api/login")
 async def login_user(
-    username: str = Form(...),
-    password: str = Form(...),
+    user: UserLogin,
     db: Session = Depends(get_db)
 ):
-    user = db.query(User).filter(User.username == username).first()
-    if not user or not verify_password(password, user.hashed_password):
+    user_db = db.query(User).filter(User.username == user.username).first()
+    if not user_db or not verify_password(user.password, user_db.hashed_password):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid credentials"
         )
-    return JSONResponse(content={"success": True, "message": "Login successful!"})
+    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = create_access_token(
+        data={"sub": user_db.username}, expires_delta=access_token_expires
+    )
+    return JSONResponse(content={"success": True, "message": "Login successful!", "access_token": access_token})
 
 # Serve static files (your frontend)
 app.mount("/css", StaticFiles(directory="css"), name="css")
@@ -102,8 +131,13 @@ app.mount("/js", StaticFiles(directory="js"), name="js")
 app.mount("/img", StaticFiles(directory="img"), name="img")
 app.mount("/pages", StaticFiles(directory="pages"), name="pages")
 app.mount("/public", StaticFiles(directory="public"), name="public")
+app.mount("/data", StaticFiles(directory="data"), name="data")
 
 
 @app.get("/")
 async def read_root():
+    return FileResponse("index.html")
+
+@app.get("/index.html")
+async def read_index():
     return FileResponse("index.html")

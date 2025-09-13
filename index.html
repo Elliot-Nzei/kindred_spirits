@@ -680,7 +680,7 @@
                 const data = await res.json();
                 if (res.ok && data.success) {
                     // Redirect or show success
-                    window.location.href = '/dashboard'; // <-- Update as needed
+                    window.location.href = '/pages/community_feed_dashboard.html'; // Redirect to dashboard
                 } else {
                     document.getElementById('loginError').textContent = data.message || 'Invalid username or password';
                     document.getElementById('loginError').classList.add('show');

@@ -1,12 +1,1 @@
-PS C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits> make run-backend
-"Starting FastAPI backend..."
-backend\venv\Scripts\uvicorn backend.main:app --reload
-INFO:     Will watch for changes in these directories: ['C:\\Users\\USER\\Documents\\PROJECTS_2025\\kindred_spirits']
-INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
-INFO:     Started reloader process [6864] using StatReload
-INFO:     Started server process [20880]
-INFO:     Waiting for application startup.
-INFO:     Application startup complete.
-INFO:     127.0.0.1:52289 - "GET / HTTP/1.1" 200 OK
-INFO:     127.0.0.1:52288 - "POST /api/register HTTP/1.1" 422 Unprocessable Entity
-INFO:     127.0.0.1:52293 - "POST /api/register HTTP/1.1" 422 Unprocessable Entity
+ i want you to help me make a way to logout in @pages/soul_profile.html, plan it and make it work for all screens and all screens should all have a way for it to logout or now button 

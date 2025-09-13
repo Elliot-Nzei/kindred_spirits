@@ -57,12 +57,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function loginUser(username, password) {
         try {
-            const response = await fetch(`${API_BASE_URL}/token`, {
+            const response = await fetch(`${API_BASE_URL}/api/login`, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
+                    'Content-Type': 'application/json'
                 },
-                body: new URLSearchParams({
+                body: JSON.stringify({
                     username: username,
                     password: password
                 })
@@ -75,7 +75,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const data = await response.json();
             localStorage.setItem('authToken', data.access_token);
-            window.location.href = 'pages/community_feed_dashboard.html'; // Redirect to dashboard
+            console.log('Redirecting to:', '/pages/community_feed_dashboard.html');
+            window.location.replace('/pages/community_feed_dashboard.html'); // Redirect to dashboard
         } catch (error) {
             console.error('Login error:', error.message);
             loginError.textContent = error.message;

@@ -2,4 +2,6 @@ fastapi
 uvicorn
 sqlalchemy
 passlib[bcrypt]
-python-multipart # Required for FastAPI forms
+python-multipart
+email-validator
+python-jose[cryptography]
