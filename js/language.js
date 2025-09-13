@@ -11,11 +11,8 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         // Update the lang attribute of the html tag
         document.documentElement.lang = lang;
-        // Update the title separately as textContent might not work for it
-        const titleElement = document.querySelector('title');
-        if (titleElement && translations[lang] && translations[lang]['settings_title']) {
-            titleElement.textContent = translations[lang]['settings_title'];
-        }
+        // The title element's data-translate attribute should be handled by the general loop.
+        // No special handling needed here.
     }
 
     // Load saved language preference or default to 'en'
