@@ -216,9 +216,10 @@
                                 <span class="text-sm comment-count" data-post-id="post1">8</span>
                             </button>
                         </div>
-                        <button type="button" class="text-text-secondary hover:text-accent transition-colors" title="Bookmark">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
+                        <button type="button" class="bookmark-btn text-text-secondary hover:text-accent transition-colors" title="Bookmark">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                <path class="bookmark-icon-outline" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
+                                <path class="bookmark-icon-filled hidden" fill-rule="evenodd" d="M5 4a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 20V4z" clip-rule="evenodd"/>
                             </svg>
                         </button>
                     </div>
@@ -298,9 +299,10 @@
                                 <span class="text-sm comment-count" data-post-id="post2">5</span>
                             </button>
                         </div>
-                        <button class="text-text-secondary hover:text-accent transition-colors" title="Bookmark">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
+                        <button class="bookmark-btn text-text-secondary hover:text-accent transition-colors" title="Bookmark">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                <path class="bookmark-icon-outline" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
+                                <path class="bookmark-icon-filled hidden" fill-rule="evenodd" d="M5 4a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 20V4z" clip-rule="evenodd"/>
                             </svg>
                         </button>
                     </div>
@@ -767,7 +769,7 @@
                     }
                 }
             });
-        } 
+        }
 
         closeCommentsModalBtn.addEventListener('click', () => {
             commentsModal.classList.remove('active');
@@ -968,6 +970,88 @@
             });
         });
 
+        // Bookmark functionality
+        const BOOKMARKS_STORAGE_KEY = 'metanoia_bookmarks';
+        let bookmarkedPosts = new Set(); // Stores post IDs
+
+        function saveBookmarks() {
+            localStorage.setItem(BOOKMARKS_STORAGE_KEY, JSON.stringify(Array.from(bookmarkedPosts)));
+        }
+
+        function loadBookmarks() {
+            const storedBookmarks = localStorage.getItem(BOOKMARKS_STORAGE_KEY);
+            if (storedBookmarks) {
+                bookmarkedPosts = new Set(JSON.parse(storedBookmarks));
+            }
+
+            document.querySelectorAll('.bookmark-btn').forEach(button => {
+                const postId = button.closest('article').dataset.postId;
+                if (bookmarkedPosts.has(postId)) {
+                    updateBookmarkIcon(button, true);
+                } else {
+                    updateBookmarkIcon(button, false);
+                }
+            });
+        }
+
+        function updateBookmarkIcon(button, isBookmarked) {
+            const outlineIcon = button.querySelector('.bookmark-icon-outline');
+            const filledIcon = button.querySelector('.bookmark-icon-filled');
+
+            if (isBookmarked) {
+                outlineIcon.classList.add('hidden');
+                filledIcon.classList.remove('hidden');
+                button.classList.add('text-accent'); // Highlight when bookmarked
+                button.classList.remove('text-text-secondary');
+            } else {
+                outlineIcon.classList.remove('hidden');
+                filledIcon.classList.add('hidden');
+                button.classList.remove('text-accent');
+                button.classList.add('text-text-secondary');
+            }
+        }
+
+        function showToast(message) {
+            let toast = document.getElementById('bookmark-toast');
+            if (!toast) {
+                toast = document.createElement('div');
+                toast.id = 'bookmark-toast';
+                toast.className = 'fixed bottom-24 left-1/2 -translate-x-1/2 bg-primary text-white px-4 py-2 rounded-lg shadow-lg opacity-0 transition-opacity duration-300 z-50';
+                document.body.appendChild(toast);
+            }
+            toast.textContent = message;
+            toast.classList.remove('opacity-0');
+            toast.classList.add('opacity-100');
+
+            setTimeout(() => {
+                toast.classList.remove('opacity-100');
+                toast.classList.add('opacity-0');
+            }, 2000);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadBookmarks();
+
+            document.querySelectorAll('.bookmark-btn').forEach(button => {
+                button.addEventListener('click', (event) => {
+                    const postId = button.closest('article').dataset.postId;
+                    let message = '';
+
+                    if (bookmarkedPosts.has(postId)) {
+                        bookmarkedPosts.delete(postId);
+                        message = 'Bookmark removed!';
+                        updateBookmarkIcon(button, false);
+                    } else {
+                        bookmarkedPosts.add(postId);
+                        message = 'Post bookmarked!';
+                        updateBookmarkIcon(button, true);
+                    }
+                    saveBookmarks();
+                    showToast(message);
+                });
+            });
+        });
+
         // Mobile menu logic (works with moved button)
         document.addEventListener('DOMContentLoaded', function() {
             const mobileMenuBtn = document.getElementById('mobile-menu-btn');
@@ -987,15 +1071,189 @@
                     }
                 });
             }
+
+            // New Post Modal Logic
+            const newPostModal = document.getElementById('new-post-modal');
+            const openNewPostModalBtn = document.getElementById('open-new-post-modal');
+            const closeNewPostModalBtn = document.getElementById('close-new-post-modal');
+            const submitNewPostBtn = document.getElementById('submit-new-post');
+            const newPostContentInput = document.getElementById('new-post-content');
+            const mainFeed = document.querySelector('main.lg\:col-span-3.space-y-6');
+
+            if (openNewPostModalBtn) {
+                openNewPostModalBtn.addEventListener('click', () => {
+                    newPostModal.classList.add('active');
+                });
+            }
+
+            if (closeNewPostModalBtn) {
+                closeNewPostModalBtn.addEventListener('click', () => {
+                    newPostModal.classList.remove('active');
+                    newPostContentInput.value = ''; // Clear textarea on close
+                });
+            }
+
+            if (newPostModal) {
+                newPostModal.addEventListener('click', (e) => {
+                    if (e.target === newPostModal) {
+                        newPostModal.classList.remove('active');
+                        newPostContentInput.value = ''; // Clear textarea on close
+                    }
+                });
+            }
+
+            if (submitNewPostBtn) {
+                submitNewPostBtn.addEventListener('click', async () => {
+                    const postText = newPostContentInput.value.trim();
+                    if (postText) {
+                        const newPostId = `post${Object.keys(commentsDataByPost).length + 1}`;
+                        const newPost = {
+                            id: 1,
+                            author: 'Current User',
+                            avatar: 'https://images.unsplash.com/photo-1544005313-949944005313-94ddf0286df2?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+                            time: 'just now',
+                            text: postText,
+                            replies: []
+                        };
+
+                        // Add new post to commentsDataByPost for comment functionality
+                        commentsDataByPost[newPostId] = [newPost];
+
+                        // Create and prepend the new post article to the main feed
+                        const newPostArticle = document.createElement('article');
+                        newPostArticle.className = 'card card-hover';
+                        newPostArticle.setAttribute('data-post-id', newPostId);
+                        newPostArticle.innerHTML = `
+                            <div class="flex items-start space-x-3 mb-4">
+                                <img src="${newPost.avatar}" alt="${newPost.author}'s Profile" class="w-10 h-10 rounded-full object-cover" onerror="this.src='https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'; this.onerror=null;" />
+                                <div class="flex-1">
+                                    <div class="flex items-center space-x-2">
+                                        <h4 class="font-medium text-text-primary">${newPost.author}</h4>
+                                        <span class="text-text-secondary text-sm">${newPost.time}</span>
+                                    </div>
+                                    <p class="text-text-secondary text-sm">Just shared</p>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <p class="text-text-primary mb-3">${newPost.text}</p>
+                            </div>
+
+                            <!-- Interaction Bar -->
+                            <div class="flex items-center justify-between pt-3 border-t border-border-light">
+                                <div class="flex items-center space-x-4">
+                                    <button type="button" class="reaction-btn flex items-center space-x-2 text-text-secondary hover:text-primary transition-colors" data-post-id="${newPostId}">
+                                        <span class="reaction-icon">
+                                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"/>
+                                            </svg>
+                                        </span>
+                                        <span class="text-sm reaction-count">0</span>
+                                    </button>
+                                    <button type="button" class="flex items-center space-x-2 text-text-secondary hover:text-primary transition-colors open-comments-modal-btn" data-post-id="${newPostId}">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                                        </svg>
+                                        <span class="text-sm comment-count" data-post-id="${newPostId}">0</span>
+                                    </button>
+                                </div>
+                                <button type="button" class="text-text-secondary hover:text-accent transition-colors" title="Bookmark">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        `;
+                        mainFeed.prepend(newPostArticle);
+
+                        // Initialize reactions for the new post
+                        postReactions[newPostId] = { love: 0 };
+                        userReactions[newPostId] = 'none';
+                        updateReactionUI(newPostId);
+
+                        // Re-attach event listeners for comments modal to include the new post
+                        const newOpenCommentsModalBtn = newPostArticle.querySelector('.open-comments-modal-btn');
+                        if (newOpenCommentsModalBtn) {
+                            newOpenCommentsModalBtn.addEventListener('click', () => {
+                                currentPostId = newOpenCommentsModalBtn.dataset.postId;
+                                modalCommentsList.innerHTML = '';
+                                if (commentsDataByPost[currentPostId]) {
+                                    renderComments(commentsDataByPost[currentPostId], modalCommentsList);
+                                }
+                                commentsModal.classList.add('active');
+                            });
+                        }
+
+                        // Re-attach event listeners for reactions to include the new post
+                        const newReactionBtn = newPostArticle.querySelector('.reaction-btn');
+                        if (newReactionBtn) {
+                            newReactionBtn.addEventListener('click', () => {
+                                toggleLoveReaction(newPostId);
+                            });
+                        }
+
+                        // Simulate saving to comments.json (requires backend)
+                        // In a real application, you would send this data to a server.
+                        // For this exercise, we'll just log it and update the in-memory object.
+                        console.log('New post to save:', { [newPostId]: [newPost] });
+                        
+                        newPostModal.classList.remove('active');
+                        newPostContentInput.value = '';
+                    }
+                });
+            }
         });
     </script>
 <script id="dhws-dataInjector" src="../public/dhws-data-injector.js"></script>
     <!-- Floating Action Button for Mobile -->
-    <button type="button" class="md:hidden fixed bottom-20 right-4 w-14 h-14 bg-accent text-primary rounded-full shadow-sacred-strong hover:shadow-contemplative transition-all duration-300 flex items-center justify-center" title="Add new post">
+    <button type="button" id="open-new-post-modal" class="md:hidden fixed bottom-20 right-4 w-14 h-14 bg-accent text-primary rounded-full shadow-sacred-strong hover:shadow-contemplative transition-all duration-300 flex items-center justify-center" title="Add new post">
         <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
             <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/>
         </svg>
     </button>
+
+    <!-- New Post Modal -->
+    <div id="new-post-modal" class="comments-overlay">
+        <div class="comments-sheet">
+            <!-- Modal Header -->
+            <div class="flex items-center justify-between pb-4 border-b border-border-light mb-4">
+                <h3 class="font-crimson text-xl font-semibold text-primary">Create New Post</h3>
+                <button type="button" id="close-new-post-modal" class="text-text-secondary hover:text-primary transition-colors" title="Close new post modal">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- New Post Form -->
+            <div class="pt-4">
+                <div class="bg-surface rounded-xl p-4 shadow-sm">
+                    <div class="flex items-start space-x-3">
+                        <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Current User's Profile" class="w-10 h-10 rounded-full object-cover border-2 border-white" />
+                        <div class="flex-1">
+                            <textarea 
+                                id="new-post-content" 
+                                rows="5" 
+                                class="w-full bg-transparent border-none focus:ring-0 p-0 text-text-primary placeholder-text-secondary resize-none" 
+                                placeholder="Share your sacred thoughts and insights with the community..."></textarea>
+                            
+                            <div class="flex items-center justify-between mt-2 pt-2 border-t border-border-light">
+                                <div class="flex items-center space-x-2 text-text-secondary">
+                                    <button class="hover:bg-primary-100 p-2 rounded-full transition-colors" title="Add emoji">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                    </button>
+                                    <button class="hover:bg-primary-100 p-2 rounded-full transition-colors" title="Attach image">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                    </button>
+                                </div>
+                                <button type="button" id="submit-new-post" class="btn-primary px-6 py-2 text-sm font-semibold">Post</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
 </body>
 </html>
