@@ -590,6 +590,14 @@
             <!-- Register Form -->
             <form class="register-form" id="registerForm">
                 <div class="input-group">
+                    <input type="text" id="register-fullname" placeholder="Full Name" required>
+                    <svg class="input-icon icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                </div>
+
+                <div class="input-group">
                     <input type="text" id="register-username" placeholder="Username" required>
                     <svg class="input-icon icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
@@ -633,6 +641,7 @@
         </div>
     </div>
 
+    <script src="js/config.js"></script>
     <script src="js/auth.js"></script>
 </body>
 </html>
