@@ -39,6 +39,14 @@ const FeedManager = {
         if (userAvatar && user.profile_picture) {
             userAvatar.src = `${API_BASE_URL}${user.profile_picture}`;
         }
+
+        // Update user avatar in welcome section
+        const welcomeUserImage = document.getElementById('welcome-user-image');
+        if (welcomeUserImage && user.profile_picture) {
+            welcomeUserImage.src = `${API_BASE_URL}${user.profile_picture}`;
+        } else if (welcomeUserImage) {
+            welcomeUserImage.src = '/img/default-avatar.jpg'; // Fallback default image
+        }
     },
 
     // Load feed posts
@@ -590,7 +598,7 @@ const FeedManager = {
                 const formData = new FormData();
                 formData.append('file', imageFile);
                 
-                const uploadResponse = await window.AuthAPI.request('/api/posts/upload-image', {
+                const uploadResponse = await window.AuthAPI.request('/api/upload/image', {
                     method: 'POST',
                     body: formData
                 });
@@ -762,7 +770,6 @@ const FeedManager = {
         const newPostBtnDesktop = document.getElementById('open-new-post-modal-desktop');
         const newPostBtnMobile = document.getElementById('open-new-post-modal-mobile');
         const newPostModal = document.getElementById('new-post-modal');
-        console.log('newPostModal reference:', newPostModal);
         const closeNewPostBtn = document.getElementById('close-new-post-modal');
         const submitPostBtn = document.getElementById('submit-new-post');
 

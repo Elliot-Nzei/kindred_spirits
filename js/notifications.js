@@ -1,10 +1,10 @@
-document.addEventListener('DOMContentLoaded', () => {
+window.addEventListener('load', () => {
     if (!window.AuthManager.isAuthenticated()) {
         window.location.href = '../index.html';
         return;
     }
 
-    const API_BASE_URL = 'http://127.0.0.1:8000';
+    
     const allNotificationsList = document.getElementById("all-notifications-list");
     const template = document.getElementById("notification-template");
 
@@ -92,4 +92,49 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     loadNotifications();
+
+    // Mobile notification button functionality
+    const openNotificationsMobileBtn = document.getElementById('open-notifications-mobile');
+    if (openNotificationsMobileBtn) {
+        openNotificationsMobileBtn.addEventListener('click', () => {
+            window.location.href = 'notifications.html';
+        });
+    }
+
+    const updateNotificationBadge = async () => {
+        const badge = document.getElementById('mobile-notification-badge');
+        if (!badge) return;
+
+        try {
+            const token = window.AuthManager.getAuthToken();
+            const response = await fetch(`${API_BASE_URL}/api/notifications/unread_count`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to fetch unread notification count');
+            }
+
+            const data = await response.json();
+            const unreadCount = data.unread_count;
+
+            if (unreadCount > 0) {
+                badge.textContent = unreadCount;
+                badge.classList.remove('hidden');
+            } else {
+                badge.classList.add('hidden');
+            }
+        } catch (error) {
+            console.error('Error updating notification badge:', error);
+            badge.classList.add('hidden'); // Hide badge on error
+        }
+    };
+
+    // Update badge on load
+    updateNotificationBadge();
+
+    // Update badge every 30 seconds
+    setInterval(updateNotificationBadge, 30000);
 });

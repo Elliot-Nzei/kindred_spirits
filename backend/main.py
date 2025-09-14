@@ -944,7 +944,7 @@ async def get_notifications(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    query = db.query(Notification).filter(Notification.recipient_id == current_user.id)
+    query = db.query(Notification).options(joinedload(Notification.sender)).filter(Notification.recipient_id == current_user.id)
     
     if unread_only:
         query = query.filter(Notification.read == False)
@@ -953,10 +953,20 @@ async def get_notifications(
     
     response = []
     for notification in notifications:
-        notif_response = NotificationResponse.from_orm(notification)
-        if notification.sender:
-            notif_response.sender_username = notification.sender.username
-            notif_response.sender_profile_picture = notification.sender.profile_picture
+        sender_username = notification.sender.username if notification.sender else None
+        sender_profile_picture = notification.sender.profile_picture if notification.sender else None
+
+        notif_response = NotificationResponse(
+            id=notification.id,
+            sender_username=sender_username,
+            sender_profile_picture=sender_profile_picture,
+            type=notification.type,
+            message=notification.message,
+            post_id=notification.post_id,
+            read=notification.read,
+            timestamp=notification.timestamp,
+            link=notification.link
+        )
         response.append(notif_response)
     
     return response
