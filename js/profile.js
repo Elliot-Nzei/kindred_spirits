@@ -24,6 +24,14 @@ const ProfileManager = {
         await this.loadProfile();
         this.attachEventListeners();
         this.setupTabs();
+
+        // Start polling for follow counts
+        this.profilePollingInterval = setInterval(() => this.updateFollowCounts(), 2000); // Poll every 2 seconds
+
+        // Clear polling interval when navigating away
+        window.addEventListener('beforeunload', () => {
+            clearInterval(this.profilePollingInterval);
+        });
     },
 
     // Load profile data
@@ -329,6 +337,42 @@ const ProfileManager = {
             
         } catch (error) {
             console.error('Error loading stats:', error);
+        }
+    },
+
+    // Update follow counts (for polling)
+    async updateFollowCounts() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const username = urlParams.get('user');
+        
+        const endpoint = username 
+            ? `/api/users/${username}` 
+            : '/api/users/me';
+
+        try {
+            const response = await window.AuthAPI.request(endpoint);
+            if (!response.ok) throw new Error('Failed to fetch latest profile data');
+            
+            const latestProfile = await response.json();
+
+            // Update only if counts have changed
+            if (this.currentProfile.followers_count !== latestProfile.followers_count) {
+                document.querySelector('#profile-header [onclick="ProfileManager.showFollowers()"] .font-bold').textContent = this.formatNumber(latestProfile.followers_count);
+                this.currentProfile.followers_count = latestProfile.followers_count;
+            }
+            if (this.currentProfile.following_count !== latestProfile.following_count) {
+                document.querySelector('#profile-header [onclick="ProfileManager.showFollowing()"] .font-bold').textContent = this.formatNumber(latestProfile.following_count);
+                this.currentProfile.following_count = latestProfile.following_count;
+            }
+
+            // Also update is_following status if it's a public profile
+            if (!this.isOwnProfile && this.currentProfile.is_following !== latestProfile.is_following) {
+                this.currentProfile.is_following = latestProfile.is_following;
+                this.updateFollowButton();
+            }
+
+        } catch (error) {
+            console.error('Error updating follow counts:', error);
         }
     },
 

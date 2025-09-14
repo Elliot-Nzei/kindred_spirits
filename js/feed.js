@@ -309,6 +309,13 @@ const FeedManager = {
         modalElement.setAttribute('data-post-id', postId);
         
         await this.loadComments(postId);
+
+        // Start polling for new comments
+        this.commentPollingInterval = setInterval(async () => {
+            if (modalElement.classList.contains('active')) { // Only poll if modal is open
+                await this.loadComments(postId);
+            }
+        }, 2000); // Poll every 2 seconds
     },
 
     // Create comments modal if not exists
@@ -440,6 +447,7 @@ const FeedManager = {
         const modal = document.getElementById('comments-modal');
         if (modal) {
             modal.classList.remove('active');
+            clearInterval(this.commentPollingInterval); // Clear polling interval
         }
     },
 
@@ -711,39 +719,84 @@ const FeedManager = {
 
     // Setup real-time updates (WebSocket or polling)
     setupRealTimeUpdates() {
-        // Poll for new posts every 30 seconds
+        // Poll for new posts every 2 seconds
         setInterval(async () => {
             if (document.hidden) return; // Don't poll if tab is not active
             
             try {
-                const response = await window.AuthAPI.request('/api/feed?limit=1');
-                if (response.ok) {
-                    const posts = await response.json();
-                    if (posts.length > 0 && posts[0].id !== this.posts[0]?.id) {
-                        this.showNewPostsNotification();
-                    }
+                // Fetch a small number of the latest posts to check for changes
+                const response = await window.AuthAPI.request('/api/feed?limit=5'); // Fetch top 5 posts
+                if (!response.ok) throw new Error('Failed to fetch latest posts for real-time update');
+                
+                const latestPosts = await response.json();
+
+                // Check for new posts
+                if (latestPosts.length > 0 && this.posts.length > 0 && latestPosts[0].id !== this.posts[0].id) {
+                    this.showNewPostsNotification();
                 }
+
+                // Update existing posts (likes/comments)
+                latestPosts.forEach(latestPost => {
+                    const currentPost = this.posts.find(p => p.id === latestPost.id);
+                    if (currentPost) {
+                        // Update likes
+                        if (latestPost.likes_count !== currentPost.likes_count) {
+                            const postElement = document.querySelector(`[data-post-id="${latestPost.id}"]`);
+                            if (postElement) {
+                                const countSpan = postElement.querySelector('.reaction-count');
+                                if (countSpan) {
+                                    countSpan.textContent = latestPost.likes_count;
+                                }
+                            }
+                            currentPost.likes_count = latestPost.likes_count;
+                        }
+                        // Update comments
+                        if (latestPost.comments_count !== currentPost.comments_count) {
+                            const postElement = document.querySelector(`[data-post-id="${latestPost.id}"]`);
+                            if (postElement) {
+                                const countSpan = postElement.querySelector('.comment-count');
+                                if (countSpan) {
+                                    countSpan.textContent = latestPost.comments_count;
+                                }
+                            }
+                            currentPost.comments_count = latestPost.comments_count;
+                        }
+                    }
+                });
+
             } catch (error) {
                 console.error('Error checking for new posts:', error);
             }
-        }, 30000);
+        }, 2000); // 2 seconds
     },
 
     // Show new posts notification
     showNewPostsNotification() {
+        if (this.newPostsNotificationElement) return; // Notification already shown
+
         const notification = document.createElement('div');
         notification.className = 'fixed top-20 left-1/2 transform -translate-x-1/2 bg-primary text-white px-4 py-2 rounded-lg cursor-pointer z-50';
-        notification.textContent = 'New posts available';
+        notification.textContent = 'New posts available. Click to refresh.';
         notification.onclick = () => {
             notification.remove();
+            this.newPostsNotificationElement = null;
             this.currentPage = 0;
             this.loadFeed();
             window.scrollTo(0, 0);
         };
         document.body.appendChild(notification);
+        this.newPostsNotificationElement = notification;
         
-        setTimeout(() => notification.remove(), 5000);
+        // Auto-hide after some time if not clicked
+        setTimeout(() => {
+            if (this.newPostsNotificationElement) {
+                this.newPostsNotificationElement.remove();
+                this.newPostsNotificationElement = null;
+            }
+        }, 10000); // Hide after 10 seconds
     },
+
+    
 
     // Show toast notification
     showToast(message, type = 'success') {
