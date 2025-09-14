@@ -150,4 +150,36 @@ window.addEventListener('load', () => {
 
     // Update badge every 30 seconds
     setInterval(updateNotificationBadge, 30000);
+
+    // Mark all as read functionality
+    const markAllReadBtn = document.getElementById('mark-all-read-btn');
+    if (markAllReadBtn) {
+        markAllReadBtn.addEventListener('click', async () => {
+            try {
+                const response = await window.AuthAPI.request('/api/notifications/mark-all-read', {
+                    method: 'PUT'
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to mark all notifications as read');
+                }
+
+                // Update UI: change opacity of all notifications
+                document.querySelectorAll('#all-notifications-list .flex.items-start').forEach(notificationEl => {
+                    notificationEl.classList.add('opacity-60');
+                });
+
+                // Reload notifications to reflect changes and update badge
+                await loadNotifications();
+                await updateNotificationBadge();
+
+                // Optionally disable the button if no unread notifications remain
+                markAllReadBtn.disabled = true;
+
+            } catch (error) {
+                console.error('Error marking all notifications as read:', error);
+                alert('Failed to mark all notifications as read. Please try again.');
+            }
+        });
+    }
 });

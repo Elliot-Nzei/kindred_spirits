@@ -1,110 +1,32 @@
 [Intervention] Images loaded lazily and replaced with placeholders. Load events are deferred. See https://go.microsoft.com/fwlink/?linkid=2048113
-translations.js:199  Uncaught SyntaxError: Unexpected token ';' (at translations.js:199:2)
-[NEW] Explain Console errors by using Copilot in Edge: click
-         
-         to explain an error. 
-        Learn more
-        Don't show again
-rocket-web.js?_cfg=https%3A%2F%2Fkindredsp1403back.builtwithrocket.new&_be=https%3A%2F%2Fapplication.rocket.new&_v=0.1.8:1 FeedManager DOMContentLoaded fired!
-language.js:5  Uncaught ReferenceError: translations is not defined
+translations.js:199 
+ Uncaught SyntaxError: Unexpected token ';' (at translations.js:199:2)
+[NEW] Explain Console errors by using Copilot in Edge: click 
+ to explain an error. Learn more
+Don't show again
+rocket-web.js?_cfg=h…cket.new&_v=0.1.8:1 FeedManager DOMContentLoaded fired!
+language.js:5 
+ Uncaught ReferenceError: translations is not defined
     at language.js:5:9
     at NodeList.forEach (<anonymous>)
     at applyTranslations (language.js:3:51)
     at HTMLDocument.<anonymous> (language.js:27:5)
-(anonymous) @ language.js:5
-applyTranslations @ language.js:3
-(anonymous) @ language.js:27
-auth.js:64   GET http://127.0.0.1:8000/api/feed?skip=0&limit=20 500 (Internal Server Error)
-request @ auth.js:64
-loadFeed @ feed.js:64
-init @ feed.js:22
-await in init
-(anonymous) @ feed.js:867
-rocket-web.js?_cfg=https%3A%2F%2Fkindredsp1403back.builtwithrocket.new&_be=https%3A%2F%2Fapplication.rocket.new&_v=0.1.8:1  Error loading feed: Error: Failed to load feed
-    at Object.loadFeed (feed.js:68:37)
-    at async Object.init (feed.js:22:9)
-(anonymous) @ rocket-web.js?_cfg=https%3A%2F%2Fkindredsp1403back.builtwithrocket.new&_be=https%3A%2F%2Fapplication.rocket.new&_v=0.1.8:1
-setTimeout
-console.error @ rocket-web.js?_cfg=https%3A%2F%2Fkindredsp1403back.builtwithrocket.new&_be=https%3A%2F%2Fapplication.rocket.new&_v=0.1.8:1
-loadFeed @ feed.js:86
-await in loadFeed
-init @ feed.js:22
-await in init
-(anonymous) @ feed.js:867
-notifications.js:29  Uncaught (in promise) TypeError: Cannot set properties of null (setting 'innerHTML')
+notifications.js:29 
+ Uncaught (in promise) TypeError: Cannot set properties of null (setting 'innerHTML')
     at loadNotifications (notifications.js:29:44)
-loadNotifications @ notifications.js:29
-await in loadNotifications
-(anonymous) @ notifications.js:101
-rocket-web.js?_cfg=https%3A%2F%2Fkindredsp1403back.builtwithrocket.new&_be=https%3A%2F%2Fapplication.rocket.new&_v=0.1.8:1  Error loading notifications: TypeError: Cannot set properties of null (setting 'innerHTML')
+rocket-web.js?_cfg=h…cket.new&_v=0.1.8:1 
+ Error loading notifications: TypeError: Cannot set properties of null (setting 'innerHTML')
     at displayNotifications (notifications.js:34:40)
     at loadNotifications (notifications.js:25:13)
+﻿
 
-
-
-terminal:
-INFO:     127.0.0.1:57423 - "GET /api/notifications/unread-count HTTP/1.1" 200 OK
-INFO:     127.0.0.1:57433 - "GET /api/notifications/unread-count HTTP/1.1" 200 OK
-INFO:     127.0.0.1:57441 - "GET /api/feed?limit=1 HTTP/1.1" 500 Internal Server Error
-ERROR:    Exception in ASGI application
-Traceback (most recent call last):
-  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\uvicorn\protocols\http\h11_impl.py", line 403, in run_asgi
-    result = await app(  # type: ignore[func-returns-value]
-             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\uvicorn\middleware\proxy_headers.py", line 60, in __call__
-    return await self.app(scope, receive, send)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\fastapi\applications.py", line 1054, in __call__
-    await super().__call__(scope, receive, send)
-  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\starlette\applications.py", line 113, in __call__
-    await self.middleware_stack(scope, receive, send)
-  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\starlette\middleware\errors.py", line 186, in __call__
-    raise exc
-  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\starlette\middleware\errors.py", line 164, in __call__
-    await self.app(scope, receive, _send)
-  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\starlette\middleware\cors.py", line 93, in __call__
-    await self.simple_response(scope, receive, send, request_headers=headers)
-  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\starlette\middleware\cors.py", line 144, in simple_response
-    await self.app(scope, receive, send)
-  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\starlette\middleware\exceptions.py", line 63, in __call__
-    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
-  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
-    raise exc
-  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
-    await app(scope, receive, sender)
-  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\starlette\routing.py", line 716, in __call__
-    await self.middleware_stack(scope, receive, send)
-  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\starlette\routing.py", line 736, in app
-    await route.handle(scope, receive, send)
-  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\starlette\routing.py", line 290, in handle
-    await self.app(scope, receive, send)
-  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\starlette\routing.py", line 78, in app
-    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
-  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
-    raise exc
-  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
-    await app(scope, receive, sender)
-  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\starlette\routing.py", line 75, in app
-    response = await f(request)
-               ^^^^^^^^^^^^^^^^
-  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\fastapi\routing.py", line 302, in app
-    raw_response = await run_endpoint_function(
-                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\fastapi\routing.py", line 213, in run_endpoint_function
-    return await dependant.call(**values)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\main.py", line 1044, in get_feed
-    post_response = PostResponse.from_orm_with_owner(post)
-                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\main.py", line 260, in from_orm_with_owner
-    return cls(
-           ^^^^
-  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\pydantic\main.py", line 253, in __init__
-    validated_self = self.__pydantic_validator__.validate_python(data, self_instance=self)
-                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-pydantic_core._pydantic_core.ValidationError: 1 validation error for PostResponse
-title
-  Input should be a valid string [type=string_type, input_value=None, input_type=NoneType]
-    For further information visit https://errors.pydantic.dev/2.11/v/string_type
-INFO:     127.0.0.1:57442 - "GET /api/notifications/unread-count HTTP/1.1" 200 OK
-INFO:     127.0.0.1:57455 - "GET /api/notifications/unread-count HTTP/1.1" 200 OK
+Compatibility
+'text-size-adjust' is not supported by Firefox, Safari.
+Performance
+A 'cache-control' header is missing or empty.
+Response should not include unneeded headers: content-security-policy
+Security
+Response should include 'x-content-type-options' header.
+The 'X-Frame-Options' header should not be used. A similar effect, with more consistent support and stronger checks, can be achieved with the 'Content-Security-Policy' header and 'frame-ancestors' directive.
+Other
+'transform' should be listed after '-webkit-transform'.

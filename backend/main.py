@@ -477,7 +477,14 @@ async def upload_profile_picture(
     if not file.content_type.startswith("image/"):
         raise HTTPException(status_code=400, detail="File must be an image")
     
-    # Save file
+    # Delete old profile picture if it exists
+    if current_user.profile_picture:
+        old_profile_picture_path = current_user.profile_picture.replace("/uploads", UPLOAD_DIR)
+        if os.path.exists(old_profile_picture_path):
+            os.remove(old_profile_picture_path)
+            print(f"Deleted old profile picture: {old_profile_picture_path}") # For logging/debugging
+    
+    # Save new file
     file_extension = file.filename.split(".")[-1]
     file_name = f"{current_user.id}_{datetime.utcnow().timestamp()}.{file_extension}"
     file_path = f"{UPLOAD_DIR}/profiles/{file_name}"
@@ -488,6 +495,7 @@ async def upload_profile_picture(
     # Update user profile picture
     current_user.profile_picture = f"/uploads/profiles/{file_name}"
     db.commit()
+    db.refresh(current_user) # Refresh to get the latest state, though not strictly necessary here
     
     return {"profile_picture": current_user.profile_picture}
 

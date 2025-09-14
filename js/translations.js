@@ -197,3 +197,5 @@ window.translations = {
         danger_zone_description: "Procede con precaución. Estas acciones son irreversibles.",
 
 };
+
+

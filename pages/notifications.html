@@ -32,7 +32,12 @@
 
   <!-- Main -->
   <main class="max-w-3xl mx-auto px-4 py-8">
-    <h2 class="text-2xl sm:text-3xl font-bold text-gray-800 mb-6">Notifications</h2>
+    <div class="flex justify-between items-center mb-6">
+      <h2 class="text-2xl sm:text-3xl font-bold text-gray-800">Notifications</h2>
+      <button id="mark-all-read-btn" class="px-4 py-2 bg-white text-primary border border-primary-200 rounded-lg hover:bg-primary-50 transition-colors text-sm font-medium">
+        Mark all as read
+      </button>
+    </div>
     <div id="all-notifications-list" class="space-y-4">
       <!-- Notifications inserted dynamically -->
     </div>

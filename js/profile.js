@@ -24,14 +24,6 @@ const ProfileManager = {
         await this.loadProfile();
         this.attachEventListeners();
         this.setupTabs();
-
-        // Start polling for follow counts
-        this.profilePollingInterval = setInterval(() => this.updateFollowCounts(), 2000); // Poll every 2 seconds
-
-        // Clear polling interval when navigating away
-        window.addEventListener('beforeunload', () => {
-            clearInterval(this.profilePollingInterval);
-        });
     },
 
     // Load profile data

@@ -725,15 +725,10 @@ const FeedManager = {
             
             try {
                 // Fetch a small number of the latest posts to check for changes
-                const response = await window.AuthAPI.request('/api/feed?limit=5'); // Fetch top 5 posts
+                const response = await window.AuthAPI.request('/api/feed?limit=20'); // Fetch top 20 posts
                 if (!response.ok) throw new Error('Failed to fetch latest posts for real-time update');
                 
                 const latestPosts = await response.json();
-
-                // Check for new posts
-                if (latestPosts.length > 0 && this.posts.length > 0 && latestPosts[0].id !== this.posts[0].id) {
-                    this.showNewPostsNotification();
-                }
 
                 // Update existing posts (likes/comments)
                 latestPosts.forEach(latestPost => {
@@ -763,6 +758,23 @@ const FeedManager = {
                         }
                     }
                 });
+
+                // Check for new posts and prepend them
+                if (latestPosts.length > 0 && this.posts.length > 0) {
+                    const newPosts = latestPosts.filter(latestPost => 
+                        !this.posts.some(currentPost => currentPost.id === latestPost.id)
+                    );
+
+                    if (newPosts.length > 0) {
+                        const feedContainer = document.getElementById('main-feed-container');
+                        newPosts.reverse().forEach(newPost => { // Reverse to prepend in correct order
+                            const newPostElement = this.createPostElement(newPost);
+                            feedContainer.prepend(newPostElement);
+                            this.posts.unshift(newPost); // Add to our internal array
+                        });
+                        this.showNewPostsNotification();
+                    }
+                }
 
             } catch (error) {
                 console.error('Error checking for new posts:', error);
