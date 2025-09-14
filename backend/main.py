@@ -3,7 +3,7 @@ from pydantic import BaseModel, EmailStr, Field
 from fastapi.responses import JSONResponse, FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from sqlalchemy import create_engine, Column, Integer, String, ForeignKey, Boolean, DateTime, Text, Float
+from sqlalchemy import create_engine, Column, Integer, String, ForeignKey, Boolean, DateTime, Text, Float, func
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, Session, relationship, joinedload
 from passlib.context import CryptContext
@@ -491,6 +491,52 @@ async def upload_profile_picture(
     
     return {"profile_picture": current_user.profile_picture}
 
+@app.get("/api/users/{username}/followers", response_model=List[UserResponse])
+async def get_user_followers(
+    username: str,
+    db: Session = Depends(get_db)
+):
+    user = db.query(User).filter(User.username == username).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    followers = db.query(User).join(Follow, User.id == Follow.follower_id).filter(
+        Follow.followed_id == user.id
+    ).all()
+
+    response = []
+    for follower in followers:
+        follower_response = UserResponse.from_orm(follower)
+        follower_response.followers_count = db.query(Follow).filter(Follow.followed_id == follower.id).count()
+        follower_response.following_count = db.query(Follow).filter(Follow.follower_id == follower.id).count()
+        follower_response.posts_count = db.query(Post).filter(Post.owner_id == follower.id).count()
+        response.append(follower_response)
+    
+    return response
+
+@app.get("/api/users/{username}/following", response_model=List[UserResponse])
+async def get_user_following(
+    username: str,
+    db: Session = Depends(get_db)
+):
+    user = db.query(User).filter(User.username == username).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    following = db.query(User).join(Follow, User.id == Follow.followed_id).filter(
+        Follow.follower_id == user.id
+    ).all()
+
+    response = []
+    for followed_user in following:
+        followed_user_response = UserResponse.from_orm(followed_user)
+        followed_user_response.followers_count = db.query(Follow).filter(Follow.followed_id == followed_user.id).count()
+        followed_user_response.following_count = db.query(Follow).filter(Follow.follower_id == followed_user.id).count()
+        followed_user_response.posts_count = db.query(Post).filter(Post.owner_id == followed_user.id).count()
+        response.append(followed_user_response)
+    
+    return response
+
 # --- Follow/Unfollow Routes ---
 @app.post("/api/users/{username}/follow")
 async def follow_user(
@@ -572,6 +618,25 @@ async def create_post(
     response.is_liked = False
     
     return response
+
+@app.post("/api/upload/image")
+async def upload_image(
+    file: UploadFile = File(...),
+    current_user: User = Depends(get_current_user)
+):
+    # Validate file type
+    if not file.content_type.startswith("image/"):
+        raise HTTPException(status_code=400, detail="File must be an image")
+    
+    # Save file
+    file_extension = file.filename.split(".")[-1]
+    file_name = f"post_{current_user.id}_{datetime.utcnow().timestamp()}.{file_extension}"
+    file_path = f"{UPLOAD_DIR}/posts/{file_name}"
+    
+    with open(file_path, "wb") as buffer:
+        shutil.copyfileobj(file.file, buffer)
+    
+    return {"image_url": f"/uploads/posts/{file_name}"}
 
 @app.get("/api/posts", response_model=List[PostResponse])
 async def get_posts(
@@ -1046,7 +1111,7 @@ async def get_stats(
     
     # Get total views across all posts
     total_views = db.query(Post).filter(Post.owner_id == current_user.id).with_entities(
-        db.func.sum(Post.view_count)
+        func.sum(Post.view_count)
     ).scalar() or 0
     
     return {

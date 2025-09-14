@@ -195,5 +195,5 @@ window.translations = {
         connect_btn: "Conectar",
         danger_zone_heading: "Zona de Peligro",
         danger_zone_description: "Procede con precaución. Estas acciones son irreversibles.",
-        }
+
 };

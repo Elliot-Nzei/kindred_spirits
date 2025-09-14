@@ -77,17 +77,9 @@ const ProfileManager = {
             <div class="relative flex-shrink-0 mb-4 sm:mb-0 sm:mr-6">
                 <img src="${profilePicture}" 
                      alt="${this.currentProfile.username}'s Profile" 
-                     class="w-32 h-32 rounded-full border-4 border-primary-light object-cover shadow-lg"
-                     onerror="this.src='${defaultAvatar}'; this.onerror=null;">
-                ${this.isOwnProfile ? `
-                    <button onclick="ProfileManager.openAvatarUpload()" 
-                            class="absolute bottom-2 right-2 p-2 bg-primary rounded-full text-white hover:bg-primary-dark transition-colors shadow-md">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/>
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/>
-                        </svg>
-                    </button>
-                ` : ''}
+                     class="w-32 h-32 rounded-full border-4 border-primary-light object-cover shadow-lg ${this.isOwnProfile ? 'cursor-pointer' : ''}"
+                     onerror="this.src='${defaultAvatar}'; this.onerror=null;"
+                     ${this.isOwnProfile ? `onclick="ProfileManager.handleProfileImageClick('${profilePicture}')"` : ''}>
             </div>
             
             <!-- Name, Username, and Actions -->
@@ -173,10 +165,27 @@ const ProfileManager = {
     </div>
             `
         }
+        // Manage visibility of mobile edit profile FAB
+        const mobileEditFab = document.getElementById('mobile-edit-profile-fab');
+        if (mobileEditFab) {
+            if (this.isOwnProfile) {
+                mobileEditFab.classList.remove('hidden');
+            } else {
+                mobileEditFab.classList.add('hidden');
+            }
+        }
     },
 
     // Load user posts
     async loadUserPosts(append = false) {
+        if (!append) {
+            this.currentPage = 0; // Reset current page for fresh load
+            this.hasMore = true; // Assume there's more content for a fresh load
+        }
+        if (this.isLoading || (!this.hasMore && append)) return; // Prevent multiple loads or loading when no more content
+
+        this.isLoading = true; // Set loading state
+
         try {
             const endpoint = `/api/users/${this.currentProfile.username}/posts?skip=${this.currentPage * this.pageSize}&limit=${this.pageSize}`;
             const response = await window.AuthAPI.request(endpoint);
@@ -200,6 +209,8 @@ const ProfileManager = {
             
         } catch (error) {
             console.error('Error loading posts:', error);
+        } finally {
+            this.isLoading = false; // Reset loading state
         }
     },
 
@@ -527,6 +538,73 @@ const ProfileManager = {
             console.error('Error uploading avatar:', error);
             this.showError('Failed to upload profile picture');
         }
+    },
+
+    // Handle profile image click
+    handleProfileImageClick(imageUrl) {
+        this.openProfileImageOptions(imageUrl);
+    },
+
+    // Open profile image options modal
+    openProfileImageOptions(imageUrl) {
+        const modal = this.createOptionsModal(imageUrl);
+        document.body.appendChild(modal);
+        // Show modal
+        setTimeout(() => modal.classList.add('active'), 10); // Add active class after a short delay for transition
+    },
+
+    // Create options modal
+    createOptionsModal(imageUrl) {
+        const modal = document.createElement('div');
+        modal.id = 'profile-image-options-modal';
+        modal.className = 'fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center profile-options-overlay';
+        modal.innerHTML = `
+            <div class="bg-surface rounded-xl max-w-xs w-full m-4 p-6 text-center profile-options-sheet">
+                <h3 class="text-lg font-semibold mb-4">Profile Image Options</h3>
+                <button onclick="ProfileManager.viewProfilePhoto('${imageUrl}'); ProfileManager.closeOptionsModal()" 
+                        class="w-full px-4 py-2 mb-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors">
+                    View Photo
+                </button>
+                <button onclick="ProfileManager.openAvatarUpload(); ProfileManager.closeOptionsModal()" 
+                        class="w-full px-4 py-2 border border-border-light rounded-lg hover:bg-surface-hover transition-colors">
+                    Edit Photo
+                </button>
+                <button onclick="ProfileManager.closeOptionsModal()" 
+                        class="w-full px-4 py-2 mt-4 text-text-secondary hover:text-primary transition-colors">
+                    Cancel
+                </button>
+            </div>
+        `;
+
+        // Close modal on outside click
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                this.closeOptionsModal();
+            }
+        });
+
+        return modal;
+    },
+
+    // Close options modal
+    closeOptionsModal() {
+        const modal = document.getElementById('profile-image-options-modal');
+        if (modal) {
+            modal.classList.remove('active');
+            // Remove from DOM after transition
+            modal.addEventListener('transitionend', () => modal.remove(), { once: true });
+        }
+    },
+
+    // View profile photo in full screen
+    viewProfilePhoto(imageUrl) {
+        const modal = document.createElement('div');
+        modal.className = 'fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center cursor-pointer';
+        modal.onclick = () => modal.remove();
+        modal.innerHTML = `
+            <img src="${imageUrl}" class="max-w-full max-h-full object-contain">
+        `;
+        document.body.appendChild(modal);
     },
 
     // Show followers modal
