@@ -45,6 +45,7 @@ window.addEventListener('load', () => {
             img.alt = `${notification.sender_username}'s avatar`;
             nameEl.textContent = notification.sender_username;
             textEl.textContent = notification.message;
+            timeEl.dataset.timestamp = notification.timestamp; // Added this line
             timeEl.textContent = timeAgo(notification.timestamp);
 
             if (notification.read) {
@@ -76,6 +77,23 @@ window.addEventListener('load', () => {
         }
     };
 
+    const markAllNotificationsAsRead = async () => {
+        try {
+            const token = window.AuthManager.getAuthToken();
+            await fetch(`${API_BASE_URL}/api/notifications/mark-all-read`, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            // After marking all as read, refresh the notifications list
+            loadNotifications();
+            updateNotificationBadge();
+        } catch (error) {
+            console.error('Error marking all notifications as read:', error);
+        }
+    };
+
     function timeAgo(timestamp) {
       const seconds = Math.floor((new Date() - new Date(timestamp)) / 1000);
       let interval = seconds / 31536000;
@@ -90,8 +108,10 @@ window.addEventListener('load', () => {
       if (interval > 1) return Math.floor(interval) + "m ago";
       return Math.floor(seconds) + "s ago";
     }
+    window.timeAgo = timeAgo; // Expose globally
 
     loadNotifications();
+    markAllNotificationsAsRead(); // Mark all as read when the page loads
 
     // Mobile notification button functionality
     const openNotificationsMobileBtn = document.getElementById('open-notifications-mobile');
@@ -107,7 +127,7 @@ window.addEventListener('load', () => {
 
         try {
             const token = window.AuthManager.getAuthToken();
-            const response = await fetch(`${API_BASE_URL}/api/notifications/unread_count`, {
+            const response = await fetch(`${API_BASE_URL}/api/notifications/unread-count`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -121,7 +141,11 @@ window.addEventListener('load', () => {
             const unreadCount = data.unread_count;
 
             if (unreadCount > 0) {
-                badge.textContent = unreadCount;
+                if (unreadCount > 9) {
+                    badge.textContent = "9+";
+                } else {
+                    badge.textContent = unreadCount;
+                }
                 badge.classList.remove('hidden');
             } else {
                 badge.classList.add('hidden');
