@@ -289,7 +289,7 @@ const FeedManager = {
         }
         
         const modalElement = document.getElementById('comments-modal');
-        modalElement.classList.remove('hidden');
+        modalElement.classList.add('active');
         modalElement.setAttribute('data-post-id', postId);
         
         await this.loadComments(postId);
@@ -310,7 +310,7 @@ const FeedManager = {
                         </svg>
                     </button>
                 </div>
-                <div id="comments-list" class="flex-1 overflow-y-auto p-4 space-y-3">
+                <div id="modal-comments-list" class="flex-1 overflow-y-auto p-4 space-y-3">
                     <div class="text-center py-4">
                         <div class="spinner"></div>
                     </div>
@@ -334,7 +334,7 @@ const FeedManager = {
 
     // Load comments
     async loadComments(postId) {
-        const commentsList = document.getElementById('comments-list');
+        const commentsList = document.getElementById('modal-comments-list');
         
         try {
             const response = await window.AuthAPI.request(`/api/posts/${postId}/comments`);
@@ -377,26 +377,26 @@ const FeedManager = {
     async postComment() {
         const modal = document.getElementById('comments-modal');
         const postId = modal.getAttribute('data-post-id');
-        const input = document.getElementById('comment-input');
+        // Try both possible comment input IDs
+        let input = document.getElementById('comment-input');
+        if (!input) {
+            input = document.getElementById('modal-comment-input-1');
+        }
+        if (!input) return; // No input found, do nothing
+
         const text = input.value.trim();
-        
         if (!text) return;
-        
         try {
             const response = await window.AuthAPI.request(`/api/posts/${postId}/comments`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ text })
             });
-            
             if (!response.ok) throw new Error('Failed to post comment');
-            
             input.value = '';
             await this.loadComments(postId);
-            
             // Update comment count in feed
             this.updateCommentCount(postId, 1);
-            
         } catch (error) {
             console.error('Error posting comment:', error);
         }
@@ -418,7 +418,7 @@ const FeedManager = {
     closeCommentsModal() {
         const modal = document.getElementById('comments-modal');
         if (modal) {
-            modal.classList.add('hidden');
+            modal.classList.remove('active');
         }
     },
 
@@ -759,6 +759,18 @@ const FeedManager = {
                     newPostModal.classList.remove('active');
                 }
             });
+        }
+
+        // Add this for static comment modal post button
+        const postCommentBtn1 = document.getElementById('post-modal-comment-btn-1');
+        if (postCommentBtn1) {
+            postCommentBtn1.addEventListener('click', () => this.postComment());
+        }
+
+        // Add close for static comment modal
+        const closeCommentsBtn1 = document.getElementById('close-comments-modal-1');
+        if (closeCommentsBtn1) {
+            closeCommentsBtn1.addEventListener('click', () => this.closeCommentsModal());
         }
     },
 

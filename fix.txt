@@ -1,37 +1,211 @@
-GET https://images.pixabay.com/photos/2016/11/21/12/42/beard-1845166_1280.jpg net::ERR_NAME_NOT_RESOLVED
-[NEW] Explain Console errors by using Copilot in Edge: click 
- to explain an error. Learn more
-Don't show again
-auth.js:64 
- 
- GET http://127.0.0.1:8000/api/stats/overview 500 (Internal Server Error)
-profile.js:263 
- Error loading stats: Error: Failed to load stats
-    at Object.loadStats (profile.js:257:37)
-    at async Object.loadProfile (profile.js:55:13)
-    at async Object.init (profile.js:24:9)
-﻿
-
-Accessibility
-Buttons must have discernible text: Element has no title attribute
-Compatibility
-'-webkit-mask-image' is not supported by Firefox. Add 'mask-image' to support Firefox 53+.
-'user-select' is not supported by Safari. Add '-webkit-user-select' to support Safari 3+.
-'content-type' header charset value should be 'utf-8'.
-'min-height: auto' is not supported by Firefox 22+.
-'text-size-adjust' is not supported by Firefox, Safari.
-Performance
-A 'cache-control' header is missing or empty.
-Resource should use cache busting but URL does not match configured patterns.
-Response should not include unneeded headers: content-security-policy
-Response should not include unneeded headers: x-xss-protection
-Security
-Response should include 'x-content-type-options' header.
-The 'Expires' header should not be used, 'Cache-Control' should be preferred.
-The 'X-Frame-Options' header should not be used. A similar effect, with more consistent support and stronger checks, can be achieved with the 'Content-Security-Policy' header and 'frame-ancestors' directive.
-Other
-Incorrect use of <label for=FORM_ELEMENT>
-'box-sizing' should be listed after '-webkit-box-sizing'.
-'transform' should be listed after '-webkit-transform'.
-'transition' should be listed after '-webkit-transition'.
-A form field element should have an id or name attribute
+PS C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits> make run-backend
+"Starting FastAPI backend..."
+backend\venv\Scripts\uvicorn backend.main:app --reload
+INFO:     Will watch for changes in these directories: ['C:\\Users\\USER\\Documents\\PROJECTS_2025\\kindred_spirits']
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     Started reloader process [6740] using StatReload
+C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\pydantic\_internal\_config.py:373: UserWarning: Valid config keys have changed in V2:
+* 'orm_mode' has been renamed to 'from_attributes'
+  warnings.warn(message, UserWarning)
+INFO:     Started server process [18116]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     127.0.0.1:65419 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65419 - "POST /api/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65419 - "GET /pages/community_feed_dashboard.html HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:65419 - "GET /js/feed.js HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:65418 - "GET /js/search.js HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:65418 - "GET /api/feed?skip=0&limit=20 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65418 - "GET /api/posts/9/comments HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\uvicorn\protocols\http\h11_impl.py", line 403, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\uvicorn\middleware\proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\fastapi\applications.py", line 1054, in __call__
+    await super().__call__(scope, receive, send)
+  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\starlette\applications.py", line 113, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\starlette\middleware\errors.py", line 186, in __call__
+    raise exc
+  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\starlette\middleware\errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\starlette\middleware\cors.py", line 85, in __call__
+    await self.app(scope, receive, send)
+  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\starlette\middleware\exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\starlette\routing.py", line 716, in __call__ 
+    await self.middleware_stack(scope, receive, send)
+  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\starlette\routing.py", line 736, in app      
+    await route.handle(scope, receive, send)
+  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\starlette\routing.py", line 290, in handle   
+    await self.app(scope, receive, send)
+  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\starlette\routing.py", line 78, in app       
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\starlette\routing.py", line 75, in app       
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\fastapi\routing.py", line 302, in app        
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\fastapi\routing.py", line 213, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\main.py", line 828, in get_comments
+    comment_response = CommentResponse.from_orm(comment)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\pydantic\main.py", line 1440, in from_orm    
+    return cls.model_validate(obj)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\pydantic\main.py", line 705, in model_validate
+    return cls.__pydantic_validator__.validate_python(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+pydantic_core._pydantic_core.ValidationError: 2 validation errors for CommentResponse
+owner_username
+  Field required [type=missing, input_value=<backend.main.Comment obj...t at 0x0000021CF03CF1D0>, input_type=Comment]
+    For further information visit https://errors.pydantic.dev/2.11/v/missing
+owner_profile_picture
+  Field required [type=missing, input_value=<backend.main.Comment obj...t at 0x0000021CF03CF1D0>, input_type=Comment]
+    For further information visit https://errors.pydantic.dev/2.11/v/missing
+INFO:     127.0.0.1:65424 - "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:65431 - "POST /api/posts/9/comments HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\uvicorn\protocols\http\h11_impl.py", line 403, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\uvicorn\middleware\proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\fastapi\applications.py", line 1054, in __call__
+    await super().__call__(scope, receive, send)
+  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\starlette\applications.py", line 113, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\starlette\middleware\errors.py", line 186, in __call__
+    raise exc
+  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\starlette\middleware\errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\starlette\middleware\cors.py", line 93, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\starlette\middleware\cors.py", line 144, in simple_response
+    await self.app(scope, receive, send)
+  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\starlette\middleware\exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\starlette\routing.py", line 716, in __call__ 
+    await self.middleware_stack(scope, receive, send)
+  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\starlette\routing.py", line 736, in app      
+    await route.handle(scope, receive, send)
+  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\starlette\routing.py", line 290, in handle   
+    await self.app(scope, receive, send)
+  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\starlette\routing.py", line 78, in app       
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\starlette\routing.py", line 75, in app       
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\fastapi\routing.py", line 302, in app        
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\fastapi\routing.py", line 213, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\main.py", line 807, in create_comment
+    response = CommentResponse.from_orm(db_comment)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\pydantic\main.py", line 1440, in from_orm    
+    return cls.model_validate(obj)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\pydantic\main.py", line 705, in model_validate
+    return cls.__pydantic_validator__.validate_python(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+pydantic_core._pydantic_core.ValidationError: 2 validation errors for CommentResponse
+owner_username
+  Field required [type=missing, input_value=<backend.main.Comment obj...t at 0x0000021CF01EBD90>, input_type=Comment]
+    For further information visit https://errors.pydantic.dev/2.11/v/missing
+owner_profile_picture
+  Field required [type=missing, input_value=<backend.main.Comment obj...t at 0x0000021CF01EBD90>, input_type=Comment]
+    For further information visit https://errors.pydantic.dev/2.11/v/missing
+INFO:     127.0.0.1:65435 - "GET /pages/community_feed_dashboard.html HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:65435 - "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:65435 - "GET /js/feed.js HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:65435 - "GET /api/feed?skip=0&limit=20 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65435 - "GET /api/posts/9/comments HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\uvicorn\protocols\http\h11_impl.py", line 403, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\uvicorn\middleware\proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\fastapi\applications.py", line 1054, in __call__
+    await super().__call__(scope, receive, send)
+  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\starlette\applications.py", line 113, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\starlette\middleware\errors.py", line 186, in __call__
+    raise exc
+  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\starlette\middleware\errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\starlette\middleware\cors.py", line 85, in __call__
+    await self.app(scope, receive, send)
+  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\starlette\middleware\exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\starlette\routing.py", line 716, in __call__ 
+    await self.middleware_stack(scope, receive, send)
+  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\starlette\routing.py", line 736, in app      
+    await route.handle(scope, receive, send)
+  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\starlette\routing.py", line 290, in handle   
+    await self.app(scope, receive, send)
+  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\starlette\routing.py", line 78, in app       
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\starlette\routing.py", line 75, in app       
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\fastapi\routing.py", line 302, in app        
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\fastapi\routing.py", line 213, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\main.py", line 828, in get_comments
+    comment_response = CommentResponse.from_orm(comment)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\pydantic\main.py", line 1440, in from_orm    
+    return cls.model_validate(obj)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\pydantic\main.py", line 705, in model_validate
+    return cls.__pydantic_validator__.validate_python(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+pydantic_core._pydantic_core.ValidationError: 2 validation errors for CommentResponse
+owner_username
+  Field required [type=missing, input_value=<backend.main.Comment obj...t at 0x0000021CF052AA10>, input_type=Comment]
+    For further information visit https://errors.pydantic.dev/2.11/v/missing
+owner_profile_picture
+  Field required [type=missing, input_value=<backend.main.Comment obj...t at 0x0000021CF052AA10>, input_type=Comment]
+    For further information visit https://errors.pydantic.dev/2.11/v/missing
