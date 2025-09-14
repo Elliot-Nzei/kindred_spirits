@@ -286,3 +286,292 @@ const ProfileManager = {
                 </div>
                 <div class="card p-4 text-center">
                     <div class="text-2xl font-bold text-accent">${this.formatNumber(stats.total_likes)}</div>
+                    <div class="text-sm text-text-secondary">Total Likes</div>
+                </div>
+                <div class="card p-4 text-center">
+                    <div class="text-2xl font-bold text-secondary">${this.formatNumber(stats.total_comments)}</div>
+                    <div class="text-sm text-text-secondary">Total Comments</div>
+                </div>
+                <div class="card p-4 text-center">
+                    <div class="text-2xl font-bold text-success">${this.formatNumber(stats.total_followers)}</div>
+                    <div class="text-sm text-text-secondary">Followers</div>
+                </div>
+                <div class="card p-4 text-center">
+                    <div class="text-2xl font-bold text-warning">${this.formatNumber(stats.total_following)}</div>
+                    <div class="text-sm text-text-secondary">Following</div>
+                </div>
+                <div class="card p-4 text-center">
+                    <div class="text-2xl font-bold text-info">${this.formatNumber(stats.total_posts)}</div>
+                    <div class="text-sm text-text-secondary">Posts</div>
+                </div>
+            </div>
+        `;
+    },
+
+    // Setup tabs
+    setupTabs() {
+        const tabButtons = document.querySelectorAll('[data-tab]');
+        tabButtons.forEach(button => {
+            button.addEventListener('click', (e) => {
+                const tab = e.target.dataset.tab;
+                this.switchTab(tab);
+            });
+        });
+    },
+
+    // Switch tabs
+    switchTab(tab) {
+        this.activeTab = tab;
+        
+        // Update tab buttons
+        document.querySelectorAll('[data-tab]').forEach(button => {
+            if (button.dataset.tab === tab) {
+                button.classList.add('border-primary', 'text-primary');
+                button.classList.remove('border-transparent', 'text-text-secondary');
+            } else {
+                button.classList.remove('border-primary', 'text-primary');
+                button.classList.add('border-transparent', 'text-text-secondary');
+            }
+        });
+        
+        // Show/hide tab content
+        document.querySelectorAll('[data-tab-content]').forEach(content => {
+            if (content.dataset.tabContent === tab) {
+                content.classList.remove('hidden');
+            } else {
+                content.classList.add('hidden');
+            }
+        });
+    },
+
+    // Toggle follow
+    async toggleFollow() {
+        if (!this.currentProfile) return;
+        
+        try {
+            const endpoint = this.currentProfile.is_following 
+                ? `/api/users/${this.currentProfile.username}/unfollow`
+                : `/api/users/${this.currentProfile.username}/follow`;
+            
+            const method = this.currentProfile.is_following ? 'DELETE' : 'POST';
+            
+            const response = await window.AuthAPI.request(endpoint, {
+                method: method
+            });
+            
+            if (response.ok) {
+                this.currentProfile.is_following = !this.currentProfile.is_following;
+                this.updateFollowButton();
+            }
+        } catch (error) {
+            console.error('Error toggling follow:', error);
+        }
+    },
+
+    // Update follow button
+    updateFollowButton() {
+        const followBtn = document.getElementById('follow-btn');
+        if (!followBtn) return;
+        
+        if (this.currentProfile.is_following) {
+            followBtn.textContent = 'Following';
+            followBtn.classList.remove('bg-primary', 'text-white');
+            followBtn.classList.add('border', 'border-border-light');
+        } else {
+            followBtn.textContent = 'Follow';
+            followBtn.classList.add('bg-primary', 'text-white');
+            followBtn.classList.remove('border', 'border-border-light');
+        }
+    },
+
+    // Open edit modal
+    openEditModal() {
+        const modal = document.getElementById('edit-profile-modal');
+        if (!modal) return;
+        
+        // Populate form with current data
+        document.getElementById('edit-full-name').value = this.currentProfile.full_name || '';
+        document.getElementById('edit-bio').value = this.currentProfile.bio || '';
+        document.getElementById('edit-location').value = this.currentProfile.location || '';
+        document.getElementById('edit-website').value = this.currentProfile.website || '';
+        
+        modal.classList.remove('hidden');
+    },
+
+    // Close edit modal
+    closeEditModal() {
+        const modal = document.getElementById('edit-profile-modal');
+        if (modal) {
+            modal.classList.add('hidden');
+        }
+    },
+
+    // Save profile changes
+    async saveProfile() {
+        const formData = {
+            full_name: document.getElementById('edit-full-name').value,
+            bio: document.getElementById('edit-bio').value,
+            location: document.getElementById('edit-location').value,
+            website: document.getElementById('edit-website').value
+        };
+        
+        try {
+            const response = await window.AuthAPI.request('/api/users/me', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            });
+            
+            if (response.ok) {
+                this.currentProfile = await response.json();
+                this.renderProfile();
+                this.closeEditModal();
+                this.showSuccess('Profile updated successfully');
+            }
+        } catch (error) {
+            console.error('Error saving profile:', error);
+            this.showError('Failed to update profile');
+        }
+    },
+
+    // Open avatar upload
+    openAvatarUpload() {
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = 'image/*';
+        input.onchange = (e) => this.handleAvatarUpload(e.target.files[0]);
+        input.click();
+    },
+
+    // Handle avatar upload
+    async handleAvatarUpload(file) {
+        if (!file) return;
+        
+        const formData = new FormData();
+        formData.append('file', file);
+        
+        try {
+            const response = await window.AuthAPI.request('/api/users/me/upload-profile-picture', {
+                method: 'POST',
+                body: formData
+            });
+            
+            if (response.ok) {
+                const data = await response.json();
+                this.currentProfile.profile_picture = data.profile_picture;
+                this.renderProfile();
+                this.showSuccess('Profile picture updated');
+            }
+        } catch (error) {
+            console.error('Error uploading avatar:', error);
+            this.showError('Failed to upload profile picture');
+        }
+    },
+
+    // Show followers modal
+    async showFollowers() {
+        // Implementation for showing followers list
+        console.log('Show followers');
+    },
+
+    // Show following modal
+    async showFollowing() {
+        // Implementation for showing following list
+        console.log('Show following');
+    },
+
+    // Send message
+    sendMessage() {
+        // Implementation for sending message
+        console.log('Send message to', this.currentProfile.username);
+    },
+
+    // Attach event listeners
+    attachEventListeners() {
+        // Edit profile form
+        const editForm = document.getElementById('edit-profile-form');
+        if (editForm) {
+            editForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                this.saveProfile();
+            });
+        }
+        
+        // Close modal buttons
+        document.querySelectorAll('[data-close-modal]').forEach(button => {
+            button.addEventListener('click', () => this.closeEditModal());
+        });
+        
+        // Load more posts on scroll
+        window.addEventListener('scroll', () => {
+            if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 1000) {
+                if (this.hasMore && this.activeTab === 'posts') {
+                    this.loadUserPosts(true);
+                }
+            }
+        });
+    },
+
+    // Utility functions
+    formatDate(dateString) {
+        const date = new Date(dateString);
+        const options = { year: 'numeric', month: 'short', day: 'numeric' };
+        return date.toLocaleDateString('en-US', options);
+    },
+
+    formatNumber(num) {
+        if (num >= 1000000) {
+            return (num / 1000000).toFixed(1) + 'M';
+        } else if (num >= 1000) {
+            return (num / 1000).toFixed(1) + 'K';
+        }
+        return num.toString();
+    },
+
+    formatBio(bio) {
+        // Convert URLs to links and handle line breaks
+        return bio
+            .replace(/\n/g, '<br>')
+            .replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" class="text-primary hover:underline">$1</a>');
+    },
+
+    showError(message) {
+        // Show error notification
+        console.error(message);
+        // Implement toast/notification system
+    },
+
+    showSuccess(message) {
+        // Show success notification
+        console.log(message);
+        // Implement toast/notification system
+    },
+
+    showUserNotFound() {
+        const container = document.querySelector('.max-w-6xl');
+        if (container) {
+            container.innerHTML = `
+                <div class="text-center py-20">
+                    <svg class="w-24 h-24 mx-auto text-text-secondary mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/>
+                    </svg>
+                    <h2 class="text-2xl font-bold text-text-primary mb-2">User Not Found</h2>
+                    <p class="text-text-secondary mb-6">The user you're looking for doesn't exist or has been removed.</p>
+                    <a href="/pages/community_feed_dashboard.html" class="inline-block px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors">
+                        Back to Feed
+                    </a>
+                </div>
+            `;
+        }
+    }
+};
+
+// Initialize when DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+    ProfileManager.init();
+});
+
+// Export for global access
+window.ProfileManager = ProfileManager;

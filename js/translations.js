@@ -1,4 +1,4 @@
-const translations = {
+var translations = {
     en: {
         settings_title: "Settings",
         settings_heading: "Settings",
@@ -196,5 +196,8 @@ const translations = {
         danger_zone_heading: "Zona de Peligro",
         danger_zone_description: "Procede con precaución. Estas acciones son irreversibles.",
         delete_account_btn: "Eliminar Cuenta"
+    }
+    }
+};e_account_btn: "Eliminar Cuenta"
     }
 };

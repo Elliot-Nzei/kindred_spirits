@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Metanoia - Transform Your Journey</title>
+    <link rel="stylesheet" href="css/main.css" />
     <style>
                     * {
                 margin: 0;
@@ -517,7 +518,7 @@
     <div class="container">
         <div class="logo-container">
             <div class="logo"></div>
-            <h1>Metanoia <span id="user-full-name"></span></h1>
+            <h1>Metanoia</h1>
             <p class="tagline">Transform your journey of self-discovery</p>
         </div>
 
@@ -531,7 +532,7 @@
             <!-- Login Form -->
             <form class="login-form" id="loginForm">
                 <div class="input-group">
-                    <input type="text" placeholder="Username or Email" required>
+                    <input type="text" id="login-username" placeholder="Username" required>
                     <svg class="input-icon icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                         <circle cx="12" cy="7" r="4"></circle>
@@ -589,7 +590,7 @@
             <!-- Register Form -->
             <form class="register-form" id="registerForm">
                 <div class="input-group">
-                    <input type="text" placeholder="Username" required>
+                    <input type="text" id="register-username" placeholder="Username" required>
                     <svg class="input-icon icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                         <circle cx="12" cy="7" r="4"></circle>
@@ -597,7 +598,7 @@
                 </div>
 
                 <div class="input-group">
-                    <input type="email" placeholder="Email" required>
+                    <input type="email" id="register-email" placeholder="Email" required>
                     <svg class="input-icon icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
                         <polyline points="22,6 12,13 2,6"></polyline>
@@ -632,117 +633,6 @@
         </div>
     </div>
 
-    <script>
-        // Tab switching
-        const loginTab = document.getElementById('loginTab');
-        const registerTab = document.getElementById('registerTab');
-        const tabIndicator = document.getElementById('tabIndicator');
-        const loginForm = document.getElementById('loginForm');
-        const registerForm = document.getElementById('registerForm');
-
-        loginTab.addEventListener('click', () => {
-            loginTab.classList.add('active');
-            registerTab.classList.remove('active');
-            tabIndicator.classList.remove('register');
-            loginForm.classList.remove('inactive');
-            registerForm.classList.remove('active');
-        });
-
-        registerTab.addEventListener('click', () => {
-            registerTab.classList.add('active');
-            loginTab.classList.remove('active');
-            tabIndicator.classList.add('register');
-            loginForm.classList.add('inactive');
-            registerForm.classList.add('active');
-        });
-
-        // Password visibility toggle
-        function togglePassword(inputId) {
-            const input = document.getElementById(inputId);
-            const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
-            input.setAttribute('type', type);
-        }
-
-        // Form submissions
-        loginForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            // Get form values
-            const usernameOrEmail = loginForm.querySelector('input[type="text"]').value;
-            const password = document.getElementById('loginPassword').value;
-
-            // Send login request to backend
-            try {
-                const res = await fetch('/api/login', { // <-- Update URL if needed
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ username: usernameOrEmail, password })
-                });
-                const data = await res.json();
-                if (res.ok && data.success) {
-                    // Redirect or show success
-                    window.location.href = '/pages/community_feed_dashboard.html'; // Redirect to dashboard
-                } else {
-                    document.getElementById('loginError').textContent = data.message || 'Invalid username or password';
-                    document.getElementById('loginError').classList.add('show');
-                }
-            } catch (err) {
-                document.getElementById('loginError').textContent = 'Network error. Please try again.';
-                document.getElementById('loginError').classList.add('show');
-            }
-        });
-
-        registerForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            const username = registerForm.querySelector('input[placeholder="Username"]').value;
-            const email = registerForm.querySelector('input[type="email"]').value;
-            const password = document.getElementById('registerPassword').value;
-            const confirmPassword = document.getElementById('confirmPassword').value;
-
-            if (password !== confirmPassword) {
-                document.getElementById('registerError').textContent = 'Passwords do not match';
-                document.getElementById('registerError').classList.add('show');
-                document.getElementById('registerSuccess').classList.remove('show');
-                return;
-            }
-
-            // Send registration request to backend
-            try {
-                const res = await fetch('/api/register', { // <-- Update URL if needed
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ username, email, password })
-                });
-                const data = await res.json();
-                if (res.ok && data.success) {
-                    document.getElementById('registerError').classList.remove('show');
-                    document.getElementById('registerSuccess').textContent = data.message || 'Account created successfully!';
-                    document.getElementById('registerSuccess').classList.add('show');
-                    setTimeout(() => {
-                        registerForm.reset();
-                        document.getElementById('registerSuccess').classList.remove('show');
-                        loginTab.click();
-                    }, 2000);
-                } else {
-                    document.getElementById('registerError').textContent = data.message || 'Registration failed';
-                    document.getElementById('registerError').classList.add('show');
-                    document.getElementById('registerSuccess').classList.remove('show');
-                }
-            } catch (err) {
-                document.getElementById('registerError').textContent = 'Network error. Please try again.';
-                document.getElementById('registerError').classList.add('show');
-                document.getElementById('registerSuccess').classList.remove('show');
-            }
-        });
-
-        // Clear error messages on input
-        document.querySelectorAll('input').forEach(input => {
-            input.addEventListener('input', () => {
-                document.querySelectorAll('.error-message').forEach(error => {
-                    error.classList.remove('show');
-                });
-            });
-        });
-    </script>
+    <script src="js/auth.js"></script>
 </body>
 </html>

@@ -1,61 +1,111 @@
-[Intervention] Images loaded lazily and replaced with placeholders. Load events are deferred. See https://go.microsoft.com/fwlink/?linkid=2048113
-auth.js:189 
- Uncaught SyntaxError: Unexpected token '}' (at auth.js:189:1)
-[NEW] Explain Console errors by using Copilot in Edge: click 
- to explain an error. Learn more
-Don't show again
-community_feed_dashboard.html:1262 
- 
- GET https://images.pixabay.com/photos/2017/08/06/12/06/people-2592247_1280.jpg net::ERR_NAME_NOT_RESOLVED
-community_feed_dashboard.html:563 
- Uncaught (in promise) TypeError: window.isAuthenticated is not a function
-    at HTMLDocument.<anonymous> (community_feed_dashboard.html:563:25)
-community_feed_dashboard.html:1 [Intervention] Slow network is detected. See https://www.chromestatus.com/feature/5636954674692096 for more details. Fallback font will be used while loading: https://cdn.loom.com/assets/fonts/circular/CircularXXWeb-Book-cd7d2bc….woff2
-﻿
+## Key Features Added for Complete Personalization:
 
-Compatibility
-'-webkit-mask-image' is not supported by Firefox. Add 'mask-image' to support Firefox 53+.
-'user-select' is not supported by Safari. Add '-webkit-user-select' to support Safari 3+.
-'content-type' header charset value should be 'utf-8'.
-'min-height: auto' is not supported by Firefox 22+.
-'text-size-adjust' is not supported by Firefox, Safari.
-Performance
-A 'cache-control' header is missing or empty.
-Resource should use cache busting but URL does not match configured patterns.
-Response should not include unneeded headers: content-security-policy
-Response should not include unneeded headers: x-xss-protection
+### 1. **Enhanced User Authentication & Profiles**
+- JWT tokens that persist across devices
+- User profiles with bio, location, website, profile pictures
+- Full user management (registration, login, profile updates)
+- Profile picture upload functionality
 
+### 2. **Social Features**
+- **Follow/Unfollow System**: Users can follow each other
+- **Personalized Feed**: Shows posts from people you follow
+- **User Search**: Find users by username, name, or bio
+- **Post Search**: Search posts by title or content
 
+### 3. **Complete Post Management**
+- Create, read, update, delete posts
+- Post views tracking
+- Image uploads for posts
+- User-specific post listings
 
+### 4. **Interactive Features**
+- **Likes**: Like/unlike posts with real-time counts
+- **Comments**: Comment on posts with nested replies support
+- **Notifications**: Real-time notifications for likes, comments, follows
+- **Unread notification counter**
 
-PS C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits> make run-backend
-"Starting FastAPI backend..."
-backend\venv\Scripts\uvicorn backend.main:app --reload
-INFO:     Will watch for changes in these directories: ['C:\\Users\\USER\\Documents\\PROJECTS_2025\\kindred_spirits']
-INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
-INFO:     Started reloader process [8040] using StatReload
-INFO:     127.0.0.1:54946 - "GET / HTTP/1.1" 200 OK
-INFO:     Started server process [19904]
-INFO:     Waiting for application startup.
-INFO:     Application startup complete.
-INFO:     127.0.0.1:54946 - "POST /api/login HTTP/1.1" 200 OK
-INFO:     127.0.0.1:54946 - "GET /js/auth.js HTTP/1.1" 304 Not Modified
-INFO:     127.0.0.1:54946 - "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 Not Found
-INFO:     127.0.0.1:54946 - "GET /pages/settings.html HTTP/1.1" 304 Not Modified
-INFO:     127.0.0.1:54946 - "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 Not Found
-INFO:     127.0.0.1:55027 - "GET /index.html HTTP/1.1" 200 OK
-INFO:     127.0.0.1:55027 - "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 Not Found
-INFO:     127.0.0.1:55027 - "POST /api/login HTTP/1.1" 200 OK
-INFO:     127.0.0.1:55027 - "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 Not Found
-INFO:     127.0.0.1:55028 - "GET /js/auth.js HTTP/1.1" 200 OK
-INFO:     127.0.0.1:55036 - "GET /pages/soul_profile.html HTTP/1.1" 304 Not Modified
-INFO:     127.0.0.1:55036 - "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 Not Found
-INFO:     127.0.0.1:55036 - "GET /js/auth.js HTTP/1.1" 304 Not Modified
-INFO:     127.0.0.1:55037 - "GET /index.html HTTP/1.1" 200 OK
-INFO:     127.0.0.1:55037 - "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 Not Found
-INFO:     127.0.0.1:55041 - "POST /api/login HTTP/1.1" 401 Unauthorized
-INFO:     127.0.0.1:55041 - "POST /api/login HTTP/1.1" 401 Unauthorized
-INFO:     127.0.0.1:55049 - "POST /api/login HTTP/1.1" 401 Unauthorized
-INFO:     127.0.0.1:55049 - "POST /api/login HTTP/1.1" 200 OK
-INFO:     127.0.0.1:55049 - "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 Not Found
-INFO:     127.0.0.1:55049 - "GET /js/auth.js HTTP/1.1" 304 Not Modified
+### 5. **Data Persistence**
+- SQLite database stores all user data
+- Data persists across sessions and devices
+- Proper relationships between users, posts, comments, likes
+- Cascade deletes to maintain data integrity
+
+### 6. **Security Features**
+- Password hashing with bcrypt
+- JWT token authentication
+- Protected routes requiring authentication
+- User-specific data access controls
+
+### 7. **API Endpoints for Frontend Integration**
+
+**Authentication:**
+- `POST /api/register` - Create new account
+- `POST /api/login` - Login (returns JWT token)
+
+**User Profile:**
+- `GET /api/users/me` - Get current user profile
+- `GET /api/users/{username}` - Get any user's profile
+- `PUT /api/users/me` - Update profile
+- `POST /api/users/me/upload-profile-picture` - Upload profile picture
+
+**Social:**
+- `POST /api/users/{username}/follow` - Follow user
+- `DELETE /api/users/{username}/unfollow` - Unfollow user
+- `GET /api/feed` - Get personalized feed
+
+**Posts:**
+- `GET /api/posts` - Get all posts
+- `POST /api/posts` - Create post
+- `GET /api/posts/{id}` - Get specific post
+- `PUT /api/posts/{id}` - Update post
+- `DELETE /api/posts/{id}` - Delete post
+- `GET /api/users/{username}/posts` - Get user's posts
+
+**Interactions:**
+- `POST /api/posts/{id}/like` - Like post
+- `DELETE /api/posts/{id}/unlike` - Unlike post
+- `POST /api/posts/{id}/comments` - Add comment
+- `GET /api/posts/{id}/comments` - Get comments
+
+**Notifications:**
+- `GET /api/notifications` - Get user notifications
+- `GET /api/notifications/unread-count` - Get unread count
+- `PUT /api/notifications/{id}/read` - Mark as read
+
+### 8. **Frontend Integration Tips**
+
+Store the JWT token in localStorage after login:
+```javascript
+// Login
+const response = await fetch('/api/login', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+    body: new URLSearchParams({
+        username: 'user',
+        password: 'pass'
+    })
+});
+const data = await response.json();
+localStorage.setItem('token', data.access_token);
+localStorage.setItem('user_id', data.user_id);
+localStorage.setItem('username', data.username);
+
+// Use token for authenticated requests
+const token = localStorage.getItem('token');
+const response = await fetch('/api/posts', {
+    headers: {
+        'Authorization': `Bearer ${token}`
+    }
+});
+```
+
+This system now provides:
+- ✅ True personalization where users see their own data
+- ✅ Data persistence across devices and sessions
+- ✅ Social features like modern platforms (Instagram, Twitter, etc.)
+- ✅ Secure authentication and authorization
+- ✅ Real-time notifications
+- ✅ Complete CRUD operations for all entities
+- ✅ Scalable architecture ready for production
+
+The backend is now fully equipped to handle a personalized social platform where users can create accounts, post content, interact with others, and access their data from any device as long as they're logged in correctly.

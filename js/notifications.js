@@ -1,0 +1,95 @@
+document.addEventListener('DOMContentLoaded', () => {
+    if (!window.isAuthenticated()) {
+        window.location.href = '../index.html';
+        return;
+    }
+
+    const API_BASE_URL = 'http://127.0.0.1:8000';
+    const allNotificationsList = document.getElementById("all-notifications-list");
+    const template = document.getElementById("notification-template");
+
+    const loadNotifications = async () => {
+        try {
+            const token = window.getAuthToken();
+            const response = await fetch(`${API_BASE_URL}/api/notifications`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to load notifications');
+            }
+
+            const notifications = await response.json();
+            displayNotifications(notifications);
+
+        } catch (error) {
+            console.error('Error loading notifications:', error);
+            allNotificationsList.innerHTML = '<p class="text-center text-red-500">Could not load notifications.</p>';
+        }
+    };
+
+    const displayNotifications = (notifications) => {
+        allNotificationsList.innerHTML = '';
+        notifications.forEach(notification => {
+            const clone = template.content.cloneNode(true);
+            const img = clone.querySelector("img");
+            const nameEl = clone.querySelector("span.font-semibold");
+            const textEl = clone.querySelector(".notification-text");
+            const timeEl = clone.querySelector("p.text-gray-500");
+
+            const defaultAvatar = 'https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D';
+
+            img.src = notification.sender_profile_picture ? `${API_BASE_URL}${notification.sender_profile_picture}` : defaultAvatar;
+            img.alt = `${notification.sender_username}'s avatar`;
+            nameEl.textContent = notification.sender_username;
+            textEl.textContent = notification.message;
+            timeEl.textContent = timeAgo(notification.timestamp);
+
+            if (notification.read) {
+                clone.firstElementChild.classList.add('opacity-60');
+            }
+
+            clone.firstElementChild.addEventListener('click', () => {
+                markNotificationAsRead(notification.id);
+                if (notification.link) {
+                    window.location.href = notification.link;
+                }
+            });
+
+            allNotificationsList.appendChild(clone);
+        });
+    };
+
+    const markNotificationAsRead = async (notificationId) => {
+        try {
+            const token = window.getAuthToken();
+            await fetch(`${API_BASE_URL}/api/notifications/${notificationId}/read`, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+        } catch (error) {
+            console.error('Error marking notification as read:', error);
+        }
+    };
+
+    function timeAgo(timestamp) {
+      const seconds = Math.floor((new Date() - new Date(timestamp)) / 1000);
+      let interval = seconds / 31536000;
+      if (interval > 1) return Math.floor(interval) + "y ago";
+      interval = seconds / 2592000;
+      if (interval > 1) return Math.floor(interval) + "mo ago";
+      interval = seconds / 86400;
+      if (interval > 1) return Math.floor(interval) + "d ago";
+      interval = seconds / 3600;
+      if (interval > 1) return Math.floor(interval) + "h ago";
+      interval = seconds / 60;
+      if (interval > 1) return Math.floor(interval) + "m ago";
+      return Math.floor(seconds) + "s ago";
+    }
+
+    loadNotifications();
+});
