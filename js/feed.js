@@ -570,15 +570,22 @@ const FeedManager = {
         submitBtn.textContent = 'Posting...';
 
         try {
-            // First create the post
+            let payload = {
+                title: content.substring(0, 50) + '...',
+                content: content
+            };
+            // Only add image_url if an image is uploaded
+            if (imageFile) {
+                // You may need to upload the image first and get a URL
+                // For now, just show a warning
+                this.showToast('Image upload not implemented', 'warning');
+                // Optionally, return here to avoid sending image_url: null
+                // return;
+            }
             const response = await window.AuthAPI.request('/api/posts', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    title: content.substring(0, 50) + '...',
-                    content: content,
-                    image_url: null
-                })
+                body: JSON.stringify(payload)
             });
 
             if (!response.ok) throw new Error('Failed to create post');
@@ -726,17 +733,17 @@ const FeedManager = {
     // Attach event listeners
     attachEventListeners() {
         // New post modal
-        const newPostBtn = document.getElementById('open-new-post-modal');
         const newPostBtnDesktop = document.getElementById('open-new-post-modal-desktop');
+        const newPostBtnMobile = document.getElementById('open-new-post-modal-mobile');
         const newPostModal = document.getElementById('new-post-modal');
         const closeNewPostBtn = document.getElementById('close-new-post-modal');
         const submitPostBtn = document.getElementById('submit-new-post');
 
-        if (newPostBtn) {
-            newPostBtn.addEventListener('click', () => newPostModal?.classList.add('active'));
-        }
         if (newPostBtnDesktop) {
             newPostBtnDesktop.addEventListener('click', () => newPostModal?.classList.add('active'));
+        }
+        if (newPostBtnMobile) {
+            newPostBtnMobile.addEventListener('click', () => newPostModal?.classList.add('active'));
         }
         if (closeNewPostBtn) {
             closeNewPostBtn.addEventListener('click', () => newPostModal?.classList.remove('active'));

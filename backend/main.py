@@ -244,20 +244,25 @@ class PostUpdate(BaseModel):
     content: Optional[str] = None
     image_url: Optional[str] = None
 
-class PostResponse(PostBase):
+class PostResponse(BaseModel):
     id: int
-    owner_id: int
+    title: str
+    content: str
     owner_username: str
-    owner_profile_picture: Optional[str]
-    created_at: datetime
-    updated_at: datetime
-    view_count: int
-    likes_count: int = 0
-    comments_count: int = 0
-    is_liked: bool = False
-    
+    owner_profile_picture: str | None = None
+
+    @classmethod
+    def from_orm_with_owner(cls, post):
+        return cls(
+            id=post.id,
+            title=post.title,
+            content=post.content,
+            owner_username=post.owner.username if post.owner else "",
+            owner_profile_picture=post.owner.profile_picture if post.owner else None,
+        )
+
     class Config:
-        from_attributes = True
+        orm_mode = True
 
 class CommentBase(BaseModel):
     text: str
@@ -553,9 +558,7 @@ async def create_post(
     db.commit()
     db.refresh(db_post)
     
-    response = PostResponse.from_orm(db_post)
-    response.owner_username = current_user.username
-    response.owner_profile_picture = current_user.profile_picture
+    response = PostResponse.from_orm_with_owner(db_post)
     response.likes_count = 0
     response.comments_count = 0
     response.is_liked = False
@@ -573,9 +576,7 @@ async def get_posts(
     
     response = []
     for post in posts:
-        post_response = PostResponse.from_orm(post)
-        post_response.owner_username = post.owner.username
-        post_response.owner_profile_picture = post.owner.profile_picture
+        post_response = PostResponse.from_orm_with_owner(post)
         post_response.likes_count = db.query(Like).filter(Like.post_id == post.id).count()
         post_response.comments_count = db.query(Comment).filter(Comment.post_id == post.id).count()
         
@@ -603,9 +604,7 @@ async def get_post(
     post.view_count += 1
     db.commit()
     
-    response = PostResponse.from_orm(post)
-    response.owner_username = post.owner.username
-    response.owner_profile_picture = post.owner.profile_picture
+    response = PostResponse.from_orm_with_owner(post)
     response.likes_count = db.query(Like).filter(Like.post_id == post.id).count()
     response.comments_count = db.query(Comment).filter(Comment.post_id == post.id).count()
     
@@ -636,9 +635,7 @@ async def get_user_posts(
     
     response = []
     for post in posts:
-        post_response = PostResponse.from_orm(post)
-        post_response.owner_username = user.username
-        post_response.owner_profile_picture = user.profile_picture
+        post_response = PostResponse.from_orm_with_owner(post)
         post_response.likes_count = db.query(Like).filter(Like.post_id == post.id).count()
         post_response.comments_count = db.query(Comment).filter(Comment.post_id == post.id).count()
         
@@ -674,9 +671,7 @@ async def update_post(
     db.commit()
     db.refresh(post)
     
-    response = PostResponse.from_orm(post)
-    response.owner_username = current_user.username
-    response.owner_profile_picture = current_user.profile_picture
+    response = PostResponse.from_orm_with_owner(post)
     response.likes_count = db.query(Like).filter(Like.post_id == post.id).count()
     response.comments_count = db.query(Comment).filter(Comment.post_id == post.id).count()
     response.is_liked = db.query(Like).filter(
@@ -936,9 +931,7 @@ async def get_feed(
     
     response = []
     for post in posts:
-        post_response = PostResponse.from_orm(post)
-        post_response.owner_username = post.owner.username
-        post_response.owner_profile_picture = post.owner.profile_picture
+        post_response = PostResponse.from_orm_with_owner(post)
         post_response.likes_count = db.query(Like).filter(Like.post_id == post.id).count()
         post_response.comments_count = db.query(Comment).filter(Comment.post_id == post.id).count()
         post_response.is_liked = db.query(Like).filter(
@@ -989,9 +982,7 @@ async def search_posts(
     
     response = []
     for post in posts:
-        post_response = PostResponse.from_orm(post)
-        post_response.owner_username = post.owner.username
-        post_response.owner_profile_picture = post.owner.profile_picture
+        post_response = PostResponse.from_orm_with_owner(post)
         post_response.likes_count = db.query(Like).filter(Like.post_id == post.id).count()
         post_response.comments_count = db.query(Comment).filter(Comment.post_id == post.id).count()
         
@@ -1012,8 +1003,9 @@ async def get_stats(
     db: Session = Depends(get_db)
 ):
     total_posts = db.query(Post).filter(Post.owner_id == current_user.id).count()
-    total_likes = db.query(Like).join(Post).filter(Post.owner_id == current_user.id).count()
-    total_comments = db.query(Comment).join(Post).filter(Post.owner_id == current_user.id).count()
+    user_post_ids = db.query(Post.id).filter(Post.owner_id == current_user.id).subquery()
+    total_likes = db.query(Like).filter(Like.post_id.in_(user_post_ids)).count()
+    total_comments = db.query(Comment).filter(Comment.post_id.in_(user_post_ids)).count()
     total_followers = db.query(Follow).filter(Follow.followed_id == current_user.id).count()
     total_following = db.query(Follow).filter(Follow.follower_id == current_user.id).count()
     
