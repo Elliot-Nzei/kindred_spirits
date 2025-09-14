@@ -248,17 +248,25 @@ class PostResponse(BaseModel):
     id: int
     title: str
     content: str
+    image_url: Optional[str] = None
     owner_username: str
     owner_profile_picture: str | None = None
-
+    likes_count: int = 0
+    comments_count: int = 0
+    is_liked: bool = False
+    
     @classmethod
     def from_orm_with_owner(cls, post):
         return cls(
             id=post.id,
             title=post.title,
             content=post.content,
+            image_url=post.image_url,
             owner_username=post.owner.username if post.owner else "",
             owner_profile_picture=post.owner.profile_picture if post.owner else None,
+            likes_count=0, # These will be populated later by the endpoint logic
+            comments_count=0,
+            is_liked=False
         )
 
     class Config:
@@ -922,12 +930,20 @@ async def get_feed(
     db: Session = Depends(get_db)
 ):
     # Get posts from users the current user follows
-    following_ids = db.query(Follow.followed_id).filter(Follow.follower_id == current_user.id).subquery()
-    
-    posts = db.query(Post).filter(
-        (Post.owner_id.in_(following_ids)) | (Post.owner_id == current_user.id),
-        Post.is_published == True
-    ).order_by(Post.created_at.desc()).offset(skip).limit(limit).all()
+    following_ids_result = db.query(Follow.followed_id).filter(Follow.follower_id == current_user.id).all()
+    following_ids = [f[0] for f in following_ids_result]
+
+    if following_ids:
+        posts = db.query(Post).filter(
+            (Post.owner_id.in_(following_ids)) | (Post.owner_id == current_user.id),
+            Post.is_published == True
+        ).order_by(Post.created_at.desc()).offset(skip).limit(limit).all()
+    else:
+        # If not following anyone, only show current user's posts
+        posts = db.query(Post).filter(
+            Post.owner_id == current_user.id,
+            Post.is_published == True
+        ).order_by(Post.created_at.desc()).offset(skip).limit(limit).all()
     
     response = []
     for post in posts:

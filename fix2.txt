@@ -1,54 +1,91 @@
-[Intervention] Images loaded lazily and replaced with placeholders. Load events are deferred. See https://go.microsoft.com/fwlink/?linkid=2048113
-community_feed_dashboard.html:554   GET https://images.pixabay.com/photos/2017/08/06/12/06/people-2592247_1280.jpg net::ERR_NAME_NOT_RESOLVED
-[NEW] Explain Console errors by using Copilot in Edge: click
-         
-         to explain an error. 
-        Learn more
-        Don't show again
-auth.js:64   GET http://127.0.0.1:8000/api/feed?skip=0&limit=20 500 (Internal Server Error)
-request @ auth.js:64
-loadFeed @ feed.js:56
-init @ feed.js:22
-await in init
-(anonymous) @ feed.js:814
-rocket-web.js?_cfg=https%3A%2F%2Fkindredsp1403back.builtwithrocket.new&_be=https%3A%2F%2Fapplication.rocket.new&_v=0.1.8:1  Error loading feed: Error: Failed to load feed
+rocket-web.js?_cfg=h…cket.new&_v=0.1.8:1 
+ Error loading feed: Error: Failed to load feed
     at Object.loadFeed (feed.js:60:37)
-    at async Object.init (feed.js:22:9)
-(anonymous) @ rocket-web.js?_cfg=https%3A%2F%2Fkindredsp1403back.builtwithrocket.new&_be=https%3A%2F%2Fapplication.rocket.new&_v=0.1.8:1
-setTimeout
-console.error @ rocket-web.js?_cfg=https%3A%2F%2Fkindredsp1403back.builtwithrocket.new&_be=https%3A%2F%2Fapplication.rocket.new&_v=0.1.8:1
-loadFeed @ feed.js:78
-await in loadFeed
-init @ feed.js:22
-await in init
-(anonymous) @ feed.js:814
-auth.js:64   GET http://127.0.0.1:8000/api/feed?skip=0&limit=20 500 (Internal Server Error)
-request @ auth.js:64
-loadFeed @ feed.js:56
-onclick @ community_feed_dashboard.html:598
-rocket-web.js?_cfg=https%3A%2F%2Fkindredsp1403back.builtwithrocket.new&_be=https%3A%2F%2Fapplication.rocket.new&_v=0.1.8:1  Error loading feed: Error: Failed to load feed
+:8000/api/feed?skip=0&limit=20:1 
+ 
+ Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+rocket-web.js?_cfg=h…cket.new&_v=0.1.8:1 
+ Error loading feed: Error: Failed to load feed
     at Object.loadFeed (feed.js:60:37)
-(anonymous) @ rocket-web.js?_cfg=https%3A%2F%2Fkindredsp1403back.builtwithrocket.new&_be=https%3A%2F%2Fapplication.rocket.new&_v=0.1.8:1
-setTimeout
-console.error @ rocket-web.js?_cfg=https%3A%2F%2Fkindredsp1403back.builtwithrocket.new&_be=https%3A%2F%2Fapplication.rocket.new&_v=0.1.8:1
-loadFeed @ feed.js:78
-await in loadFeed
-onclick @ community_feed_dashboard.html:598
-auth.js:64   GET http://127.0.0.1:8000/api/feed?skip=0&limit=20 500 (Internal Server Error)
-request @ auth.js:64
-loadFeed @ feed.js:56
-onclick @ community_feed_dashboard.html:1
-rocket-web.js?_cfg=https%3A%2F%2Fkindredsp1403back.builtwithrocket.new&_be=https%3A%2F%2Fapplication.rocket.new&_v=0.1.8:1  Error loading feed: Error: Failed to load feed
+:8000/api/feed?skip=0&limit=20:1 
+ 
+ Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+rocket-web.js?_cfg=h…cket.new&_v=0.1.8:1 
+ Error loading feed: Error: Failed to load feed
     at Object.loadFeed (feed.js:60:37)
-(anonymous) @ rocket-web.js?_cfg=https%3A%2F%2Fkindredsp1403back.builtwithrocket.new&_be=https%3A%2F%2Fapplication.rocket.new&_v=0.1.8:1
-setTimeout
-console.error @ rocket-web.js?_cfg=https%3A%2F%2Fkindredsp1403back.builtwithrocket.new&_be=https%3A%2F%2Fapplication.rocket.new&_v=0.1.8:1
-loadFeed @ feed.js:78
-await in loadFeed
-onclick @ community_feed_dashboard.html:1
-auth.js:64   GET http://127.0.0.1:8000/api/feed?skip=0&limit=20 500 (Internal Server Error)
-request @ auth.js:64
-loadFeed @ feed.js:56
-onclick @ community_feed_dashboard.html:1
-rocket-web.js?_cfg=https%3A%2F%2Fkindredsp1403back.builtwithrocket.new&_be=https%3A%2F%2Fapplication.rocket.new&_v=0.1.8:1  Error loading feed: Error: Failed to load feed
+:8000/api/feed?skip=0&limit=20:1 
+ 
+ Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+rocket-web.js?_cfg=h…cket.new&_v=0.1.8:1 
+ Error loading feed: Error: Failed to load feed
     at Object.loadFeed (feed.js:60:37)
+[NEW] Explain Console errors by using Copilot in Edge: click 
+ to explain an error. Learn more
+Don't show again
+auth.js:64 
+ 
+ POST http://127.0.0.1:8000/api/posts 500 (Internal Server Error)
+rocket-web.js?_cfg=h…cket.new&_v=0.1.8:1 
+ Error creating post: Error: Failed to create post
+    at Object.createPost (feed.js:591:37)
+auth.js:64 
+ 
+ GET http://127.0.0.1:8000/api/feed?skip=0&limit=20 500 (Internal Server Error)
+rocket-web.js?_cfg=h…cket.new&_v=0.1.8:1 
+ Error loading feed: Error: Failed to load feed
+    at Object.loadFeed (feed.js:60:37)
+auth.js:64 
+ 
+ GET http://127.0.0.1:8000/api/feed?skip=0&limit=20 500 (Internal Server Error)
+rocket-web.js?_cfg=h…cket.new&_v=0.1.8:1 
+ Error loading feed: Error: Failed to load feed
+    at Object.loadFeed (feed.js:60:37)
+auth.js:64 
+ 
+ GET http://127.0.0.1:8000/api/feed?skip=0&limit=20 500 (Internal Server Error)
+rocket-web.js?_cfg=h…cket.new&_v=0.1.8:1 
+ Error loading feed: Error: Failed to load feed
+    at Object.loadFeed (feed.js:60:37)
+auth.js:64 
+ 
+ GET http://127.0.0.1:8000/api/feed?skip=0&limit=20 500 (Internal Server Error)
+rocket-web.js?_cfg=h…cket.new&_v=0.1.8:1 
+ Error loading feed: Error: Failed to load feed
+    at Object.loadFeed (feed.js:60:37)
+auth.js:64 
+ 
+ GET http://127.0.0.1:8000/api/feed?skip=0&limit=20 500 (Internal Server Error)
+rocket-web.js?_cfg=h…cket.new&_v=0.1.8:1 
+ Error loading feed: Error: Failed to load feed
+    at Object.loadFeed (feed.js:60:37)
+auth.js:64 
+ 
+ GET http://127.0.0.1:8000/api/feed?limit=1 500 (Internal Server Error)
+auth.js:64 
+ 
+ POST http://127.0.0.1:8000/api/posts 500 (Internal Server Error)
+rocket-web.js?_cfg=h…cket.new&_v=0.1.8:1 
+ Error creating post: Error: Failed to create post
+    at Object.createPost (feed.js:591:37)
+auth.js:64 
+ 
+ POST http://127.0.0.1:8000/api/posts 500 (Internal Server Error)
+rocket-web.js?_cfg=h…cket.new&_v=0.1.8:1 
+ Error creating post: Error: Failed to create post
+    at Object.createPost (feed.js:591:37)
+auth.js:64 
+ 
+ POST http://127.0.0.1:8000/api/posts 500 (Internal Server Error)
+rocket-web.js?_cfg=h…cket.new&_v=0.1.8:1 
+ Error creating post: Error: Failed to create post
+    at Object.createPost (feed.js:591:37)
+﻿
+
+Compatibility
+'-webkit-mask-image' is not supported by Firefox. Add 'mask-image' to support Firefox 53+.
+'user-select' is not supported by Safari. Add '-webkit-user-select' to support Safari 3+.
+'min-height: auto' is not supported by Firefox 22+.
+Other
+'box-sizing' should be listed after '-webkit-box-sizing'.
+'transform' should be listed after '-webkit-transform'.
+'transition' should be listed after '-webkit-transition'.
