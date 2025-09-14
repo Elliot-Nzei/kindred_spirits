@@ -585,18 +585,29 @@ const FeedManager = {
         submitBtn.textContent = 'Posting...';
 
         try {
+            let imageUrl = null;
+            if (imageFile) {
+                const formData = new FormData();
+                formData.append('file', imageFile);
+                
+                const uploadResponse = await window.AuthAPI.request('/api/posts/upload-image', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!uploadResponse.ok) {
+                    throw new Error('Failed to upload image');
+                }
+                const uploadData = await uploadResponse.json();
+                imageUrl = uploadData.image_url;
+            }
+
             let payload = {
                 title: content.substring(0, 50) + '...',
-                content: content
+                content: content,
+                image_url: imageUrl
             };
-            // Only add image_url if an image is uploaded
-            if (imageFile) {
-                // You may need to upload the image first and get a URL
-                // For now, just show a warning
-                this.showToast('Image upload not implemented', 'warning');
-                // Optionally, return here to avoid sending image_url: null
-                // return;
-            }
+
             const response = await window.AuthAPI.request('/api/posts', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },

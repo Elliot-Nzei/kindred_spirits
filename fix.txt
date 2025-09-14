@@ -1,9 +1,34 @@
-Accessibility
-Buttons must have discernible text: Element has no title attribute
+[Intervention] Images loaded lazily and replaced with placeholders. Load events are deferred. See https://go.microsoft.com/fwlink/?linkid=2048113
+rocket-web.js?_cfg=h…cket.new&_v=0.1.8:1 FeedManager DOMContentLoaded fired!
+rocket-web.js?_cfg=h…cket.new&_v=0.1.8:1 newPostModal reference: 
+notifications.js:29 
+ Uncaught (in promise) TypeError: Cannot set properties of null (setting 'innerHTML')
+    at loadNotifications (notifications.js:29:44)
+    at HTMLDocument.<anonymous> (notifications.js:94:5)
+[NEW] Explain Console errors by using Copilot in Edge: click 
+ to explain an error. Learn more
+Don't show again
+rocket-web.js?_cfg=h…cket.new&_v=0.1.8:1 
+ Error loading notifications: TypeError: window.getAuthToken is not a function
+    at loadNotifications (notifications.js:13:34)
+    at HTMLDocument.<anonymous> (notifications.js:94:5)
+auth.js:64 
+ 
+ POST http://127.0.0.1:8000/api/posts/upload-image 405 (Method Not Allowed)
+rocket-web.js?_cfg=h…cket.new&_v=0.1.8:1 
+ Error creating post: Error: Failed to upload image
+    at Object.createPost (feed.js:599:27)
+auth.js:64 
+ 
+ POST http://127.0.0.1:8000/api/posts/upload-image 405 (Method Not Allowed)
+rocket-web.js?_cfg=h…cket.new&_v=0.1.8:1 
+ Error creating post: Error: Failed to upload image
+    at Object.createPost (feed.js:599:27)
+﻿
+
 Compatibility
 '-webkit-mask-image' is not supported by Firefox. Add 'mask-image' to support Firefox 53+.
 'user-select' is not supported by Safari. Add '-webkit-user-select' to support Safari 3+.
-'content-type' header charset value should be 'utf-8'.
 'min-height: auto' is not supported by Firefox 22+.
 'text-size-adjust' is not supported by Firefox, Safari.
 Performance

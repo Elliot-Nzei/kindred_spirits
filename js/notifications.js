@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    if (!window.isAuthenticated()) {
+    if (!window.AuthManager.isAuthenticated()) {
         window.location.href = '../index.html';
         return;
     }
@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const loadNotifications = async () => {
         try {
-            const token = window.getAuthToken();
+            const token = window.AuthManager.getAuthToken();
             const response = await fetch(`${API_BASE_URL}/api/notifications`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -64,7 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const markNotificationAsRead = async (notificationId) => {
         try {
-            const token = window.getAuthToken();
+            const token = window.AuthManager.getAuthToken();
             await fetch(`${API_BASE_URL}/api/notifications/${notificationId}/read`, {
                 method: 'PUT',
                 headers: {
