@@ -1,6 +1,6 @@
 // feed.js - Complete Feed Management System for Social Platform
 
-const API_BASE_URL = 'http://127.0.0.1:8000';
+
 
 // Feed Manager
 const FeedManager = {
@@ -46,7 +46,7 @@ const FeedManager = {
         if (this.isLoading || (!this.hasMore && append)) return;
 
         this.isLoading = true;
-        const feedContainer = document.querySelector('main.lg\\:col-span-3.space-y-6');
+        const feedContainer = document.getElementById('main-feed-container');
         
         if (!append) {
             this.showLoadingState(feedContainer);

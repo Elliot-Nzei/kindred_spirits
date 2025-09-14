@@ -663,79 +663,8 @@
         </div>
     </nav>
 
+    <script src="../js/config.js"></script>
     <script src="../js/auth.js"></script>
-    <script>
-        // Client-side protection: Redirect if not authenticated
-        document.addEventListener('DOMContentLoaded', () => {
-            if (!window.isAuthenticated()) {
-                window.location.href = '../index.html'; // Redirect to login page
-                return; // Stop further script execution
-            }
-        });
-
-        // Smooth scroll animations
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.style.opacity = '1';
-                    entry.target.style.transform = 'translateY(0)';
-                }
-            });
-        }, observerOptions);
-
-        document.querySelectorAll('.card').forEach(card => {
-            card.style.opacity = '0';
-            card.style.transform = 'translateY(20px)';
-            card.style.transition = 'all 0.6s ease-out';
-            observer.observe(card);
-        });
-
-        // Workshop card hover effects
-        document.querySelectorAll('.card-hover').forEach(card => {
-            card.addEventListener('mouseenter', () => {
-                card.style.transform = 'translateY(-8px)';
-            });
-            
-            card.addEventListener('mouseleave', () => {
-                card.style.transform = 'translateY(0)';
-            });
-        });
-    </script>
-<script id="dhws-dataInjector" src="../public/dhws-data-injector.js"></script>
-    <!-- Mobile Menu Overlay -->
-    <div id="mobile-menu-overlay" class="mobile-menu-overlay">
-        <div class="mobile-menu-sheet">
-            <a href="settings.html">Settings</a>
-            <a href="help_support.html">Help & Support</a>
-            <a href="about.html">About</a>
-            <button id="close-mobile-menu" class="bg-primary text-white py-2 rounded-lg font-medium">Close</button>
-        </div>
-    </div>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
-            const mobileMenuOverlay = document.getElementById('mobile-menu-overlay');
-            const closeMobileMenu = document.getElementById('close-mobile-menu');
-
-            if (mobileMenuBtn && mobileMenuOverlay && closeMobileMenu) {
-                mobileMenuBtn.addEventListener('click', () => {
-                    mobileMenuOverlay.classList.add('active');
-                });
-                closeMobileMenu.addEventListener('click', () => {
-                    mobileMenuOverlay.classList.remove('active');
-                });
-                mobileMenuOverlay.addEventListener('click', (e) => {
-                    if (e.target === mobileMenuOverlay) {
-                        mobileMenuOverlay.classList.remove('active');
-                    }
-                });
-            }
-        });
-    </script>
+    <script src="../js/mobileMenu.js"></script>
 </body>
 </html>

@@ -202,7 +202,7 @@
                 <h3 class="font-crimson text-xl font-semibold text-red-700 mb-4">Danger Zone</h3>
                 <p class="text-red-600 text-sm mb-4">Proceed with caution. These actions are irreversible.</p>
                 <div class="flex justify-end space-x-4">
-                    <button id="logout-button" class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-all duration-300 font-medium text-sm">Logout</button>
+                    <button id="logout-button" class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-all duration-300 font-medium text-sm" onclick="AuthManager.logout()">Logout</button>
                     <button class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-all duration-300 font-medium text-sm">Delete Account</button>
                 </div>
             </div>
@@ -259,43 +259,9 @@
         </div>
     </div>
 
+    <script src="../js/config.js"></script>
     <script src="../js/auth.js"></script>
-    <script>
-        // Client-side protection: Redirect if not authenticated
-        document.addEventListener('DOMContentLoaded', () => {
-            if (!window.isAuthenticated()) {
-                window.location.href = '../index.html'; // Redirect to login page
-                return; // Stop further script execution
-            }
-        });
-
-        // Mobile menu logic
-        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
-        const mobileMenuOverlay = document.getElementById('mobile-menu-overlay');
-        const closeMobileMenu = document.getElementById('close-mobile-menu');
-
-        if (mobileMenuBtn && mobileMenuOverlay && closeMobileMenu) {
-            mobileMenuBtn.addEventListener('click', () => {
-                mobileMenuOverlay.classList.add('active');
-            });
-            closeMobileMenu.addEventListener('click', () => {
-                mobileMenuOverlay.classList.remove('active');
-            });
-            mobileMenuOverlay.addEventListener('click', (e) => {
-                if (e.target === mobileMenuOverlay) {
-                    mobileMenuOverlay.classList.remove('active');
-                }
-            });
-        }
-
-        // Logout logic
-        const logoutButton = document.getElementById('logout-button');
-        if (logoutButton) {
-            logoutButton.addEventListener('click', () => {
-                window.logout();
-            });
-        }
-    </script>
+    <script src="../js/mobileMenu.js"></script>
     <script src="../js/translations.js"></script>
     <script src="../js/language.js"></script>
     <div class="text-center py-6">

@@ -1,11 +1,38 @@
-PS C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits> make run-backend
-"Starting FastAPI backend..."
-backend\venv\Scripts\uvicorn backend.main:app --reload
-INFO:     Will watch for changes in these directories: ['C:\\Users\\USER\\Documents\\PROJECTS_2025\\kindred_spirits']
-INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
-INFO:     Started reloader process [11644] using StatReload
-INFO:     Started server process [17280]
-INFO:     Waiting for application startup.
-INFO:     Application startup complete.   
-INFO:     127.0.0.1:65043 - "GET / HTTP/1.1" 200 OK
-INFO:     127.0.0.1:65043 - "GET /js/auth.js HTTP/1.1" 304 Not Modified
+https://go.microsoft.com/fwlink/?linkid=2048113
+feed.js:1 
+ Uncaught SyntaxError: Identifier 'API_BASE_URL' has already been declared (at feed.js:1:1)
+translations.js:201 
+ Uncaught SyntaxError: Unexpected token '}' (at translations.js:201:1)
+[NEW] Explain Console errors by using Copilot in Edge: click 
+ to explain an error. Learn more
+Don't show again
+community_feed_dashboard.html:561 
+ 
+ GET https://images.pixabay.com/photos/2017/08/06/12/06/people-2592247_1280.jpg net::ERR_NAME_NOT_RESOLVED
+language.js:5 
+ Uncaught ReferenceError: translations is not defined
+    at language.js:5:9
+    at NodeList.forEach (<anonymous>)
+    at applyTranslations (language.js:3:51)
+    at HTMLDocument.<anonymous> (language.js:27:5)
+﻿
+
+Compatibility
+'-webkit-mask-image' is not supported by Firefox. Add 'mask-image' to support Firefox 53+.
+'user-select' is not supported by Safari. Add '-webkit-user-select' to support Safari 3+.
+'content-type' header charset value should be 'utf-8'.
+'min-height: auto' is not supported by Firefox 22+.
+'text-size-adjust' is not supported by Firefox, Safari.
+Performance
+A 'cache-control' header is missing or empty.
+Resource should use cache busting but URL does not match configured patterns.
+Response should not include unneeded headers: content-security-policy
+Response should not include unneeded headers: x-xss-protection
+Security
+Response should include 'x-content-type-options' header.
+The 'Expires' header should not be used, 'Cache-Control' should be preferred.
+The 'X-Frame-Options' header should not be used. A similar effect, with more consistent support and stronger checks, can be achieved with the 'Content-Security-Policy' header and 'frame-ancestors' directive.
+Other
+'box-sizing' should be listed after '-webkit-box-sizing'.
+'transform' should be listed after '-webkit-transform'.
+'transition' should be listed after '-webkit-transition'.

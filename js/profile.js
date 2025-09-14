@@ -71,115 +71,106 @@ const ProfileManager = {
         const profileHeader = document.getElementById('profile-header');
         if (profileHeader) {
             profileHeader.innerHTML = `
-                <div class="relative">
-                    <!-- Cover Photo -->
-                    <div class="h-48 bg-gradient-to-r from-primary to-accent rounded-t-xl"></div>
+    <div class="bg-white p-6 rounded-lg shadow-md">
+        <div class="flex flex-col items-center sm:flex-row sm:items-start">
+            <!-- Avatar -->
+            <div class="relative flex-shrink-0 mb-4 sm:mb-0 sm:mr-6">
+                <img src="${profilePicture}" 
+                     alt="${this.currentProfile.username}'s Profile" 
+                     class="w-32 h-32 rounded-full border-4 border-primary-light object-cover shadow-lg"
+                     onerror="this.src='${defaultAvatar}'; this.onerror=null;">
+                ${this.isOwnProfile ? `
+                    <button onclick="ProfileManager.openAvatarUpload()" 
+                            class="absolute bottom-2 right-2 p-2 bg-primary rounded-full text-white hover:bg-primary-dark transition-colors shadow-md">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/>
+                        </svg>
+                    </button>
+                ` : ''}
+            </div>
+            
+            <!-- Name, Username, and Actions -->
+            <div class="flex-1 text-center sm:text-left">
+                <div class="flex flex-col sm:flex-row items-center justify-center sm:justify-between">
+                    <div>
+                        <h1 class="text-3xl font-bold text-text-primary">
+                            ${this.currentProfile.full_name || this.currentProfile.username}
+                        </h1>
+                        <p class="text-text-secondary text-lg">@${this.currentProfile.username}</p>
+                    </div>
                     
-                    <!-- Profile Info -->
-                    <div class="px-6 pb-6">
-                        <div class="flex flex-col sm:flex-row sm:items-end sm:space-x-5 -mt-12">
-                            <!-- Avatar -->
-                            <div class="relative">
-                                <img src="${profilePicture}" 
-                                     alt="${this.currentProfile.username}'s Profile" 
-                                     class="w-24 h-24 rounded-full border-4 border-surface object-cover"
-                                     onerror="this.src='${defaultAvatar}'; this.onerror=null;">
-                                ${this.isOwnProfile ? `
-                                    <button onclick="ProfileManager.openAvatarUpload()" 
-                                            class="absolute bottom-0 right-0 p-2 bg-primary rounded-full text-white hover:bg-primary-dark transition-colors">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/>
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                        </svg>
-                                    </button>
-                                ` : ''}
-                            </div>
+                    <!-- Action Buttons -->
+                    <div class="flex space-x-2 mt-4 sm:mt-0">
+                        ${this.isOwnProfile ? `
                             
-                            <!-- Name and Username -->
-                            <div class="mt-4 sm:mt-0 flex-1">
-                                <div class="flex items-center justify-between">
-                                    <div>
-                                        <h1 class="text-2xl font-bold text-text-primary">
-                                            ${this.currentProfile.full_name || this.currentProfile.username}
-                                        </h1>
-                                        <p class="text-text-secondary">@${this.currentProfile.username}</p>
-                                    </div>
-                                    
-                                    <!-- Action Buttons -->
-                                    <div class="flex space-x-2">
-                                        ${this.isOwnProfile ? `
-                                            <button onclick="ProfileManager.openEditModal()" 
-                                                    class="px-4 py-2 border border-border-light rounded-lg hover:bg-surface-hover transition-colors">
-                                                Edit Profile
-                                            </button>
-                                        ` : `
-                                            <button onclick="ProfileManager.toggleFollow()" 
-                                                    id="follow-btn"
-                                                    class="px-4 py-2 ${this.currentProfile.is_following 
-                                                        ? 'border border-border-light' 
-                                                        : 'bg-primary text-white'} rounded-lg hover:opacity-90 transition-opacity">
-                                                ${this.currentProfile.is_following ? 'Following' : 'Follow'}
-                                            </button>
-                                            <button onclick="ProfileManager.sendMessage()" 
-                                                    class="px-4 py-2 border border-border-light rounded-lg hover:bg-surface-hover transition-colors">
-                                                Message
-                                            </button>
-                                        `}
-                                    </div>
-                                </div>
-                                
-                                <!-- Bio -->
-                                ${this.currentProfile.bio ? `
-                                    <p class="mt-3 text-text-primary">${this.formatBio(this.currentProfile.bio)}</p>
-                                ` : ''}
-                                
-                                <!-- Additional Info -->
-                                <div class="mt-3 flex flex-wrap gap-4 text-sm text-text-secondary">
-                                    ${this.currentProfile.location ? `
-                                        <span class="flex items-center">
-                                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                            </svg>
-                                            ${this.currentProfile.location}
-                                        </span>
-                                    ` : ''}
-                                    ${this.currentProfile.website ? `
-                                        <a href="${this.currentProfile.website}" target="_blank" 
-                                           class="flex items-center hover:text-primary transition-colors">
-                                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/>
-                                            </svg>
-                                            ${new URL(this.currentProfile.website).hostname}
-                                        </a>
-                                    ` : ''}
-                                    <span class="flex items-center">
-                                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                                        </svg>
-                                        Joined ${this.formatDate(this.currentProfile.joined_date)}
-                                    </span>
-                                </div>
-                                
-                                <!-- Stats -->
-                                <div class="mt-4 flex space-x-6">
-                                    <div class="cursor-pointer hover:text-primary transition-colors" onclick="ProfileManager.showFollowers()">
-                                        <span class="font-bold text-text-primary">${this.formatNumber(this.currentProfile.followers_count)}</span>
-                                        <span class="text-text-secondary ml-1">Followers</span>
-                                    </div>
-                                    <div class="cursor-pointer hover:text-primary transition-colors" onclick="ProfileManager.showFollowing()">
-                                        <span class="font-bold text-text-primary">${this.formatNumber(this.currentProfile.following_count)}</span>
-                                        <span class="text-text-secondary ml-1">Following</span>
-                                    </div>
-                                    <div>
-                                        <span class="font-bold text-text-primary">${this.formatNumber(this.currentProfile.posts_count)}</span>
-                                        <span class="text-text-secondary ml-1">Posts</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        ` : `
+                            <button onclick="ProfileManager.toggleFollow()" 
+                                    id="follow-btn"
+                                    class="px-4 py-2 ${this.currentProfile.is_following 
+                                        ? 'border border-border-light' 
+                                        : 'bg-primary text-white'} rounded-lg hover:opacity-90 transition-opacity">
+                                ${this.currentProfile.is_following ? 'Following' : 'Follow'}
+                            </button>
+                            <button onclick="ProfileManager.sendMessage()" 
+                                    class="px-4 py-2 border border-border-light rounded-lg hover:bg-surface-hover transition-colors">
+                                Message
+                            </button>
+                        `}
                     </div>
                 </div>
+                
+                <!-- Bio -->
+                ${this.currentProfile.bio ? `
+                    <p class="mt-4 text-text-primary">${this.formatBio(this.currentProfile.bio)}</p>
+                ` : ''}
+                
+                <!-- Additional Info -->
+                <div class="mt-4 flex flex-wrap justify-center sm:justify-start gap-4 text-sm text-text-secondary">
+                    ${this.currentProfile.location ? `
+                        <span class="flex items-center">
+                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                            </svg>
+                            ${this.currentProfile.location}
+                        </span>
+                    ` : ''}
+                    ${this.currentProfile.website ? `
+                        <a href="${this.currentProfile.website}" target="_blank" 
+                           class="flex items-center hover:text-primary transition-colors">
+                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/>
+                            </svg>
+                            ${new URL(this.currentProfile.website).hostname}
+                        </a>
+                    ` : ''}
+                    <span class="flex items-center">
+                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                        </svg>
+                        Joined ${this.formatDate(this.currentProfile.joined_date)}
+                    </span>
+                </div>
+                
+                <!-- Stats -->
+                <div class="mt-6 flex justify-center sm:justify-start space-x-6">
+                    <div class="cursor-pointer hover:text-primary transition-colors" onclick="ProfileManager.showFollowers()">
+                        <span class="font-bold text-text-primary">${this.formatNumber(this.currentProfile.followers_count)}</span>
+                        <span class="text-text-secondary ml-1">Followers</span>
+                    </div>
+                    <div class="cursor-pointer hover:text-primary transition-colors" onclick="ProfileManager.showFollowing()">
+                        <span class="font-bold text-text-primary">${this.formatNumber(this.currentProfile.following_count)}</span>
+                        <span class="text-text-secondary ml-1">Following</span>
+                    </div>
+                    <div>
+                        <span class="font-bold text-text-primary">${this.formatNumber(this.currentProfile.posts_count)}</span>
+                        <span class="text-text-secondary ml-1">Posts</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
             `;
         }
     },
