@@ -8,7 +8,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, Session, relationship, joinedload
 from passlib.context import CryptContext
 from jose import JWTError, jwt
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Optional, List
 import os
 import shutil
@@ -67,7 +67,7 @@ class User(Base):
     profile_picture = Column(String, nullable=True)
     location = Column(String, nullable=True)
     website = Column(String, nullable=True)
-    joined_date = Column(DateTime, default=datetime.utcnow)
+    joined_date = Column(DateTime, default=lambda: datetime.now(timezone.utc))
     is_active = Column(Boolean, default=True)
     is_verified = Column(Boolean, default=False)
     
@@ -110,7 +110,7 @@ class Follow(Base):
     id = Column(Integer, primary_key=True, index=True)
     follower_id = Column(Integer, ForeignKey("users.id"))
     followed_id = Column(Integer, ForeignKey("users.id"))
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
     
     follower = relationship("User", foreign_keys=[follower_id], back_populates="following")
     followed = relationship("User", foreign_keys=[followed_id], back_populates="followers")
@@ -123,8 +123,8 @@ class Post(Base):
     content = Column(Text)
     image_url = Column(String, nullable=True)
     owner_id = Column(Integer, ForeignKey("users.id"))
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
     is_published = Column(Boolean, default=True)
     view_count = Column(Integer, default=0)
     
@@ -141,8 +141,8 @@ class Comment(Base):
     owner_id = Column(Integer, ForeignKey("users.id"))
     post_id = Column(Integer, ForeignKey("posts.id"))
     parent_id = Column(Integer, ForeignKey("comments.id"), nullable=True)
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
     
     owner = relationship("User", back_populates="comments")
     post = relationship("Post", back_populates="comments")
@@ -154,7 +154,7 @@ class Like(Base):
     id = Column(Integer, primary_key=True, index=True)
     owner_id = Column(Integer, ForeignKey("users.id"))
     post_id = Column(Integer, ForeignKey("posts.id"))
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
     
     owner = relationship("User", back_populates="likes")
     post = relationship("Post", back_populates="likes")
@@ -169,7 +169,7 @@ class Notification(Base):
     message = Column(Text)
     post_id = Column(Integer, ForeignKey("posts.id"), nullable=True)
     read = Column(Boolean, default=False)
-    timestamp = Column(DateTime, default=datetime.utcnow)
+    timestamp = Column(DateTime, default=lambda: datetime.now(timezone.utc))
     link = Column(String, nullable=True)
     
     recipient = relationship("User", foreign_keys=[recipient_id], back_populates="received_notifications")
@@ -232,7 +232,7 @@ class UserProfile(UserResponse):
         from_attributes = True
 
 class PostBase(BaseModel):
-    title: str
+    title: Optional[str] = None
     content: str
     image_url: Optional[str] = None
 

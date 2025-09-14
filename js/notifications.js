@@ -37,7 +37,7 @@ window.addEventListener('load', () => {
             const img = clone.querySelector("img");
             const nameEl = clone.querySelector("span.font-semibold");
             const textEl = clone.querySelector(".notification-text");
-            const timeEl = clone.querySelector("p.text-gray-500");
+            // const timeEl = clone.querySelector("p.text-gray-500"); // Removed this line
 
             const defaultAvatar = 'https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D';
 
@@ -45,8 +45,8 @@ window.addEventListener('load', () => {
             img.alt = `${notification.sender_username}'s avatar`;
             nameEl.textContent = notification.sender_username;
             textEl.textContent = notification.message;
-            timeEl.dataset.timestamp = notification.timestamp; // Added this line
-            timeEl.textContent = timeAgo(notification.timestamp);
+            // timeEl.dataset.timestamp = notification.timestamp; // Removed this line
+            // timeEl.textContent = timeAgo(notification.timestamp); // Removed this line
 
             if (notification.read) {
                 clone.firstElementChild.classList.add('opacity-60');
@@ -77,25 +77,13 @@ window.addEventListener('load', () => {
         }
     };
 
-    const markAllNotificationsAsRead = async () => {
-        try {
-            const token = window.AuthManager.getAuthToken();
-            await fetch(`${API_BASE_URL}/api/notifications/mark-all-read`, {
-                method: 'PUT',
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-            // After marking all as read, refresh the notifications list
-            loadNotifications();
-            updateNotificationBadge();
-        } catch (error) {
-            console.error('Error marking all notifications as read:', error);
-        }
-    };
-
     function timeAgo(timestamp) {
       const seconds = Math.floor((new Date() - new Date(timestamp)) / 1000);
+
+      if (seconds < 120) { // Less than 2 minutes
+          return 'Just now';
+      }
+
       let interval = seconds / 31536000;
       if (interval > 1) return Math.floor(interval) + "y ago";
       interval = seconds / 2592000;
@@ -111,7 +99,6 @@ window.addEventListener('load', () => {
     window.timeAgo = timeAgo; // Expose globally
 
     loadNotifications();
-    markAllNotificationsAsRead(); // Mark all as read when the page loads
 
     // Mobile notification button functionality
     const openNotificationsMobileBtn = document.getElementById('open-notifications-mobile');

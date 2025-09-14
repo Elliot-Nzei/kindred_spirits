@@ -2,7 +2,7 @@ function updateRealtimeClocks() {
     document.querySelectorAll('[data-timestamp]').forEach(element => {
         const timestamp = element.dataset.timestamp;
         if (timestamp) {
-            element.textContent = window.timeAgo(timestamp);
+            element.textContent = window.FeedManager.timeAgo(timestamp);
         }
     });
 }

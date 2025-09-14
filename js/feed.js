@@ -134,7 +134,7 @@ const FeedManager = {
                                    class="font-semibold text-text-primary hover:text-primary transition-colors text-base">
                                     ${post.owner_username}
                                 </a>
-                                <p class="text-text-secondary text-xs">${this.timeAgo(post.created_at)}</p>
+                                <p class="text-text-secondary text-xs" data-timestamp="${post.created_at}">${this.timeAgo(post.created_at)}</p>
                             </div>
                             ${this.createPostMenu(post)}
                         </div>
@@ -168,7 +168,7 @@ const FeedManager = {
                                 class="reaction-btn flex items-center space-x-1 text-text-secondary hover:text-red-500 transition-colors ${post.is_liked ? 'text-red-500' : ''}"
                                 onclick="FeedManager.toggleLike(${post.id}, this)">
                             <span class="reaction-icon">
-                                <svg class="w-5 h-5" fill="${post.is_liked ? 'currentColor' : 'none'}" stroke="currentColor" viewBox="0 0 20 20">
+                                <svg class="w-5 h-5" fill="${post.is_bookmarked ? 'currentColor' : 'none'}" stroke="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"/>
                                 </svg>
                             </span>
@@ -383,7 +383,6 @@ const FeedManager = {
                     <div class="flex-1">
                         <div class="flex items-center space-x-2">
                             <span class="font-medium text-sm">${comment.owner_username}</span>
-                            <span class="text-xs text-text-secondary">${this.timeAgo(comment.created_at)}</span>
                         </div>
                         <p class="text-sm mt-1">${comment.text}</p>
                     </div>
@@ -566,7 +565,7 @@ const FeedManager = {
             this.currentPage = 0;
             await this.loadFeed();
             
-            this.showToast('Post updated successfully');
+            this.showToast('Post created successfully!');
 
         } catch (error) {
             console.error('Error updating post:', error);
@@ -624,14 +623,20 @@ const FeedManager = {
 
             if (!response.ok) throw new Error('Failed to create post');
 
+            const newPost = await response.json(); // Get the newly created post object
+
             // Clear form and close modal
             contentInput.value = '';
             if (imageInput) imageInput.value = '';
             modal.classList.remove('active');
 
-            // Reload feed
-            this.currentPage = 0;
-            await this.loadFeed();
+            // Prepend the new post to the feed
+            const feedContainer = document.getElementById('main-feed-container');
+            const newPostElement = this.createPostElement(newPost);
+            feedContainer.prepend(newPostElement); // Prepend instead of append
+
+            // Add the new post to the beginning of the posts array
+            this.posts.unshift(newPost);
             
             this.showToast('Post created successfully!');
 
@@ -670,7 +675,11 @@ const FeedManager = {
     // Time ago helper
     timeAgo(timestamp) {
         const seconds = Math.floor((new Date() - new Date(timestamp)) / 1000);
-        
+
+        if (seconds < 120) { // Less than 2 minutes
+            return 'Just now';
+        }
+
         const intervals = {
             year: 31536000,
             month: 2592000,
@@ -686,8 +695,7 @@ const FeedManager = {
                 return `${interval} ${unit}${interval > 1 ? 's' : ''} ago`;
             }
         }
-        
-        return 'Just now';
+        return 'Just now'; // Fallback
     },
 
     // Setup infinite scroll
