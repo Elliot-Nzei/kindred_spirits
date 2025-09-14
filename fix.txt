@@ -1,1 +1,1 @@
- i want you to help me make a way to logout in @pages/soul_profile.html, plan it and make it work for all screens and all screens should all have a way for it to logout or now button 
+ it did not work, i want the personalization to be like how normal    websites does theirs, ie, comments, likes, profiles etc all if it    calls then correct info the user that logs in so the means that the  user can login in another phone and still see all their data and     info in the website as long as they login in correctly, improvise in this and do it correctly 
