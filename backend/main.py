@@ -246,7 +246,7 @@ class PostUpdate(BaseModel):
 
 class PostResponse(BaseModel):
     id: int
-    title: str
+    title: Optional[str] = None
     content: str
     image_url: Optional[str] = None
     owner_username: str

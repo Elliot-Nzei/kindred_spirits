@@ -138,7 +138,6 @@ const FeedManager = {
                             </div>
                             ${this.createPostMenu(post)}
                         </div>
-                        <h3 class="text-text-primary font-medium mt-1">${post.title}</h3>
                     </div>
                 </div>
                 
@@ -610,7 +609,6 @@ const FeedManager = {
             }
 
             let payload = {
-                title: content.substring(0, 50) + '...',
                 content: content,
                 image_url: imageUrl
             };

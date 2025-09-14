@@ -37,7 +37,7 @@ window.addEventListener('load', () => {
             const img = clone.querySelector("img");
             const nameEl = clone.querySelector("span.font-semibold");
             const textEl = clone.querySelector(".notification-text");
-            // const timeEl = clone.querySelector("p.text-gray-500"); // Removed this line
+            const timeEl = clone.querySelector("p.text-gray-500"); // Re-enabled this line
 
             const defaultAvatar = 'https://images.unsplash.com/photo-1584824486509-112e4181ff6b?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D';
 
@@ -45,8 +45,10 @@ window.addEventListener('load', () => {
             img.alt = `${notification.sender_username}'s avatar`;
             nameEl.textContent = notification.sender_username;
             textEl.textContent = notification.message;
-            // timeEl.dataset.timestamp = notification.timestamp; // Removed this line
-            // timeEl.textContent = timeAgo(notification.timestamp); // Removed this line
+            if (timeEl) { // Add a check for timeEl in case it's not found
+                timeEl.dataset.timestamp = notification.timestamp;
+                timeEl.textContent = timeAgo(notification.timestamp);
+            }
 
             if (notification.read) {
                 clone.firstElementChild.classList.add('opacity-60');
