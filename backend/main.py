@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy import create_engine, Column, Integer, String, ForeignKey, Boolean, DateTime, Text, Float
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker, Session, relationship
+from sqlalchemy.orm import sessionmaker, Session, relationship, joinedload
 from passlib.context import CryptContext
 from jose import JWTError, jwt
 from datetime import datetime, timedelta
@@ -804,10 +804,18 @@ async def create_comment(
         db.add(notification)
         db.commit()
     
-    response = CommentResponse.from_orm(db_comment)
-    response.owner_username = current_user.username
-    response.owner_profile_picture = current_user.profile_picture
-    response.replies_count = 0
+    response = CommentResponse(
+        id=db_comment.id,
+        text=db_comment.text,
+        owner_id=db_comment.owner_id,
+        post_id=db_comment.post_id,
+        parent_id=db_comment.parent_id,
+        created_at=db_comment.created_at,
+        updated_at=db_comment.updated_at,
+        owner_username=current_user.username,
+        owner_profile_picture=current_user.profile_picture,
+        replies_count=0
+    )
     
     return response
 
@@ -818,17 +826,28 @@ async def get_comments(
     limit: int = 50,
     db: Session = Depends(get_db)
 ):
-    comments = db.query(Comment).filter(
+    comments = db.query(Comment).options(joinedload(Comment.owner)).filter(
         Comment.post_id == post_id,
         Comment.parent_id == None
     ).order_by(Comment.created_at.desc()).offset(skip).limit(limit).all()
     
     response = []
     for comment in comments:
-        comment_response = CommentResponse.from_orm(comment)
-        comment_response.owner_username = comment.owner.username
-        comment_response.owner_profile_picture = comment.owner.profile_picture
-        comment_response.replies_count = db.query(Comment).filter(Comment.parent_id == comment.id).count()
+        owner_username = comment.owner.username if comment.owner else None
+        owner_profile_picture = comment.owner.profile_picture if comment.owner else None
+
+        comment_response = CommentResponse(
+            id=comment.id,
+            text=comment.text,
+            owner_id=comment.owner_id,
+            post_id=comment.post_id,
+            parent_id=comment.parent_id,
+            created_at=comment.created_at,
+            updated_at=comment.updated_at,
+            owner_username=owner_username,
+            owner_profile_picture=owner_profile_picture,
+            replies_count=db.query(Comment).filter(Comment.parent_id == comment.id).count()
+        )
         response.append(comment_response)
     
     return response

@@ -171,7 +171,7 @@ const ProfileManager = {
             </div>
         </div>
     </div>
-            `;
+            `
         }
     },
 
@@ -203,6 +203,34 @@ const ProfileManager = {
         }
     },
 
+    // Load followers
+    async loadFollowers() {
+        try {
+            const endpoint = `/api/users/${this.currentProfile.username}/followers`;
+            const response = await window.AuthAPI.request(endpoint);
+            if (!response.ok) throw new Error('Failed to load followers');
+            const followers = await response.json();
+            this.renderFollowers(followers);
+        } catch (error) {
+            console.error('Error loading followers:', error);
+            document.getElementById('profile-followers').innerHTML = '<p class="text-center text-red-500">Failed to load followers.</p>';
+        }
+    },
+
+    // Load following
+    async loadFollowing() {
+        try {
+            const endpoint = `/api/users/${this.currentProfile.username}/following`;
+            const response = await window.AuthAPI.request(endpoint);
+            if (!response.ok) throw new Error('Failed to load following');
+            const following = await response.json();
+            this.renderFollowing(following);
+        } catch (error) {
+            console.error('Error loading following:', error);
+            document.getElementById('profile-following').innerHTML = '<p class="text-center text-red-500">Failed to load following.</p>';
+        }
+    },
+
     // Render posts
     renderPosts(posts, append = false) {
         const postsContainer = document.getElementById('profile-posts');
@@ -225,32 +253,61 @@ const ProfileManager = {
         }
         
         posts.forEach(post => {
-            const postElement = window.FeedManager?.createPostElement(post) || this.createSimplePostElement(post);
+            const postElement = window.FeedManager.createPostElement(post);
             postsContainer.appendChild(postElement);
         });
     },
 
-    // Create simple post element (fallback if FeedManager not available)
-    createSimplePostElement(post) {
-        const article = document.createElement('article');
-        article.className = 'card card-hover';
-        article.innerHTML = `
-            <div class="p-4">
-                <h3 class="font-semibold mb-2">${post.title}</h3>
-                <p class="text-text-secondary">${post.content}</p>
-                <div class="mt-3 flex items-center space-x-4 text-sm text-text-secondary">
-                    <span>${post.likes_count} likes</span>
-                    <span>${post.comments_count} comments</span>
-                    <span>${this.formatDate(post.created_at)}</span>
+    // Render followers
+    renderFollowers(followers) {
+        const followersContainer = document.getElementById('profile-followers');
+        if (!followersContainer) return;
+
+        if (followers.length === 0) {
+            followersContainer.innerHTML = '<p class="text-center text-text-secondary">No followers yet.</p>';
+            return;
+        }
+
+        followersContainer.innerHTML = followers.map(user => `
+            <div class="flex items-center space-x-3 card p-3">
+                <img src="${user.profile_picture ? `${API_BASE_URL}${user.profile_picture}` : '/img/default-avatar.jpg'}"
+                     alt="${user.username}'s Profile"
+                     class="w-10 h-10 rounded-full object-cover">
+                <div>
+                    <a href="/pages/soul_profile.html?user=${user.username}" class="font-medium text-text-primary hover:text-primary">${user.full_name || user.username}</a>
+                    <p class="text-sm text-text-secondary">@${user.username}</p>
                 </div>
             </div>
-        `;
-        return article;
+        `).join('');
     },
+
+    // Render following
+    renderFollowing(following) {
+        const followingContainer = document.getElementById('profile-following');
+        if (!followingContainer) return;
+
+        if (following.length === 0) {
+            followingContainer.innerHTML = '<p class="text-center text-text-secondary">Not following anyone yet.</p>';
+            return;
+        }
+
+        followingContainer.innerHTML = following.map(user => `
+            <div class="flex items-center space-x-3 card p-3">
+                <img src="${user.profile_picture ? `${API_BASE_URL}${user.profile_picture}` : '/img/default-avatar.jpg'}"
+                     alt="${user.username}'s Profile"
+                     class="w-10 h-10 rounded-full object-cover">
+                <div>
+                    <a href="/pages/soul_profile.html?user=${user.username}" class="font-medium text-text-primary hover:text-primary">${user.full_name || user.username}</a>
+                    <p class="text-sm text-text-secondary">@${user.username}</p>
+                </div>
+            </div>
+        `).join('');
+    },
+
 
     // Load stats
     async loadStats() {
-        if (!this.isOwnProfile) return;
+        if (!this.isOwnProfile) return; 
         
         try {
             const response = await window.AuthAPI.request('/api/stats/overview');
@@ -333,15 +390,26 @@ const ProfileManager = {
                 content.classList.add('hidden');
             }
         });
+
+        // Load data for the active tab
+        if (tab === 'followers') {
+            this.loadFollowers();
+        } else if (tab === 'following') {
+            this.loadFollowing();
+        } else if (tab === 'posts') {
+            this.loadUserPosts();
+        } else if (tab === 'stats') {
+            this.loadStats();
+        }
     },
 
     // Toggle follow
     async toggleFollow() {
-        if (!this.currentProfile) return;
+        if (!this.currentProfile) return; 
         
         try {
             const endpoint = this.currentProfile.is_following 
-                ? `/api/users/${this.currentProfile.username}/unfollow`
+                ? `/api/users/${this.currentProfile.username}/unfollow` 
                 : `/api/users/${this.currentProfile.username}/follow`;
             
             const method = this.currentProfile.is_following ? 'DELETE' : 'POST';
@@ -378,7 +446,7 @@ const ProfileManager = {
     // Open edit modal
     openEditModal() {
         const modal = document.getElementById('edit-profile-modal');
-        if (!modal) return;
+        if (!modal) return; 
         
         // Populate form with current data
         document.getElementById('edit-full-name').value = this.currentProfile.full_name || '';
@@ -438,7 +506,7 @@ const ProfileManager = {
 
     // Handle avatar upload
     async handleAvatarUpload(file) {
-        if (!file) return;
+        if (!file) return; 
         
         const formData = new FormData();
         formData.append('file', file);
@@ -463,14 +531,12 @@ const ProfileManager = {
 
     // Show followers modal
     async showFollowers() {
-        // Implementation for showing followers list
-        console.log('Show followers');
+        await this.loadFollowers();
     },
 
     // Show following modal
     async showFollowing() {
-        // Implementation for showing following list
-        console.log('Show following');
+        await this.loadFollowing();
     },
 
     // Send message

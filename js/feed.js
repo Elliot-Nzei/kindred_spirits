@@ -111,83 +111,92 @@ const FeedManager = {
             : defaultAvatar;
 
         article.innerHTML = `
-            <div class="flex items-start space-x-3 mb-4">
-                <a href="/pages/profile.html?user=${post.owner_username}" class="flex-shrink-0">
-                    <img src="${profilePicture}" 
-                         alt="${post.owner_username}'s Profile" 
-                         class="w-10 h-10 rounded-full object-cover hover:ring-2 hover:ring-primary transition-all"
-                         onerror="this.src='${defaultAvatar}'; this.onerror=null;" />
-                </a>
-                <div class="flex-1">
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center space-x-2">
-                            <a href="/pages/profile.html?user=${post.owner_username}" 
-                               class="font-medium text-text-primary hover:text-primary transition-colors">
-                                ${post.owner_username}
-                            </a>
-                            <span class="text-text-secondary text-sm">${this.timeAgo(post.created_at)}</span>
+            <div class="p-4">
+                <div class="flex items-start space-x-3 mb-4">
+                    <a href="/pages/profile.html?user=${post.owner_username}" class="flex-shrink-0">
+                        <img src="${profilePicture}" 
+                             alt="${post.owner_username}'s Profile" 
+                             class="w-10 h-10 rounded-full object-cover border-2 border-primary-light hover:border-primary transition-all duration-200"
+                             onerror="this.src='${defaultAvatar}'; this.onerror=null;" />
+                    </a>
+                    <div class="flex-1">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <a href="/pages/profile.html?user=${post.owner_username}" 
+                                   class="font-semibold text-text-primary hover:text-primary transition-colors text-base">
+                                    ${post.owner_username}
+                                </a>
+                                <p class="text-text-secondary text-xs">${this.timeAgo(post.created_at)}</p>
+                            </div>
+                            ${this.createPostMenu(post)}
                         </div>
-                        ${this.createPostMenu(post)}
+                        <h3 class="text-text-primary font-medium mt-1">${post.title}</h3>
                     </div>
-                    <p class="text-text-secondary text-sm">${post.title}</p>
-                </div>
-            </div>
-            
-            <div class="mb-4">
-                <p class="text-text-primary mb-3 whitespace-pre-wrap">${this.formatContent(post.content)}</p>
-                ${post.image_url ? `
-                    <div class="rounded-lg overflow-hidden cursor-pointer" onclick="FeedManager.openImageModal('${API_BASE_URL}${post.image_url}')">
-                        <img src="${API_BASE_URL}${post.image_url}" 
-                             alt="Post image" 
-                             class="w-full h-auto max-h-96 object-cover hover:scale-105 transition-transform duration-300" 
-                             loading="lazy" 
-                             onerror="this.style.display='none'">
-                    </div>
-                ` : ''}
-            </div>
-
-            <div class="flex items-center justify-between pt-3 border-t border-border-light">
-                <div class="flex items-center space-x-4">
-                    <button type="button" 
-                            class="reaction-btn flex items-center space-x-2 text-text-secondary hover:text-red-500 transition-colors ${post.is_liked ? 'text-red-500' : ''}"
-                            onclick="FeedManager.toggleLike(${post.id}, this)">
-                        <span class="reaction-icon">
-                            <svg class="w-5 h-5" fill="${post.is_liked ? 'currentColor' : 'none'}" stroke="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"/>
-                            </svg>
-                        </span>
-                        <span class="text-sm reaction-count">${post.likes_count || 0}</span>
-                    </button>
-                    
-                    <button type="button" 
-                            class="flex items-center space-x-2 text-text-secondary hover:text-primary transition-colors"
-                            onclick="FeedManager.openComments(${post.id})">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                                  d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
-                        </svg>
-                        <span class="text-sm comment-count">${post.comments_count || 0}</span>
-                    </button>
-                    
-                    <button type="button" 
-                            class="flex items-center space-x-2 text-text-secondary hover:text-primary transition-colors"
-                            onclick="FeedManager.sharePost(${post.id})">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                                  d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m9.032 4.026a3 3 0 10-4.26 4.26l1.392-4.26zm0 0l-1.392 4.26M7.316 10.658a3 3 0 10-4.26-4.26l4.26 1.392z"/>
-                        </svg>
-                    </button>
                 </div>
                 
-                <button type="button" 
-                        class="bookmark-btn text-text-secondary hover:text-accent transition-colors" 
-                        onclick="FeedManager.toggleBookmark(${post.id}, this)"
-                        title="Bookmark">
-                    <svg class="w-5 h-5" fill="${post.is_bookmarked ? 'currentColor' : 'none'}" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                              d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
-                    </svg>
-                </button>
+                <div class="mb-4">
+                    <p class="text-text-primary mb-3 whitespace-pre-wrap text-sm leading-relaxed">${this.formatContent(post.content)}</p>
+                    ${post.image_url ? `
+                        <div class="rounded-lg overflow-hidden shadow-md border border-border-light cursor-pointer" onclick="FeedManager.openImageModal('${API_BASE_URL}${post.image_url}')">
+                            <img src="${API_BASE_URL}${post.image_url}" 
+                                 alt="Post image" 
+                                 class="w-full h-auto max-h-96 object-cover transition-transform duration-300 hover:scale-105" 
+                                 loading="lazy" 
+                                 onerror="this.style.display='none'">
+                        </div>
+                    ` : post.video_url ? `
+                        <div class="rounded-lg overflow-hidden shadow-md border border-border-light">
+                            <video controls class="w-full h-auto max-h-96 object-cover">
+                                <source src="${API_BASE_URL}${post.video_url}" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
+                        </div>
+                    ` : ''}
+                </div>
+
+                <div class="flex items-center justify-between pt-3 border-t border-border-light">
+                    <div class="flex items-center space-x-4">
+                        <button type="button" 
+                                class="reaction-btn flex items-center space-x-1 text-text-secondary hover:text-red-500 transition-colors ${post.is_liked ? 'text-red-500' : ''}"
+                                onclick="FeedManager.toggleLike(${post.id}, this)">
+                            <span class="reaction-icon">
+                                <svg class="w-5 h-5" fill="${post.is_liked ? 'currentColor' : 'none'}" stroke="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"/>
+                                </svg>
+                            </span>
+                            <span class="text-sm reaction-count">${post.likes_count || 0}</span>
+                        </button>
+                        
+                        <button type="button" 
+                                class="flex items-center space-x-1 text-text-secondary hover:text-primary transition-colors"
+                                onclick="FeedManager.openComments(${post.id})">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                      d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                            </svg>
+                            <span class="text-sm comment-count">${post.comments_count || 0}</span>
+                        </button>
+                        
+                        <button type="button" 
+                                class="flex items-center space-x-1 text-text-secondary hover:text-primary transition-colors"
+                                onclick="FeedManager.sharePost(${post.id})">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                      d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m9.032 4.026a3 3 0 10-4.26 4.26l1.392-4.26zm0 0l-1.392 4.26M7.316 10.658a3 3 0 10-4.26-4.26l4.26 1.392z"/>
+                            </svg>
+                        </button>
+                    </div>
+                    
+                    <button type="button" 
+                            class="bookmark-btn text-text-secondary hover:text-accent transition-colors" 
+                            onclick="FeedManager.toggleBookmark(${post.id}, this)"
+                            title="Bookmark">
+                        <svg class="w-5 h-5" fill="${post.is_bookmarked ? 'currentColor' : 'none'}" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                  d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
+                        </svg>
+                    </button>
+                </div>
             </div>
         `;
         
@@ -335,12 +344,14 @@ const FeedManager = {
     // Load comments
     async loadComments(postId) {
         const commentsList = document.getElementById('modal-comments-list');
+        commentsList.innerHTML = `<div class="text-center py-4"><div class="spinner"></div></div>`;
         
         try {
             const response = await window.AuthAPI.request(`/api/posts/${postId}/comments`);
             if (!response.ok) throw new Error('Failed to load comments');
             
-            const comments = await response.json();
+            const commentsData = await response.json();
+            const comments = Array.isArray(commentsData) ? commentsData : commentsData.items || [];
             this.renderComments(comments, commentsList);
             
         } catch (error) {
@@ -377,24 +388,28 @@ const FeedManager = {
     async postComment() {
         const modal = document.getElementById('comments-modal');
         const postId = modal.getAttribute('data-post-id');
-        // Try both possible comment input IDs
-        let input = document.getElementById('comment-input');
+        const input = document.getElementById('modal-comment-input-1') || document.getElementById('comment-input');
+
         if (!input) {
-            input = document.getElementById('modal-comment-input-1');
+            console.error('Comment input field not found!');
+            return;
         }
-        if (!input) return; // No input found, do nothing
 
         const text = input.value.trim();
         if (!text) return;
+
         try {
             const response = await window.AuthAPI.request(`/api/posts/${postId}/comments`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ text })
             });
+
             if (!response.ok) throw new Error('Failed to post comment');
+
             input.value = '';
             await this.loadComments(postId);
+
             // Update comment count in feed
             this.updateCommentCount(postId, 1);
         } catch (error) {
@@ -736,6 +751,7 @@ const FeedManager = {
         const newPostBtnDesktop = document.getElementById('open-new-post-modal-desktop');
         const newPostBtnMobile = document.getElementById('open-new-post-modal-mobile');
         const newPostModal = document.getElementById('new-post-modal');
+        console.log('newPostModal reference:', newPostModal);
         const closeNewPostBtn = document.getElementById('close-new-post-modal');
         const submitPostBtn = document.getElementById('submit-new-post');
 
@@ -822,6 +838,7 @@ const FeedManager = {
 
 // Initialize feed when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
+    console.log('FeedManager DOMContentLoaded fired!');
     if (window.location.pathname.includes('community_feed_dashboard')) {
         FeedManager.init();
     }
