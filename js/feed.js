@@ -838,13 +838,11 @@ const FeedManager = {
 
         const notification = document.createElement('div');
         notification.className = 'fixed top-20 left-1/2 transform -translate-x-1/2 bg-primary text-white px-4 py-2 rounded-lg cursor-pointer z-50';
-        notification.textContent = 'New posts available. Click to refresh.';
+        notification.textContent = 'New posts available. Click to scroll to top.';
         notification.onclick = () => {
             notification.remove();
             this.newPostsNotificationElement = null;
-            this.currentPage = 0;
-            this.loadFeed();
-            window.scrollTo(0, 0);
+            window.scrollTo(0, 0); // Just scroll to top, new posts are already prepended
         };
         document.body.appendChild(notification);
         this.newPostsNotificationElement = notification;
