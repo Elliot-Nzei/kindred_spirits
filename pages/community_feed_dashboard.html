@@ -145,21 +145,38 @@
 
                 <!-- Floating Meditation Timer -->
                 <div class="hidden md:flex items-center space-x-4">
-                    <button type="button" class="flex items-center space-x-2 bg-primary-50 text-primary px-4 py-2 rounded-full hover:bg-primary-100 transition-all duration-300">
-                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
-                        </svg>
-                        <span class="text-sm font-medium" data-translate="meditation_time">5 min</span>
-                    </button>
-                    <button type="button" class="bg-accent text-primary px-4 py-2 rounded-full hover:bg-accent-500 transition-all duration-300 font-medium text-sm" data-translate="quick_practice_btn">
-                        Quick Practice
-                    </button>
                     <button type="button" id="open-search-modal-desktop" class="flex items-center space-x-2 bg-gray-200 text-text-secondary px-4 py-2 rounded-full hover:bg-gray-300 transition-all duration-300">
                         <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                             <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/>
                         </svg>
                         <span class="text-sm font-medium">Search</span>
                     </button>
+                    <a href="personal_growth_pathway.html" class="flex items-center space-x-2 bg-primary-50 text-primary px-4 py-2 rounded-full hover:bg-primary-100 transition-all duration-300">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11.707 4.707a1 1 0 00-1.414-1.414L10 9.586 8.707 8.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                        </svg>
+                        <span class="text-sm font-medium" data-translate="nav_growth">My Journey</span>
+                    </a>
+                    <a href="workshop_gateway.html" class="bg-accent text-primary px-4 py-2 rounded-full hover:bg-accent-500 transition-all duration-300 font-medium text-sm" data-translate="nav_workshops">
+                        Workshops
+                    </a>
+                    <div x-data="{ open: false }" class="relative">
+                        <button @click="open = !open" type="button" class="flex items-center space-x-2 bg-gray-200 text-text-secondary px-4 py-2 rounded-full hover:bg-gray-300 transition-all duration-300">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 12a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/>
+                                <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"/>
+                            </svg>
+                            <span class="text-sm font-medium">More</span>
+                            <svg class="w-4 h-4 ml-1 transform" :class="{ 'rotate-180': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+                        <div x-show="open" @click.away="open = false" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-20">
+                            <a href="settings.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" data-translate="settings_link">Settings</a>
+                            <a href="help_support.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" data-translate="help_support_link">Help & Support</a>
+                            <a href="about.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" data-translate="about_link">About</a>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Mobile Menu Button (moved here from tab bar) -->
@@ -544,9 +561,6 @@
     <!-- Mobile Menu Overlay (newly added) -->
     <div id="mobile-menu-overlay" class="mobile-menu-overlay">
         <div class="mobile-menu-sheet">
-            <a href="settings.html" data-translate="settings_link">Settings</a>
-            <a href="help_support.html" data-translate="help_support_link">Help & Support</a>
-            <a href="about.html" data-translate="about_link">About</a>
             <button id="close-mobile-menu" class="bg-primary text-white py-2 rounded-lg font-medium" data-translate="close_btn">Close</button>
         </div>
     </div>
