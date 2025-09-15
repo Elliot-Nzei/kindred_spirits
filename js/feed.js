@@ -308,12 +308,12 @@ const FeedManager = {
         modalElement.classList.add('active');
         modalElement.setAttribute('data-post-id', postId);
         
-        await this.loadComments(postId);
+        await this.loadComments(postId, true);
 
         // Start polling for new comments
         this.commentPollingInterval = setInterval(async () => {
             if (modalElement.classList.contains('active')) { // Only poll if modal is open
-                await this.loadComments(postId);
+                await this.loadComments(postId, false);
             }
         }, 2000); // Poll every 2 seconds
     },
@@ -355,46 +355,96 @@ const FeedManager = {
         document.body.appendChild(modal);
     },
 
+    // Store comments currently displayed in the modal
+    currentModalComments: [],
+
     // Load comments
-    async loadComments(postId) {
+    async loadComments(postId, initialLoad = true) {
         const commentsList = document.getElementById('modal-comments-list');
-        commentsList.innerHTML = `<div class="text-center py-4"><div class="spinner"></div></div>`;
+        if (initialLoad) {
+            commentsList.innerHTML = `<div class="text-center py-4"><div class="spinner"></div></div>`;
+            this.currentModalComments = []; // Clear on initial load
+        }
         
         try {
             const response = await window.AuthAPI.request(`/api/posts/${postId}/comments`);
             if (!response.ok) throw new Error('Failed to load comments');
             
             const commentsData = await response.json();
-            const comments = Array.isArray(commentsData) ? commentsData : commentsData.items || [];
-            this.renderComments(comments, commentsList);
+            const fetchedComments = Array.isArray(commentsData) ? commentsData : commentsData.items || [];
+
+            if (initialLoad) {
+                this.renderAllComments(fetchedComments, commentsList);
+            } else {
+                this.appendNewComments(fetchedComments, commentsList);
+            }
             
         } catch (error) {
             console.error('Error loading comments:', error);
-            commentsList.innerHTML = '<p class="text-red-500 text-center">Failed to load comments</p>';
+            if (initialLoad) {
+                commentsList.innerHTML = '<p class="text-red-500 text-center">Failed to load comments</p>';
+            }
         }
     },
 
-    // Render comments
-    renderComments(comments, container) {
+    // Render all comments (for initial load)
+    renderAllComments(comments, container) {
+        container.innerHTML = ''; // Clear existing comments
+        this.currentModalComments = []; // Reset current comments
+
         if (comments.length === 0) {
             container.innerHTML = '<p class="text-center text-text-secondary">No comments yet. Be the first to comment!</p>';
             return;
         }
 
-        container.innerHTML = comments.map(comment => `
-            <div class="comment-item p-3 bg-background rounded-lg">
-                <div class="flex items-start space-x-3">
-                    <img src="${comment.owner_profile_picture ? API_BASE_URL + comment.owner_profile_picture : '/img/default-avatar.jpg'}" 
-                         class="w-8 h-8 rounded-full object-cover">
-                    <div class="flex-1">
-                        <div class="flex items-center space-x-2">
-                            <span class="font-medium text-sm">${comment.owner_username}</span>
-                        </div>
-                        <p class="text-sm mt-1">${comment.text}</p>
+        comments.forEach(comment => {
+            const commentElement = this.createCommentElement(comment);
+            container.appendChild(commentElement);
+            this.currentModalComments.push(comment);
+        });
+    },
+
+    // Append only new comments
+    appendNewComments(fetchedComments, container) {
+        const newComments = fetchedComments.filter(
+            fetchedComment => !this.currentModalComments.some(
+                existingComment => existingComment.id === fetchedComment.id
+            )
+        );
+
+        newComments.forEach(comment => {
+            const commentElement = this.createCommentElement(comment);
+            container.appendChild(commentElement);
+            this.currentModalComments.push(comment);
+        });
+
+        if (this.currentModalComments.length === 0 && fetchedComments.length === 0) {
+            container.innerHTML = '<p class="text-center text-text-secondary">No comments yet. Be the first to comment!</p>';
+        } else if (this.currentModalComments.length > 0 && fetchedComments.length === 0) {
+            // All comments were deleted, clear the list
+            container.innerHTML = '<p class="text-center text-text-secondary">No comments yet. Be the first to comment!</p>';
+            this.currentModalComments = [];
+        }
+    },
+
+    // Create a single comment element
+    createCommentElement(comment) {
+        const commentDiv = document.createElement('div');
+        commentDiv.className = 'comment-item p-3 bg-background rounded-lg';
+        commentDiv.setAttribute('data-comment-id', comment.id); // Add data-comment-id for identification
+        commentDiv.innerHTML = `
+            <div class="flex items-start space-x-3">
+                <img src="${comment.owner_profile_picture ? API_BASE_URL + comment.owner_profile_picture : '/img/default-avatar.jpg'}" 
+                     class="w-8 h-8 rounded-full object-cover">
+                <div class="flex-1">
+                    <div class="flex items-center space-x-2">
+                        <span class="font-medium text-sm">${comment.owner_username}</span>
                     </div>
+                    <p class="text-sm mt-1">${comment.text}</p>
                 </div>
             </div>
-        `).join('');
+        `;
+        return commentDiv;
     },
 
     // Post comment
@@ -421,7 +471,7 @@ const FeedManager = {
             if (!response.ok) throw new Error('Failed to post comment');
 
             input.value = '';
-            await this.loadComments(postId);
+            await this.loadComments(postId, false);
 
             // Update comment count in feed
             this.updateCommentCount(postId, 1);
