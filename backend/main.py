@@ -75,6 +75,7 @@ class User(Base):
     posts = relationship("Post", back_populates="owner", cascade="all, delete-orphan")
     comments = relationship("Comment", back_populates="owner", cascade="all, delete-orphan")
     likes = relationship("Like", back_populates="owner", cascade="all, delete-orphan")
+    comment_likes = relationship("CommentLike", back_populates="owner", cascade="all, delete-orphan")
     
     # Follow relationships
     followers = relationship(
@@ -147,6 +148,19 @@ class Comment(Base):
     owner = relationship("User", back_populates="comments")
     post = relationship("Post", back_populates="comments")
     replies = relationship("Comment", backref="parent", remote_side=[id])
+    likes = relationship("CommentLike", back_populates="comment", cascade="all, delete-orphan")
+
+class CommentLike(Base):
+    __tablename__ = "comment_likes"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    owner_id = Column(Integer, ForeignKey("users.id"))
+    comment_id = Column(Integer, ForeignKey("comments.id"))
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    
+    owner = relationship("User")
+    comment = relationship("Comment", back_populates="likes")
+
 
 class Like(Base):
     __tablename__ = "likes"
@@ -288,6 +302,8 @@ class CommentResponse(CommentBase):
     created_at: datetime
     updated_at: datetime
     replies_count: int = 0
+    likes_count: int = 0
+    is_liked: bool = False
     
     class Config:
         from_attributes = True
@@ -887,7 +903,9 @@ async def create_comment(
         updated_at=db_comment.updated_at,
         owner_username=current_user.username,
         owner_profile_picture=current_user.profile_picture,
-        replies_count=0
+        replies_count=0,
+        likes_count=0,
+        is_liked=False
     )
     
     return response
@@ -897,17 +915,25 @@ async def get_comments(
     post_id: int,
     skip: int = 0,
     limit: int = 50,
+    current_user: Optional[User] = Depends(get_current_user_optional),
     db: Session = Depends(get_db)
 ):
     comments = db.query(Comment).options(joinedload(Comment.owner)).filter(
-        Comment.post_id == post_id,
-        Comment.parent_id == None
-    ).order_by(Comment.created_at.desc()).offset(skip).limit(limit).all()
+        Comment.post_id == post_id
+    ).order_by(Comment.created_at.asc()).offset(skip).limit(limit).all()
     
     response = []
     for comment in comments:
         owner_username = comment.owner.username if comment.owner else None
         owner_profile_picture = comment.owner.profile_picture if comment.owner else None
+
+        likes_count = db.query(CommentLike).filter(CommentLike.comment_id == comment.id).count()
+        is_liked = False
+        if current_user:
+            is_liked = db.query(CommentLike).filter(
+                CommentLike.comment_id == comment.id,
+                CommentLike.owner_id == current_user.id
+            ).first() is not None
 
         comment_response = CommentResponse(
             id=comment.id,
@@ -919,7 +945,9 @@ async def get_comments(
             updated_at=comment.updated_at,
             owner_username=owner_username,
             owner_profile_picture=owner_profile_picture,
-            replies_count=db.query(Comment).filter(Comment.parent_id == comment.id).count()
+            replies_count=db.query(Comment).filter(Comment.parent_id == comment.id).count(),
+            likes_count=likes_count,
+            is_liked=is_liked
         )
         response.append(comment_response)
     
@@ -942,6 +970,53 @@ async def delete_comment(
     db.commit()
     
     return {"message": "Comment deleted successfully"}
+
+# --- Comment Like Routes ---
+@app.post("/api/comments/{comment_id}/like")
+async def like_comment(
+    comment_id: int,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    comment = db.query(Comment).filter(Comment.id == comment_id).first()
+    if not comment:
+        raise HTTPException(status_code=404, detail="Comment not found")
+    
+    existing_like = db.query(CommentLike).filter(
+        CommentLike.comment_id == comment_id,
+        CommentLike.owner_id == current_user.id
+    ).first()
+    
+    if existing_like:
+        raise HTTPException(status_code=400, detail="Already liked this comment")
+    
+    like = CommentLike(owner_id=current_user.id, comment_id=comment_id)
+    db.add(like)
+    db.commit()
+    
+    likes_count = db.query(CommentLike).filter(CommentLike.comment_id == comment_id).count()
+    return {"message": "Comment liked", "likes_count": likes_count}
+
+@app.delete("/api/comments/{comment_id}/unlike")
+async def unlike_comment(
+    comment_id: int,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    like = db.query(CommentLike).filter(
+        CommentLike.comment_id == comment_id,
+        CommentLike.owner_id == current_user.id
+    ).first()
+    
+    if not like:
+        raise HTTPException(status_code=400, detail="Comment not liked")
+    
+    db.delete(like)
+    db.commit()
+    
+    likes_count = db.query(CommentLike).filter(CommentLike.comment_id == comment_id).count()
+    return {"message": "Comment unliked", "likes_count": likes_count}
+
 
 # --- Notification Routes ---
 @app.get("/api/notifications", response_model=List[NotificationResponse])

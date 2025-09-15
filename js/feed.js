@@ -397,7 +397,22 @@ const FeedManager = {
             return;
         }
 
+        const commentMap = {};
+        const topLevelComments = [];
+
         comments.forEach(comment => {
+            comment.children = [];
+            commentMap[comment.id] = comment;
+            if (comment.parent_id) {
+                if (commentMap[comment.parent_id]) {
+                    commentMap[comment.parent_id].children.push(comment);
+                }
+            } else {
+                topLevelComments.push(comment);
+            }
+        });
+
+        topLevelComments.forEach(comment => {
             const commentElement = this.createCommentElement(comment);
             container.appendChild(commentElement);
             this.currentModalComments.push(comment);
@@ -406,24 +421,57 @@ const FeedManager = {
 
     // Append only new comments
     appendNewComments(fetchedComments, container) {
-        const newComments = fetchedComments.filter(
-            fetchedComment => !this.currentModalComments.some(
-                existingComment => existingComment.id === fetchedComment.id
-            )
-        );
+        const commentMap = {};
+        this.currentModalComments.forEach(comment => {
+            commentMap[comment.id] = comment;
+        });
 
-        newComments.forEach(comment => {
-            const commentElement = this.createCommentElement(comment);
-            container.appendChild(commentElement);
-            this.currentModalComments.push(comment);
+        fetchedComments.forEach(fetchedComment => {
+            if (commentMap[fetchedComment.id]) {
+                // Update existing comment
+                const existingComment = commentMap[fetchedComment.id];
+                if (existingComment.likes_count !== fetchedComment.likes_count) {
+                    const commentElement = container.querySelector(`[data-comment-id="${fetchedComment.id}"]`);
+                    if (commentElement) {
+                        const likeCountSpan = commentElement.querySelector('.like-count');
+                        if (likeCountSpan) {
+                            likeCountSpan.textContent = fetchedComment.likes_count;
+                        }
+                        const likeButton = commentElement.querySelector('.like-comment-btn');
+                        if (likeButton) {
+                            if (fetchedComment.is_liked) {
+                                likeButton.classList.add('text-red-500');
+                            } else {
+                                likeButton.classList.remove('text-red-500');
+                            }
+                        }
+                    }
+                    existingComment.likes_count = fetchedComment.likes_count;
+                    existingComment.is_liked = fetchedComment.is_liked;
+                }
+            } else {
+                // Append new comment
+                const commentElement = this.createCommentElement(fetchedComment);
+                if (fetchedComment.parent_id) {
+                    const parentElement = container.querySelector(`[data-comment-id="${fetchedComment.parent_id}"]`);
+                    if (parentElement) {
+                        const repliesContainer = parentElement.querySelector('.replies-container');
+                        if (repliesContainer) {
+                            repliesContainer.appendChild(commentElement);
+                        }
+                    }
+                } else {
+                    container.appendChild(commentElement);
+                }
+                this.currentModalComments.push(fetchedComment);
+            }
         });
 
         if (this.currentModalComments.length === 0 && fetchedComments.length === 0) {
             container.innerHTML = '<p class="text-center text-text-secondary">No comments yet. Be the first to comment!</p>';
-        } else if (this.currentModalComments.length > 0 && fetchedComments.length === 0) {
-            // All comments were deleted, clear the list
-            container.innerHTML = '<p class="text-center text-text-secondary">No comments yet. Be the first to comment!</p>';
-            this.currentModalComments = [];
+        } else if (container.innerHTML === '<p class="text-center text-text-secondary">No comments yet. Be the first to comment!</p>' && this.currentModalComments.length > 0) {
+            container.innerHTML = '';
+            this.renderAllComments(this.currentModalComments, container);
         }
     },
 
@@ -431,7 +479,13 @@ const FeedManager = {
     createCommentElement(comment) {
         const commentDiv = document.createElement('div');
         commentDiv.className = 'comment-item p-3 bg-background rounded-lg';
-        commentDiv.setAttribute('data-comment-id', comment.id); // Add data-comment-id for identification
+        commentDiv.setAttribute('data-comment-id', comment.id);
+
+        let repliesHtml = '';
+        if (comment.children && comment.children.length > 0) {
+            repliesHtml = comment.children.map(reply => this.createCommentElement(reply).outerHTML).join('');
+        }
+
         commentDiv.innerHTML = `
             <div class="flex items-start space-x-3">
                 <img src="${comment.owner_profile_picture ? API_BASE_URL + comment.owner_profile_picture : '/img/default-avatar.jpg'}" 
@@ -441,10 +495,81 @@ const FeedManager = {
                         <span class="font-medium text-sm">${comment.owner_username}</span>
                     </div>
                     <p class="text-sm mt-1">${comment.text}</p>
+                    <div class="flex items-center space-x-4 mt-2 text-xs text-text-secondary">
+                        <button class="like-comment-btn hover:text-red-500 ${comment.is_liked ? 'text-red-500' : ''}" onclick="FeedManager.toggleCommentLike(${comment.id}, this)">
+                            <span class="like-count">${comment.likes_count || 0}</span> Likes
+                        </button>
+                        <button class="reply-comment-btn hover:text-primary" onclick="FeedManager.showReplyInput(${comment.id})">
+                            Reply
+                        </button>
+                    </div>
+                    <div id="reply-input-${comment.id}" class="hidden mt-2">
+                        <textarea class="w-full bg-surface border border-border-light rounded-lg p-2 text-sm" placeholder="Write a reply..."></textarea>
+                        <button class="mt-2 px-3 py-1 bg-primary text-white rounded-lg text-xs" onclick="FeedManager.postReply(${comment.id})">Post Reply</button>
+                    </div>
+                    <div class="replies-container mt-4 space-y-3 ml-4 border-l-2 border-border-light pl-4">
+                        ${repliesHtml}
+                    </div>
                 </div>
             </div>
         `;
         return commentDiv;
+    },
+
+    // Toggle like on a comment
+    async toggleCommentLike(commentId, button) {
+        const isLiked = button.classList.contains('text-red-500');
+        const endpoint = isLiked ? `/api/comments/${commentId}/unlike` : `/api/comments/${commentId}/like`;
+        
+        try {
+            const response = await window.AuthAPI.request(endpoint, {
+                method: isLiked ? 'DELETE' : 'POST'
+            });
+            if (!response.ok) throw new Error('Failed to update comment like');
+
+            const data = await response.json();
+            const likeCountSpan = button.querySelector('.like-count');
+            likeCountSpan.textContent = data.likes_count;
+            button.classList.toggle('text-red-500');
+        } catch (error) {
+            console.error('Error toggling comment like:', error);
+        }
+    },
+
+    // Show reply input
+    showReplyInput(commentId) {
+        const replyInputDiv = document.getElementById(`reply-input-${commentId}`);
+        if (replyInputDiv) {
+            replyInputDiv.classList.toggle('hidden');
+        }
+    },
+
+    // Post a reply to a comment
+    async postReply(commentId) {
+        const replyInputDiv = document.getElementById(`reply-input-${commentId}`);
+        const textarea = replyInputDiv.querySelector('textarea');
+        const text = textarea.value.trim();
+
+        if (!text) return;
+
+        const modal = document.getElementById('comments-modal');
+        const postId = modal.getAttribute('data-post-id');
+
+        try {
+            const response = await window.AuthAPI.request(`/api/posts/${postId}/comments`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ text: text, parent_id: commentId })
+            });
+
+            if (!response.ok) throw new Error('Failed to post reply');
+
+            textarea.value = '';
+            replyInputDiv.classList.add('hidden');
+            await this.loadComments(postId, false);
+        } catch (error) {
+            console.error('Error posting reply:', error);
+        }
     },
 
     // Post comment

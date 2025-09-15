@@ -1,4 +1,3 @@
-
 run-backend:
 	@echo "Starting FastAPI backend..."
 	backend\venv\Scripts\uvicorn backend.main:app --reload
@@ -16,3 +15,12 @@ push:
 
 .PHONY: push
 
+clean:
+	@echo "Cleaning user-generated content..."
+	-del /Q uploads\posts\*
+	-del /Q uploads\profiles\*
+	@echo '{"comments": []}' > data\comments.json
+	@echo '[]' > data\notifications.json
+	@echo "Done!"
+
+.PHONY: clean
