@@ -1,46 +1,899 @@
-[Intervention] Images loaded lazily and replaced with placeholders. Load events are deferred. See https://go.microsoft.com/fwlink/?linkid=2048113
-rocket-web.js?_cfg=h…cket.new&_v=0.1.8:1 FeedManager DOMContentLoaded fired!
-rocket-web.js?_cfg=h…cket.new&_v=0.1.8:1 newPostModal reference: 
-notifications.js:29 
- Uncaught (in promise) TypeError: Cannot set properties of null (setting 'innerHTML')
-    at loadNotifications (notifications.js:29:44)
-    at HTMLDocument.<anonymous> (notifications.js:94:5)
-[NEW] Explain Console errors by using Copilot in Edge: click 
- to explain an error. Learn more
-Don't show again
-rocket-web.js?_cfg=h…cket.new&_v=0.1.8:1 
- Error loading notifications: TypeError: window.getAuthToken is not a function
-    at loadNotifications (notifications.js:13:34)
-    at HTMLDocument.<anonymous> (notifications.js:94:5)
-auth.js:64 
- 
- POST http://127.0.0.1:8000/api/posts/upload-image 405 (Method Not Allowed)
-rocket-web.js?_cfg=h…cket.new&_v=0.1.8:1 
- Error creating post: Error: Failed to upload image
-    at Object.createPost (feed.js:599:27)
-auth.js:64 
- 
- POST http://127.0.0.1:8000/api/posts/upload-image 405 (Method Not Allowed)
-rocket-web.js?_cfg=h…cket.new&_v=0.1.8:1 
- Error creating post: Error: Failed to upload image
-    at Object.createPost (feed.js:599:27)
-﻿
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kindred Spirits - Login</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-Compatibility
-'-webkit-mask-image' is not supported by Firefox. Add 'mask-image' to support Firefox 53+.
-'user-select' is not supported by Safari. Add '-webkit-user-select' to support Safari 3+.
-'min-height: auto' is not supported by Firefox 22+.
-'text-size-adjust' is not supported by Firefox, Safari.
-Performance
-A 'cache-control' header is missing or empty.
-Resource should use cache busting but URL does not match configured patterns.
-Response should not include unneeded headers: content-security-policy
-Response should not include unneeded headers: x-xss-protection
-Security
-Response should include 'x-content-type-options' header.
-The 'Expires' header should not be used, 'Cache-Control' should be preferred.
-The 'X-Frame-Options' header should not be used. A similar effect, with more consistent support and stronger checks, can be achieved with the 'Content-Security-Policy' header and 'frame-ancestors' directive.
-Other
-'box-sizing' should be listed after '-webkit-box-sizing'.
-'transform' should be listed after '-webkit-transform'.
-'transition' should be listed after '-webkit-transition'.
+        body {
+            font-family: 'Arial', sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Animated background elements */
+        .bg-decoration {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .floating-orb {
+            position: absolute;
+            border-radius: 50%;
+            background: linear-gradient(45deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+            backdrop-filter: blur(10px);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .orb-1 { width: 200px; height: 200px; top: 10%; left: -5%; animation-delay: 0s; }
+        .orb-2 { width: 150px; height: 150px; top: 60%; right: -3%; animation-delay: 2s; }
+        .orb-3 { width: 120px; height: 120px; bottom: 20%; left: 15%; animation-delay: 4s; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            33% { transform: translateY(-20px) rotate(5deg); }
+            66% { transform: translateY(20px) rotate(-5deg); }
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+            position: relative;
+            z-index: 1;
+        }
+
+        .left-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo-section {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .logo {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        .tagline {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+        }
+
+        .features-list {
+            list-style: none;
+            color: rgba(255, 255, 255, 0.9);
+            text-align: left;
+            max-width: 300px;
+        }
+
+        .features-list li {
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            font-size: 0.95rem;
+        }
+
+        .features-list li:before {
+            content: "✨";
+            margin-right: 0.8rem;
+            font-size: 1.2rem;
+        }
+
+        .right-panel {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+        }
+
+        .form-container {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 3rem;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 450px;
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .form {
+            transition: all 0.5s ease;
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .form.slide-out-left {
+            opacity: 0;
+            transform: translateX(-100px);
+        }
+
+        .form.slide-out-right {
+            opacity: 0;
+            transform: translateX(100px);
+        }
+
+        .form.slide-in-left {
+            opacity: 0;
+            transform: translateX(-100px);
+            animation: slideInLeft 0.5s ease forwards;
+        }
+
+        .form.slide-in-right {
+            opacity: 0;
+            transform: translateX(100px);
+            animation: slideInRight 0.5s ease forwards;
+        }
+
+        @keyframes slideInLeft {
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes slideInRight {
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .form-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .form-title {
+            font-size: 2rem;
+            color: #333;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .form-subtitle {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #555;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            background: white;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            margin-right: 0.5rem;
+            transform: scale(1.2);
+        }
+
+        .checkbox-group label {
+            color: #666;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+
+        .checkbox-group a {
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        .checkbox-group a:hover {
+            text-decoration: underline;
+        }
+
+        .forgot-password {
+            text-align: right;
+            margin-bottom: 2rem;
+        }
+
+        .forgot-password a {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+            cursor: pointer;
+        }
+
+        .forgot-password a:hover {
+            color: #5a67d8;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .divider {
+            text-align: center;
+            margin: 1.5rem 0;
+            position: relative;
+            color: #999;
+            font-size: 0.9rem;
+        }
+
+        .divider:before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: #e0e0e0;
+            z-index: 1;
+        }
+
+        .divider span {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 0 1rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .form-link {
+            text-align: center;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .form-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            margin-left: 0.3rem;
+            cursor: pointer;
+        }
+
+        .form-link a:hover {
+            text-decoration: underline;
+        }
+
+        .back-to-login {
+            text-align: center;
+            margin-top: 1rem;
+        }
+
+        .back-to-login a {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+
+        .back-to-login a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .left-panel {
+                display: none;
+            }
+            
+            .right-panel {
+                padding: 1rem;
+            }
+            
+            .form-container {
+                padding: 2rem;
+                max-width: 100%;
+            }
+            
+            .logo {
+                font-size: 2rem;
+            }
+
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+        }
+
+        /* Loading animation */
+        .btn-loading {
+            position: relative;
+            color: transparent;
+        }
+
+        .btn-loading:after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            width: 20px;
+            height: 20px;
+            margin-left: -10px;
+            margin-top: -10px;
+            border: 2px solid transparent;
+            border-top: 2px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .success-message {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .error-message {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .password-strength {
+            margin-top: 0.5rem;
+            font-size: 0.8rem;
+        }
+
+        .strength-bar {
+            height: 4px;
+            background: #e0e0e0;
+            border-radius: 2px;
+            margin-top: 0.3rem;
+            overflow: hidden;
+        }
+
+        .strength-fill {
+            height: 100%;
+            border-radius: 2px;
+            transition: all 0.3s ease;
+            width: 0;
+        }
+
+        .strength-weak { background: #e74c3c; width: 25%; }
+        .strength-fair { background: #f39c12; width: 50%; }
+        .strength-good { background: #f1c40f; width: 75%; }
+        .strength-strong { background: #27ae60; width: 100%; }
+    </style>
+</head>
+<body>
+    <div class="bg-decoration">
+        <div class="floating-orb orb-1"></div>
+        <div class="floating-orb orb-2"></div>
+        <div class="floating-orb orb-3"></div>
+    </div>
+
+    <div class="container">
+        <div class="left-panel">
+            <div class="logo-section">
+                <h1 class="logo">Kindred Spirits</h1>
+                <p class="tagline">Your journey of growth and connection begins here</p>
+            </div>
+            
+            <ul class="features-list">
+                <li>Connect with like-minded souls</li>
+                <li>Personal Growth Pathways</li>
+                <li>Practice Studio & Workshops</li>
+                <li>Daily Wisdom & Inspiration</li>
+                <li>Sacred Community Space</li>
+                <li>Holistic Well-being Tools</li>
+            </ul>
+        </div>
+
+        <div class="right-panel">
+            <div class="form-container">
+                <!-- Login Form -->
+                <form class="form" id="loginForm">
+                    <div class="form-header">
+                        <h2 class="form-title">Welcome Back</h2>
+                        <p class="form-subtitle">Continue your spiritual journey</p>
+                    </div>
+
+                    <div id="loginMessage" class="hidden"></div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="loginEmail">Email Address</label>
+                        <input 
+                            type="email" 
+                            id="loginEmail" 
+                            name="email" 
+                            class="form-input" 
+                            placeholder="your@email.com"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="loginPassword">Password</label>
+                        <input 
+                            type="password" 
+                            id="loginPassword" 
+                            name="password" 
+                            class="form-input" 
+                            placeholder="Enter your password"
+                            required
+                        >
+                    </div>
+
+                    <div class="forgot-password">
+                        <a onclick="showForgotPassword()">Forgot Password?</a>
+                    </div>
+
+                    <button type="submit" class="submit-btn" id="loginBtn">
+                        Sign In to Your Soul Profile
+                    </button>
+
+                    <div class="divider">
+                        <span>or</span>
+                    </div>
+
+                    <div class="form-link">
+                        New to Kindred Spirits?
+                        <a onclick="showRegister()">Create Your Profile</a>
+                    </div>
+                </form>
+
+                <!-- Register Form -->
+                <form class="form hidden" id="registerForm">
+                    <div class="form-header">
+                        <h2 class="form-title">Join Our Community</h2>
+                        <p class="form-subtitle">Create your soul profile and begin your journey</p>
+                    </div>
+
+                    <div id="registerMessage" class="hidden"></div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="firstName">First Name</label>
+                            <input 
+                                type="text" 
+                                id="firstName" 
+                                name="firstName" 
+                                class="form-input" 
+                                placeholder="Your first name"
+                                required
+                            >
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="lastName">Last Name</label>
+                            <input 
+                                type="text" 
+                                id="lastName" 
+                                name="lastName" 
+                                class="form-input" 
+                                placeholder="Your last name"
+                                required
+                            >
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="registerEmail">Email Address</label>
+                        <input 
+                            type="email" 
+                            id="registerEmail" 
+                            name="email" 
+                            class="form-input" 
+                            placeholder="your@email.com"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="registerPassword">Password</label>
+                        <input 
+                            type="password" 
+                            id="registerPassword" 
+                            name="password" 
+                            class="form-input" 
+                            placeholder="Create a strong password"
+                            required
+                        >
+                        <div class="password-strength">
+                            <div class="strength-bar">
+                                <div class="strength-fill" id="strengthFill"></div>
+                            </div>
+                            <span id="strengthText">Password strength</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="confirmPassword">Confirm Password</label>
+                        <input 
+                            type="password" 
+                            id="confirmPassword" 
+                            name="confirmPassword" 
+                            class="form-input" 
+                            placeholder="Confirm your password"
+                            required
+                        >
+                    </div>
+
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="agreeTerms" name="agreeTerms" required>
+                        <label for="agreeTerms">
+                            I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>
+                        </label>
+                    </div>
+
+                    <button type="submit" class="submit-btn" id="registerBtn">
+                        Create Your Soul Profile
+                    </button>
+
+                    <div class="form-link">
+                        Already have an account?
+                        <a onclick="showLogin()">Sign In</a>
+                    </div>
+                </form>
+
+                <!-- Forgot Password Form -->
+                <form class="form hidden" id="forgotPasswordForm">
+                    <div class="form-header">
+                        <h2 class="form-title">Reset Password</h2>
+                        <p class="form-subtitle">Enter your email to receive reset instructions</p>
+                    </div>
+
+                    <div id="forgotMessage" class="hidden"></div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="forgotEmail">Email Address</label>
+                        <input 
+                            type="email" 
+                            id="forgotEmail" 
+                            name="email" 
+                            class="form-input" 
+                            placeholder="your@email.com"
+                            required
+                        >
+                    </div>
+
+                    <button type="submit" class="submit-btn" id="forgotBtn">
+                        Send Reset Instructions
+                    </button>
+
+                    <div class="back-to-login">
+                        <a onclick="showLogin()">← Back to Sign In</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentForm = 'login';
+
+        // Form switching functions
+        function showLogin() {
+            switchForm('login');
+        }
+
+        function showRegister() {
+            switchForm('register');
+        }
+
+        function showForgotPassword() {
+            switchForm('forgot');
+        }
+
+        function switchForm(formType) {
+            const forms = {
+                login: document.getElementById('loginForm'),
+                register: document.getElementById('registerForm'),
+                forgot: document.getElementById('forgotPasswordForm')
+            };
+
+            const currentFormEl = forms[currentForm];
+            const newFormEl = forms[formType];
+
+            if (currentForm === formType) return;
+
+            // Slide out current form
+            const slideOutDirection = (currentForm === 'login' && formType === 'register') || 
+                                    (currentForm === 'forgot' && formType === 'login') ? 'left' : 'right';
+            
+            currentFormEl.classList.add(`slide-out-${slideOutDirection}`);
+
+            setTimeout(() => {
+                currentFormEl.classList.add('hidden');
+                currentFormEl.classList.remove(`slide-out-${slideOutDirection}`, 'form');
+                
+                // Slide in new form
+                const slideInDirection = slideOutDirection === 'left' ? 'right' : 'left';
+                newFormEl.classList.remove('hidden');
+                newFormEl.classList.add('form', `slide-in-${slideInDirection}`);
+                
+                setTimeout(() => {
+                    newFormEl.classList.remove(`slide-in-${slideInDirection}`);
+                }, 500);
+            }, 250);
+
+            currentForm = formType;
+            clearMessages();
+        }
+
+        function clearMessages() {
+            const messages = document.querySelectorAll('[id$="Message"]');
+            messages.forEach(msg => {
+                msg.classList.add('hidden');
+                msg.innerHTML = '';
+            });
+        }
+
+        function showMessage(formType, message, isError = false) {
+            const messageEl = document.getElementById(`${formType}Message`);
+            messageEl.className = isError ? 'error-message' : 'success-message';
+            messageEl.innerHTML = message;
+            messageEl.classList.remove('hidden');
+        }
+
+        // Password strength checker
+        function checkPasswordStrength(password) {
+            const strengthFill = document.getElementById('strengthFill');
+            const strengthText = document.getElementById('strengthText');
+            
+            let strength = 0;
+            let strengthClass = '';
+            let strengthLabel = '';
+
+            if (password.length >= 8) strength++;
+            if (password.match(/[a-z]/) && password.match(/[A-Z]/)) strength++;
+            if (password.match(/\d/)) strength++;
+            if (password.match(/[^a-zA-Z\d]/)) strength++;
+
+            switch (strength) {
+                case 0:
+                case 1:
+                    strengthClass = 'strength-weak';
+                    strengthLabel = 'Weak password';
+                    break;
+                case 2:
+                    strengthClass = 'strength-fair';
+                    strengthLabel = 'Fair password';
+                    break;
+                case 3:
+                    strengthClass = 'strength-good';
+                    strengthLabel = 'Good password';
+                    break;
+                case 4:
+                    strengthClass = 'strength-strong';
+                    strengthLabel = 'Strong password';
+                    break;
+            }
+
+            strengthFill.className = `strength-fill ${strengthClass}`;
+            strengthText.textContent = strengthLabel;
+        }
+
+        // Event listeners
+        document.getElementById('registerPassword').addEventListener('input', function() {
+            checkPasswordStrength(this.value);
+        });
+
+        // Login form handler
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const loginBtn = document.getElementById('loginBtn');
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            if (!email || !password) {
+                showMessage('login', 'Please fill in all fields', true);
+                return;
+            }
+            
+            loginBtn.classList.add('btn-loading');
+            loginBtn.disabled = true;
+            
+            setTimeout(() => {
+                loginBtn.classList.remove('btn-loading');
+                loginBtn.disabled = false;
+                
+                // Simulate successful login
+                showMessage('login', 'Welcome back to Kindred Spirits! Redirecting to your dashboard...');
+                
+                setTimeout(() => {
+                    this.reset();
+                    clearMessages();
+                }, 2000);
+            }, 2000);
+        });
+
+        // Register form handler
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const registerBtn = document.getElementById('registerBtn');
+            const firstName = document.getElementById('firstName').value;
+            const lastName = document.getElementById('lastName').value;
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const agreeTerms = document.getElementById('agreeTerms').checked;
+            
+            // Validation
+            if (!firstName || !lastName || !email || !password || !confirmPassword) {
+                showMessage('register', 'Please fill in all fields', true);
+                return;
+            }
+            
+            if (password !== confirmPassword) {
+                showMessage('register', 'Passwords do not match', true);
+                return;
+            }
+            
+            if (password.length < 8) {
+                showMessage('register', 'Password must be at least 8 characters long', true);
+                return;
+            }
+            
+            if (!agreeTerms) {
+                showMessage('register', 'Please agree to the Terms of Service and Privacy Policy', true);
+                return;
+            }
+            
+            registerBtn.classList.add('btn-loading');
+            registerBtn.disabled = true;
+            
+            setTimeout(() => {
+                registerBtn.classList.remove('btn-loading');
+                registerBtn.disabled = false;
+                
+                showMessage('register', `Welcome to Kindred Spirits, ${firstName}! Your soul profile has been created. Please check your email to verify your account.`);
+                
+                setTimeout(() => {
+                    this.reset();
+                    clearMessages();
+                    showLogin();
+                }, 3000);
+            }, 2000);
+        });
+
+        // Forgot password form handler
+        document.getElementById('forgotPasswordForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const forgotBtn = document.getElementById('forgotBtn');
+            const email = document.getElementById('forgotEmail').value;
+            
+            if (!email) {
+                showMessage('forgot', 'Please enter your email address', true);
+                return;
+            }
+            
+            forgotBtn.classList.add('btn-loading');
+            forgotBtn.disabled = true;
+            
+            setTimeout(() => {
+                forgotBtn.classList.remove('btn-loading');
+                forgotBtn.disabled = false;
+                
+                showMessage('forgot', 'Password reset instructions have been sent to your email address. Please check your inbox and spam folder.');
+                
+                setTimeout(() => {
+                    this.reset();
+                    clearMessages();
+                }, 3000);
+            }, 2000);
+        });
+
+        // Add entrance animation
+        window.addEventListener('load', function() {
+            const formContainer = document.querySelector('.form-container');
+            const leftPanel = document.querySelector('.left-panel');
+            
+            formContainer.style.opacity = '0';
+            formContainer.style.transform = 'translateY(30px)';
+            leftPanel.style.opacity = '0';
+            leftPanel.style.transform = 'translateX(-30px)';
+            
+            setTimeout(() => {
+                formContainer.style.transition = 'all 0.8s ease';
+                leftPanel.style.transition = 'all 0.8s ease';
+                formContainer.style.opacity = '1';
+                formContainer.style.transform = 'translateY(0)';
+                leftPanel.style.opacity = '1';
+                leftPanel.style.transform = 'translateX(0)';
+            }, 100);
+        });
+    </script>
+</body>
+</html>
