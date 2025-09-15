@@ -297,8 +297,8 @@ const FeedManager = {
         setTimeout(() => button.classList.remove('scale-125'), 200);
     },
 
-    // Open comments modal
-    async openComments(postId) {
+    // Open comments modal for a post or a reply thread for a specific comment
+    async openComments(postId, parentCommentId = null) {
         const modal = document.getElementById('comments-modal');
         if (!modal) {
             this.createCommentsModal();
@@ -307,15 +307,26 @@ const FeedManager = {
         const modalElement = document.getElementById('comments-modal');
         modalElement.classList.add('active');
         modalElement.setAttribute('data-post-id', postId);
-        
-        await this.loadComments(postId, true);
+        modalElement.setAttribute('data-parent-comment-id', parentCommentId || ''); // Store parent comment ID
 
-        // Start polling for new comments
+        const commentsHeading = modalElement.querySelector('.comments-heading');
+        if (commentsHeading) {
+            commentsHeading.textContent = parentCommentId ? 'Reply Thread' : 'Comments';
+        }
+
+        await this.loadComments(postId, true, parentCommentId);
+
+        // Start polling for new comments/replies
         this.commentPollingInterval = setInterval(async () => {
             if (modalElement.classList.contains('active')) { // Only poll if modal is open
-                await this.loadComments(postId, false);
+                await this.loadComments(postId, false, parentCommentId);
             }
         }, 2000); // Poll every 2 seconds
+    },
+
+    // Open reply thread modal
+    openReplyThread(postId, parentCommentId) {
+        this.openComments(postId, parentCommentId);
     },
 
     // Create comments modal if not exists
@@ -359,7 +370,7 @@ const FeedManager = {
     currentModalComments: [],
 
     // Load comments
-    async loadComments(postId, initialLoad = true) {
+    async loadComments(postId, initialLoad = true, parentCommentId = null) {
         const commentsList = document.getElementById('modal-comments-list');
         if (initialLoad) {
             commentsList.innerHTML = `<div class="text-center py-4"><div class="spinner"></div></div>`;
@@ -367,16 +378,25 @@ const FeedManager = {
         }
         
         try {
-            const response = await window.AuthAPI.request(`/api/posts/${postId}/comments`);
+            const endpoint = parentCommentId ? `/api/comments/${parentCommentId}/replies` : `/api/posts/${postId}/comments`;
+            const response = await window.AuthAPI.request(endpoint);
             if (!response.ok) throw new Error('Failed to load comments');
             
             const commentsData = await response.json();
             const fetchedComments = Array.isArray(commentsData) ? commentsData : commentsData.items || [];
 
             if (initialLoad) {
-                this.renderAllComments(fetchedComments, commentsList);
+                if (parentCommentId) {
+                    // For reply thread, fetch parent comment and then its replies
+                    const parentCommentResponse = await window.AuthAPI.request(`/api/comments/${parentCommentId}`);
+                    if (!parentCommentResponse.ok) throw new Error('Failed to load parent comment');
+                    const parentComment = await parentCommentResponse.json();
+                    this.renderReplyThread(parentComment, fetchedComments, commentsList);
+                } else {
+                    this.renderAllComments(fetchedComments, commentsList);
+                }
             } else {
-                this.appendNewComments(fetchedComments, commentsList);
+                this.appendNewComments(fetchedComments, commentsList, parentCommentId);
             }
             
         } catch (error) {
@@ -419,8 +439,41 @@ const FeedManager = {
         });
     },
 
+    // Render a reply thread (parent comment + its replies)
+    renderReplyThread(parentComment, replies, container) {
+        container.innerHTML = ''; // Clear existing content
+        this.currentModalComments = []; // Reset current comments
+
+        // Render the parent comment
+        const parentCommentElement = this.createCommentElement(parentComment);
+        container.appendChild(parentCommentElement);
+        this.currentModalComments.push(parentComment);
+
+        // Render replies within the parent comment's replies container
+        const repliesContainer = parentCommentElement.querySelector(`#replies-container-${parentComment.id}`);
+        if (repliesContainer) {
+            repliesContainer.classList.remove('hidden'); // Ensure replies are visible
+            replies.forEach(reply => {
+                const replyElement = this.createCommentElement(reply);
+                repliesContainer.appendChild(replyElement);
+                this.currentModalComments.push(reply);
+            });
+        }
+
+        if (replies.length === 0) {
+            const noRepliesMessage = document.createElement('p');
+            noRepliesMessage.className = 'text-center text-text-secondary text-sm mt-4';
+            noRepliesMessage.textContent = 'No replies yet. Be the first to reply!';
+            if (repliesContainer) {
+                repliesContainer.appendChild(noRepliesMessage);
+            } else {
+                container.appendChild(noRepliesMessage);
+            }
+        }
+    },
+
     // Append only new comments
-    appendNewComments(fetchedComments, container) {
+    appendNewComments(fetchedComments, container, parentCommentId = null) {
         const commentMap = {};
         this.currentModalComments.forEach(comment => {
             commentMap[comment.id] = comment;
@@ -460,8 +513,13 @@ const FeedManager = {
                             repliesContainer.appendChild(commentElement);
                         }
                     }
-                } else {
+                } else if (!parentCommentId) { // Only append top-level comments if not in a reply thread
                     container.appendChild(commentElement);
+                } else if (parentCommentId && fetchedComment.parent_id === parentCommentId) { // Append replies to the correct container in reply thread
+                    const repliesContainer = container.querySelector(`#replies-container-${parentCommentId}`);
+                    if (repliesContainer) {
+                        repliesContainer.appendChild(commentElement);
+                    }
                 }
                 this.currentModalComments.push(fetchedComment);
             }
@@ -502,12 +560,17 @@ const FeedManager = {
                         <button class="reply-comment-btn hover:text-primary" onclick="FeedManager.showReplyInput(${comment.id})">
                             Reply
                         </button>
+                        ${comment.children && comment.children.length > 0 ? `
+                            <button class="view-replies-btn hover:text-primary" data-comment-id="${comment.id}" data-reply-count="${comment.children.length}" onclick="FeedManager.toggleReplies(${comment.id}, this)">
+                                View ${comment.children.length} Replies
+                            </button>
+                        ` : ''}
                     </div>
                     <div id="reply-input-${comment.id}" class="hidden mt-2">
                         <textarea class="w-full bg-surface border border-border-light rounded-lg p-2 text-sm" placeholder="Write a reply..."></textarea>
                         <button class="mt-2 px-3 py-1 bg-primary text-white rounded-lg text-xs" onclick="FeedManager.postReply(${comment.id})">Post Reply</button>
                     </div>
-                    <div class="replies-container mt-4 space-y-3 ml-4 border-l-2 border-border-light pl-4">
+                    <div id="replies-container-${comment.id}" class="replies-container mt-4 space-y-3 ml-4 border-l-2 border-border-light pl-4 hidden">
                         ${repliesHtml}
                     </div>
                 </div>
@@ -544,6 +607,19 @@ const FeedManager = {
         }
     },
 
+    // Toggle replies visibility
+    toggleReplies(commentId, button) {
+        const repliesContainer = document.getElementById(`replies-container-${commentId}`);
+        if (repliesContainer) {
+            repliesContainer.classList.toggle('hidden');
+            if (repliesContainer.classList.contains('hidden')) {
+                button.textContent = `View ${button.dataset.replyCount} Replies`;
+            } else {
+                button.textContent = 'Hide Replies';
+            }
+        }
+    },
+
     // Post a reply to a comment
     async postReply(commentId) {
         const replyInputDiv = document.getElementById(`reply-input-${commentId}`);
@@ -566,16 +642,19 @@ const FeedManager = {
 
             textarea.value = '';
             replyInputDiv.classList.add('hidden');
-            await this.loadComments(postId, false);
+            // Reload comments for the specific reply thread if it's open, otherwise reload all comments for the post
+            const currentParentCommentId = modal.getAttribute('data-parent-comment-id');
+            await this.loadComments(postId, false, currentParentCommentId);
         } catch (error) {
             console.error('Error posting reply:', error);
         }
     },
 
-    // Post comment
+    // Post comment or reply
     async postComment() {
         const modal = document.getElementById('comments-modal');
         const postId = modal.getAttribute('data-post-id');
+        const parentCommentId = modal.getAttribute('data-parent-comment-id'); // Get parent comment ID from modal
         const input = document.getElementById('modal-comment-input-1') || document.getElementById('comment-input');
 
         if (!input) {
@@ -587,19 +666,26 @@ const FeedManager = {
         if (!text) return;
 
         try {
+            const payload = { text: text };
+            if (parentCommentId) {
+                payload.parent_id = parentCommentId;
+            }
+
             const response = await window.AuthAPI.request(`/api/posts/${postId}/comments`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ text })
+                body: JSON.stringify(payload)
             });
 
             if (!response.ok) throw new Error('Failed to post comment');
 
             input.value = '';
-            await this.loadComments(postId, false);
+            await this.loadComments(postId, false, parentCommentId); // Pass parentCommentId to reload correctly
 
-            // Update comment count in feed
-            this.updateCommentCount(postId, 1);
+            // Update comment count in feed (only for top-level comments)
+            if (!parentCommentId) {
+                this.updateCommentCount(postId, 1);
+            }
         } catch (error) {
             console.error('Error posting comment:', error);
         }
@@ -1016,25 +1102,79 @@ const FeedManager = {
         const newPostModal = document.getElementById('new-post-modal');
         const closeNewPostBtn = document.getElementById('close-new-post-modal');
         const submitPostBtn = document.getElementById('submit-new-post');
+        const newPostImageUpload = document.getElementById('new-post-image-upload');
+        const newPostImagePreview = document.getElementById('new-post-image-preview');
+        const imagePreviewContainer = document.getElementById('image-preview-container');
+        const clearImageUploadBtn = document.getElementById('clear-image-upload');
+        const newPostUserImage = document.getElementById('new-post-user-image');
+
+        const openNewPostModal = () => {
+            newPostModal?.classList.add('active');
+            // Set user avatar in new post modal
+            const user = window.AuthManager.getCurrentUser();
+            if (newPostUserImage && user.profile_picture) {
+                newPostUserImage.src = `${API_BASE_URL}${user.profile_picture}`;
+            } else if (newPostUserImage) {
+                newPostUserImage.src = '/img/default-avatar.jpg'; // Fallback default image
+            }
+        };
+
+        const closeNewPostModal = () => {
+            newPostModal?.classList.remove('active');
+            // Clear any previous image preview
+            if (newPostImageUpload) newPostImageUpload.value = '';
+            if (newPostImagePreview) newPostImagePreview.src = '';
+            if (imagePreviewContainer) imagePreviewContainer.classList.add('hidden');
+            // Clear textarea
+            const newPostContent = document.getElementById('new-post-content');
+            if (newPostContent) newPostContent.value = '';
+        };
 
         if (newPostBtnDesktop) {
-            newPostBtnDesktop.addEventListener('click', () => newPostModal?.classList.add('active'));
+            newPostBtnDesktop.addEventListener('click', openNewPostModal);
         }
         if (newPostBtnMobile) {
-            newPostBtnMobile.addEventListener('click', () => newPostModal?.classList.add('active'));
+            newPostBtnMobile.addEventListener('click', openNewPostModal);
         }
         if (closeNewPostBtn) {
-            closeNewPostBtn.addEventListener('click', () => newPostModal?.classList.remove('active'));
+            closeNewPostBtn.addEventListener('click', closeNewPostModal);
         }
         if (submitPostBtn) {
             submitPostBtn.addEventListener('click', () => this.createPost());
+        }
+
+        // Handle image preview for new post
+        if (newPostImageUpload) {
+            newPostImageUpload.addEventListener('change', (event) => {
+                const file = event.target.files[0];
+                if (file && file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        if (newPostImagePreview) newPostImagePreview.src = e.target.result;
+                        if (imagePreviewContainer) imagePreviewContainer.classList.remove('hidden');
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    if (newPostImagePreview) newPostImagePreview.src = '';
+                    if (imagePreviewContainer) imagePreviewContainer.classList.add('hidden');
+                }
+            });
+        }
+
+        // Handle clear image upload
+        if (clearImageUploadBtn) {
+            clearImageUploadBtn.addEventListener('click', () => {
+                if (newPostImageUpload) newPostImageUpload.value = '';
+                if (newPostImagePreview) newPostImagePreview.src = '';
+                if (imagePreviewContainer) imagePreviewContainer.classList.add('hidden');
+            });
         }
 
         // Close modal on outside click
         if (newPostModal) {
             newPostModal.addEventListener('click', (e) => {
                 if (e.target === newPostModal) {
-                    newPostModal.classList.remove('active');
+                    closeNewPostModal();
                 }
             });
         }

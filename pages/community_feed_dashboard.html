@@ -234,7 +234,7 @@
                                 </span>
                                 <span class="text-sm reaction-count">0</span>
                             </button>
-                            <button type="button" class="flex items-center space-x-2 text-text-secondary hover:text-primary transition-colors open-comments-modal-btn" data-post-id="post1">
+                            <button type="button" class="flex items-center space-x-2 text-text-secondary hover:text-primary transition-colors" onclick="FeedManager.openComments('post1')">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
                                 </svg>
@@ -316,7 +316,7 @@
                                 </span>
                                 <span class="text-sm reaction-count">0</span>
                             </button>
-                            <button class="flex items-center space-x-2 text-text-secondary hover:text-primary transition-colors open-comments-modal-btn" data-post-id="post2">
+                            <button class="flex items-center space-x-2 text-text-secondary hover:text-primary transition-colors" onclick="FeedManager.openComments('post2')">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
                                 </svg>
@@ -494,7 +494,7 @@
         <div class="comments-sheet">
             <!-- Modal Header -->
             <div class="flex items-center justify-between pb-4 border-b border-border-light mb-4">
-                <h3 class="font-crimson text-xl font-semibold text-primary" data-translate="comments_heading">Comments</h3>
+                <h3 class="font-crimson text-xl font-semibold text-primary comments-heading" data-translate="comments_heading">Comments</h3>
                 <button type="button" id="close-comments-modal-1" class="text-text-secondary hover:text-primary transition-colors" title="Close comments modal">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
@@ -553,7 +553,7 @@
 
     <!-- New Post Modal -->
     <div id="new-post-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
-        <div class="bg-white rounded-xl max-w-2xl w-full m-4">
+        <div class="bg-white rounded-xl max-w-2xl w-full m-4 flex flex-col">
             <div class="p-4 border-b border-border-light flex items-center justify-between">
                 <h3 class="text-lg font-semibold" data-translate="create_new_post_title">Create New Post</h3>
                 <button type="button" id="close-new-post-modal" class="p-2 hover:bg-surface-hover rounded-full" title="Close new post modal">
@@ -562,11 +562,27 @@
                     </svg>
                 </button>
             </div>
-            <div class="p-4">
-                <textarea id="new-post-content" rows="6" class="w-full px-3 py-2 bg-background border border-border-light rounded-lg focus:outline-none focus:border-primary" placeholder="Share your sacred thoughts..." data-translate="new_post_placeholder"></textarea>
-                <input type="file" id="new-post-image-upload" accept="image/*" class="mt-3 block w-full text-sm text-text-secondary file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary-50 file:text-primary hover:file:bg-primary-100" title="Upload image">
+            <div class="p-4 flex-1 overflow-y-auto">
+                <div class="flex items-start space-x-3 mb-4">
+                    <img id="new-post-user-image" src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Current User's Profile" class="w-10 h-10 rounded-full object-cover border-2 border-white" />
+                    <textarea id="new-post-content" rows="6" class="flex-1 px-3 py-2 bg-background border border-border-light rounded-lg focus:outline-none focus:border-primary resize-none" placeholder="Share your sacred thoughts..." data-translate="new_post_placeholder"></textarea>
+                </div>
+                <div id="image-preview-container" class="hidden relative mb-4">
+                    <img id="new-post-image-preview" src="" alt="Image preview" class="w-full h-48 object-cover rounded-lg border border-border-light" />
+                    <button type="button" id="clear-image-upload" class="absolute top-2 right-2 bg-black bg-opacity-50 text-white rounded-full p-1 hover:bg-opacity-75 transition-colors">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                        </svg>
+                    </button>
+                </div>
             </div>
-            <div class="p-4 border-t border-border-light flex justify-end">
+            <div class="p-4 border-t border-border-light flex items-center justify-between">
+                <label for="new-post-image-upload" class="cursor-pointer p-2 rounded-full hover:bg-primary-100 transition-colors text-text-secondary" title="Attach image">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                    </svg>
+                    <input type="file" id="new-post-image-upload" accept="image/*" class="hidden">
+                </label>
                 <button type="button" id="submit-new-post" class="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors font-medium" data-translate="post_btn">Post</button>
             </div>
         </div>
