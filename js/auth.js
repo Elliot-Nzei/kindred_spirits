@@ -203,12 +203,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             await AuthAPI.login(username, password);
             
-            // Redirect based on username
-            if (username === 'master') {
-                window.location.href = '/pages/master_landing.html';
-            } else {
-                window.location.href = '/pages/community_feed_dashboard.html';
-            }
+            // Redirect to dashboard
+            window.location.href = '/pages/community_feed_dashboard.html';
         } catch (error) {
             showError(errorDiv, error.message);
         } finally {

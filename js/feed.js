@@ -481,7 +481,10 @@ const FeedManager = {
         commentDiv.className = 'comment-item p-3 bg-background rounded-lg';
         commentDiv.setAttribute('data-comment-id', comment.id);
 
-        const hasReplies = comment.replies_count > 0;
+        let repliesHtml = '';
+        if (comment.children && comment.children.length > 0) {
+            repliesHtml = comment.children.map(reply => this.createCommentElement(reply).outerHTML).join('');
+        }
 
         commentDiv.innerHTML = `
             <div class="flex items-start space-x-3">
@@ -504,50 +507,13 @@ const FeedManager = {
                         <textarea class="w-full bg-surface border border-border-light rounded-lg p-2 text-sm" placeholder="Write a reply..."></textarea>
                         <button class="mt-2 px-3 py-1 bg-primary text-white rounded-lg text-xs" onclick="FeedManager.postReply(${comment.id})">Post Reply</button>
                     </div>
-                    <div class="replies-section mt-2">
-                        ${hasReplies ? `<button class="view-replies-btn text-xs text-primary mt-2 hover:underline" data-comment-id="${comment.id}" data-replies-count="${comment.replies_count}" onclick="FeedManager.loadReplies(${comment.id})">View ${comment.replies_count} replies</button>` : ''}
-                        <div id="replies-content-${comment.id}" class="replies-content mt-2 space-y-3 ml-4 border-l-2 border-border-light pl-4 hidden"></div>
+                    <div class="replies-container mt-4 space-y-3 ml-4 border-l-2 border-border-light pl-4">
+                        ${repliesHtml}
                     </div>
                 </div>
             </div>
         `;
         return commentDiv;
-    },
-
-    // Load replies for a comment
-    async loadReplies(commentId) {
-        const commentElement = document.querySelector(`[data-comment-id="${commentId}"]`);
-        const repliesContent = document.getElementById(`replies-content-${commentId}`);
-        const viewRepliesBtn = commentElement.querySelector('.view-replies-btn');
-
-        if (repliesContent.classList.contains('hidden')) {
-            // Show replies
-            try {
-                const response = await window.AuthAPI.request(`/api/comments/${commentId}/replies`);
-                if (!response.ok) throw new Error('Failed to load replies');
-                const replies = await response.json();
-
-                repliesContent.innerHTML = '';
-                if (replies.length > 0) {
-                    replies.forEach(reply => {
-                        const replyElement = this.createCommentElement(reply);
-                        repliesContent.appendChild(replyElement);
-                    });
-                } else {
-                    repliesContent.innerHTML = '<p class="text-text-secondary text-xs">No replies yet.</p>';
-                }
-                repliesContent.classList.remove('hidden');
-                viewRepliesBtn.textContent = `Hide replies`;
-            } catch (error) {
-                console.error('Error loading replies:', error);
-                repliesContent.innerHTML = '<p class="text-red-500 text-xs">Failed to load replies</p>';
-                repliesContent.classList.remove('hidden');
-            }
-        } else {
-            // Hide replies
-            repliesContent.classList.add('hidden');
-            viewRepliesBtn.textContent = `View ${viewRepliesBtn.dataset.repliesCount} replies`;
-        }
     },
 
     // Toggle like on a comment
@@ -1083,49 +1049,6 @@ const FeedManager = {
         const closeCommentsBtn1 = document.getElementById('close-comments-modal-1');
         if (closeCommentsBtn1) {
             closeCommentsBtn1.addEventListener('click', () => this.closeCommentsModal());
-        }
-
-        // Master post form
-        const masterPostForm = document.getElementById('master-post-form');
-        if (masterPostForm) {
-            masterPostForm.addEventListener('submit', (e) => this.handleMasterPost(e));
-        }
-    },
-
-    async handleMasterPost(event) {
-        event.preventDefault();
-
-        const title = document.getElementById('post-title')?.value;
-        const content = document.getElementById('post-content')?.value;
-
-        if (!title || !content) {
-            this.showToast('Please fill in both title and content', 'warning');
-            return;
-        }
-
-        try {
-            const payload = {
-                title: title,
-                content: content,
-                // Assuming master posts are always announcements for now
-                is_announcement: true 
-            };
-
-            const response = await window.AuthAPI.request('/api/posts', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
-
-            if (!response.ok) throw new Error('Failed to create master post');
-
-            this.showToast('Announcement/Post created successfully!');
-            document.getElementById('post-title').value = '';
-            document.getElementById('post-content').value = '';
-
-        } catch (error) {
-            console.error('Error creating master post:', error);
-            this.showToast('Failed to create post', 'error');
         }
     },
 
