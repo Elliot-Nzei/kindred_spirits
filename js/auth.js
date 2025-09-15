@@ -167,7 +167,8 @@ document.addEventListener('DOMContentLoaded', () => {
             input.setAttribute('type', type);
             
             // Update eye icon if exists
-            const icon = input.nextElementSibling?.querySelector('i');
+            const toggleButton = input.closest('.input-group')?.querySelector('.password-toggle');
+            const icon = toggleButton?.querySelector('i');
             if (icon) {
                 icon.classList.toggle('fa-eye');
                 icon.classList.toggle('fa-eye-slash');
