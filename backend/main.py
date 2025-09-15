@@ -919,8 +919,9 @@ async def get_comments(
     db: Session = Depends(get_db)
 ):
     comments = db.query(Comment).options(joinedload(Comment.owner)).filter(
-        Comment.post_id == post_id
-    ).order_by(Comment.created_at.asc()).offset(skip).limit(limit).all()
+        Comment.post_id == post_id,
+        Comment.parent_id == None
+    ).order_by(Comment.created_at.desc()).offset(skip).limit(limit).all()
     
     response = []
     for comment in comments:
@@ -970,6 +971,47 @@ async def delete_comment(
     db.commit()
     
     return {"message": "Comment deleted successfully"}
+
+@app.get("/api/comments/{comment_id}/replies", response_model=List[CommentResponse])
+async def get_replies(
+    comment_id: int,
+    current_user: Optional[User] = Depends(get_current_user_optional),
+    db: Session = Depends(get_db)
+):
+    replies = db.query(Comment).options(joinedload(Comment.owner)).filter(
+        Comment.parent_id == comment_id
+    ).order_by(Comment.created_at.asc()).all()
+    
+    response = []
+    for reply in replies:
+        owner_username = reply.owner.username if reply.owner else None
+        owner_profile_picture = reply.owner.profile_picture if reply.owner else None
+
+        likes_count = db.query(CommentLike).filter(CommentLike.comment_id == reply.id).count()
+        is_liked = False
+        if current_user:
+            is_liked = db.query(CommentLike).filter(
+                CommentLike.comment_id == reply.id,
+                CommentLike.owner_id == current_user.id
+            ).first() is not None
+
+        reply_response = CommentResponse(
+            id=reply.id,
+            text=reply.text,
+            owner_id=reply.owner_id,
+            post_id=reply.post_id,
+            parent_id=reply.parent_id,
+            created_at=reply.created_at,
+            updated_at=reply.updated_at,
+            owner_username=owner_username,
+            owner_profile_picture=owner_profile_picture,
+            replies_count=0, # Replies don't have replies in this model
+            likes_count=likes_count,
+            is_liked=is_liked
+        )
+        response.append(reply_response)
+    
+    return response
 
 # --- Comment Like Routes ---
 @app.post("/api/comments/{comment_id}/like")
