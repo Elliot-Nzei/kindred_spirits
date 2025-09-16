@@ -31,7 +31,8 @@ const FeedManager = {
         if (welcomeElement) {
             const hour = new Date().getHours();
             const greeting = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
-            welcomeElement.textContent = `${greeting}, ${user.username} ✨`;
+            const roleTitle = user.is_guide ? 'Guide ' : '';
+            welcomeElement.textContent = `${greeting}, ${roleTitle}${user.username} ✨`;
         }
 
         // Update user avatar in new post section

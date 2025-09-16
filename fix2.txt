@@ -1,33 +1,7 @@
-1. Automatic Master Account Creation:
-
-When the website is first initialized, the system will automatically create a master account. This can be done in the setup script or the first time the application runs.
-
-This master account will have a predefined username and password, and it will be flagged as a master account in the database.
-
-
-
-2. Login Flow:
-
-Both the master account and regular users will use the same login interface. However, once the master account logs in, it will be redirected to the master dashboard, while regular users go to their own user profile.
-
-
-
-3. Vice Admins:
-
-Once the master account is logged in, it can create up to 10 vice admins. This would be done through a special admin dashboard that allows the master to add new users with elevated privileges.
-
-These vice admins will be created directly in the database by the master account and will not need to go through the normal user registration process.
-
-
-
-4. Security Considerations:
-
-Since the master account is created automatically and doesn’t go through normal verification, it’s important to ensure that this account is secure and not easily accessible to unauthorized users.
-
-The vice admins, while not requiring registration, should still have their own secure credentials and limited permissions as defined by the master account.
-
-
-
-5. Profile Separation:
-
-When a vice admin logs in, they should be redirected to a dashboard that reflects their privileges. This keeps the master account's controls separate from those of the vice admins.
+INFO:     127.0.0.1:50654 - "GET /pages/master_admin_dashboard.html HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:50654 - "GET /js/master_admin.js HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:50654 - "GET /api/admin/stats?_t=1758056245744 HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:50655 - "GET /api/admin/users?_t=1758056245745 HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:50656 - "POST /api/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50656 - "GET /api/admin/stats?_t=1758056253491 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50657 - "GET /api/admin/users?_t=1758056253492 HTTP/1.1" 200 OK

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guide Dashboard - Metanoia</title>
+    <link rel="stylesheet" href="../css/main.css">
+    <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script>
+</head>
+<body class="bg-gray-50 font-sans">
+    <div class="flex h-screen bg-gray-100">
+        <!-- Sidebar -->
+        <aside class="w-64 bg-white shadow-md flex flex-col">
+            <div class="p-4 border-b border-gray-200 flex items-center space-x-3">
+                <img src="../img/logo_only.jpg" alt="Metanoia Logo" class="w-10 h-10 rounded-full object-cover">
+                <div>
+                    <h1 class="text-lg font-semibold text-primary">Metanoia</h1>
+                    <span class="text-sm text-gray-500">Guide Dashboard</span>
+                </div>
+            </div>
+            <nav class="flex-1 p-4 space-y-2">
+                <a href="#" class="flex items-center p-2 text-gray-700 bg-primary-50 rounded-lg font-medium">
+                    <svg class="w-5 h-5 mr-3 text-primary" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a8 8 0 100 16 8 8 0 000-16zm0 14a6 6 0 110-12 6 6 0 010 12zM10 8a2 2 0 100-4 2 2 0 000 4z"/></svg>
+                    <span>Overview</span>
+                </a>
+                <a href="#workshops" class="flex items-center p-2 text-gray-600 hover:bg-gray-100 rounded-lg">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                    <span>My Workshops</span>
+                </a>
+                <a href="#practice-uploads" class="flex items-center p-2 text-gray-600 hover:bg-gray-100 rounded-lg">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-4-4V7a4 4 0 014-4h10a4 4 0 014 4v5a4 4 0 01-4 4H7z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                    <span>My Practices</span>
+                </a>
+                <a href="#wisdom-contributions" class="flex items-center p-2 text-gray-600 hover:bg-gray-100 rounded-lg">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v11.494m-9-5.747h18"></path></svg>
+                    <span>Wisdom Contributions</span>
+                </a>
+            </nav>
+            <div class="p-4 border-t border-gray-200 mt-auto">
+                <div class="flex items-center space-x-3">
+                    <img src="../img/default-avatar.jpg" alt="Guide Avatar" class="w-10 h-10 rounded-full object-cover">
+                    <div>
+                        <p class="font-medium text-gray-800">Guide</p>
+                        <button data-logout class="text-sm text-red-500 hover:underline">Logout</button>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 p-8 overflow-y-auto">
+            <header class="mb-8">
+                <h2 class="text-3xl font-bold text-gray-800">Guide Dashboard</h2>
+                <p class="text-gray-500">Share your wisdom. Lead with heart. This is your space to contribute.</p>
+            </header>
+
+            <!-- My Workshops -->
+            <div id="workshops" class="bg-white p-8 rounded-lg shadow-sm mb-8">
+                <h3 class="text-2xl font-bold text-gray-800 mb-6">My Workshops</h3>
+                <div class="text-gray-500">
+                    <!-- List of workshops hosted by the guide -->
+                    <p>You are not hosting any workshops currently. Workshops you host will appear here.</p>
+                    <button class="mt-4 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark">Propose a New Workshop</button>
+                </div>
+            </div>
+
+            <!-- My Practices -->
+            <div id="practice-uploads" class="bg-white p-8 rounded-lg shadow-sm mb-8">
+                <h3 class="text-2xl font-bold text-gray-800 mb-6">My Practices</h3>
+                <div class="text-gray-500">
+                    <!-- List of practices uploaded by the guide -->
+                    <p>You have not uploaded any practices. Uploads will be listed here.</p>
+                    <button class="mt-4 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark">Upload a New Practice</button>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <script src="../js/config.js"></script>
+    <script src="../js/auth.js"></script>
+    <!-- <script src="../js/guide.js"></script> -->
+</body>
+</html>
