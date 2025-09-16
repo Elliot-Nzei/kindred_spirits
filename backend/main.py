@@ -47,6 +47,33 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 
+def create_master_user():
+    db = SessionLocal()
+    try:
+        # Check if master user already exists
+        master_user = db.query(User).filter(User.username == "masteradmin").first()
+        if master_user:
+            print("Master user already exists.")
+        else:
+            print("Creating master user...")
+            hashed_password = get_password_hash("p@ssw0rd")
+            db_user = User(
+                username="masteradmin",
+                email="masteradmin@example.com",
+                hashed_password=hashed_password,
+                full_name="Master Admin",
+                is_master=True
+            )
+            db.add(db_user)
+            db.commit()
+            db.refresh(db_user)
+            print(f"Master user '{db_user.username}' created successfully!")
+    except Exception as e:
+        print(f"Error creating master user: {e}")
+        db.rollback()
+    finally:
+        db.close()
+
 def get_db():
     db = SessionLocal()
     try:
@@ -70,6 +97,8 @@ class User(Base):
     joined_date = Column(DateTime, default=lambda: datetime.now(timezone.utc))
     is_active = Column(Boolean, default=True)
     is_verified = Column(Boolean, default=False)
+    is_master = Column(Boolean, default=False)
+    is_vice_admin = Column(Boolean, default=False)
     
     # Relationships
     posts = relationship("Post", back_populates="owner", cascade="all, delete-orphan")
@@ -201,6 +230,8 @@ class Token(BaseModel):
     username: str
     email: str
     profile_picture: Optional[str]
+    is_master: bool = False
+    is_vice_admin: bool = False
 
 class TokenData(BaseModel):
     username: Optional[str] = None
@@ -352,8 +383,17 @@ async def get_current_user_optional(token: Optional[str] = Depends(oauth2_scheme
     except:
         return None
 
+async def get_current_master_user(current_user: User = Depends(get_current_user)):
+    if not current_user.is_master:
+        raise HTTPException(status_code=403, detail="Not a master admin")
+    return current_user
+
 # --- FastAPI App Setup ---
 app = FastAPI(title="Social Platform API", version="1.0.0")
+
+@app.on_event("startup")
+async def startup_event():
+    create_master_user()
 
 # CORS Middleware
 app.add_middleware(
@@ -429,8 +469,46 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = 
         user_id=user.id,
         username=user.username,
         email=user.email,
-        profile_picture=user.profile_picture
+        profile_picture=user.profile_picture,
+        is_master=user.is_master,
+        is_vice_admin=user.is_vice_admin
     )
+
+@app.post("/api/admin/create-vice-admin", response_model=UserResponse)
+async def create_vice_admin(
+    user: UserCreate,
+    db: Session = Depends(get_db),
+    master_user: User = Depends(get_current_master_user)
+):
+    # Enforce max 10 vice admins
+    vice_admin_count = db.query(User).filter(User.is_vice_admin == True).count()
+    if vice_admin_count >= 10:
+        raise HTTPException(status_code=400, detail="Maximum number of vice admins reached")
+    
+    # Check if username or email already exists
+    if db.query(User).filter(User.username == user.username).first():
+        raise HTTPException(status_code=400, detail="Username already registered")
+    if db.query(User).filter(User.email == user.email).first():
+        raise HTTPException(status_code=400, detail="Email already registered")
+    
+    # Create new user
+    hashed_password = get_password_hash(user.password)
+    db_user = User(
+        username=user.username,
+        email=user.email,
+        full_name=user.full_name,
+        hashed_password=hashed_password,
+        is_vice_admin=True
+    )
+    db.add(db_user)
+    db.commit()
+    db.refresh(db_user)
+    
+    response = UserResponse.from_orm(db_user)
+    response.followers_count = 0
+    response.following_count = 0
+    response.posts_count = 0
+    return response
 
 # --- User Profile Routes ---
 @app.get("/api/users/me", response_model=UserResponse)
@@ -1238,6 +1316,11 @@ async def read_index():
 @app.get("/api/health")
 async def health_check():
     return {"status": "healthy", "timestamp": datetime.utcnow()}
+
+# IMPORTANT: If you see "no such column: users.is_master" error,
+# delete the old sql_app.db file in your backend directory and restart the backend.
+# This will recreate the database with the correct schema.
+# For production, use Alembic for migrations instead.
 
 if __name__ == "__main__":
     import uvicorn

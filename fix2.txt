@@ -1,242 +1,33 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kindred Spirits - Login</title>
-    <link rel="stylesheet" href="css/auth.css">
-</head>
-<body>
-    <div class="bg-decoration">
-        <div class="floating-orb orb-1"></div>
-        <div class="floating-orb orb-2"></div>
-        <div class="floating-orb orb-3"></div>
-    </div>
+1. Automatic Master Account Creation:
 
-    <div class="container">
-        <div class="left-panel">
-            <div class="logo-section">
-                <h1 class="logo">Kindred Spirits</h1>
-                <p class="tagline">Your journey of growth and connection begins here</p>
-            </div>
-            
-            <ul class="features-list">
-                <li>Connect with like-minded souls</li>
-                <li>Personal Growth Pathways</li>
-                <li>Practice Studio & Workshops</li>
-                <li>Daily Wisdom & Inspiration</li>
-                <li>Sacred Community Space</li>
-                <li>Holistic Well-being Tools</li>
-            </ul>
-        </div>
+When the website is first initialized, the system will automatically create a master account. This can be done in the setup script or the first time the application runs.
 
-        <div class="right-panel">
-            <div class="form-container">
-                <!-- Login Form -->
-                <form class="form" id="loginForm">
-                    <div class="form-header">
-                        <h2 class="form-title">Welcome Back</h2>
-                        <p class="form-subtitle">Continue your spiritual journey</p>
-                    </div>
+This master account will have a predefined username and password, and it will be flagged as a master account in the database.
 
-                    <div id="loginMessage" class="hidden"></div>
 
-                    <div class="form-group">
-                        <label class="form-label" for="loginUsername">Username</label>
-                        <input 
-                            type="text" 
-                            id="loginUsername" 
-                            name="username" 
-                            class="form-input" 
-                            placeholder="Your username"
-                            required
-                        >
-                    </div>
 
-                    <div class="form-group">
-                        <label class="form-label" for="loginPassword">Password</label>
-                        <input 
-                            type="password" 
-                            id="loginPassword" 
-                            name="password" 
-                            class="form-input" 
-                            placeholder="Enter your password"
-                            required
-                        >
-                    </div>
+2. Login Flow:
 
-                    <div class="forgot-password">
-                        <a onclick="showForgotPassword()">Forgot Password?</a>
-                    </div>
+Both the master account and regular users will use the same login interface. However, once the master account logs in, it will be redirected to the master dashboard, while regular users go to their own user profile.
 
-                    <button type="submit" class="submit-btn" id="loginBtn">
-                        Sign In to Your Soul Profile
-                    </button>
 
-                    <div class="divider">
-                        <span>or</span>
-                    </div>
 
-                    <div class="form-link">
-                        New to Kindred Spirits?
-                        <a onclick="showRegister()">Create Your Profile</a>
-                    </div>
-                </form>
+3. Vice Admins:
 
-                <!-- Register Form -->
-                <form class="form hidden" id="registerForm">
-                    <div class="form-header">
-                        <h2 class="form-title">Join Our Community</h2>
-                        <p class="form-subtitle">Create your soul profile and begin your journey</p>
-                    </div>
+Once the master account is logged in, it can create up to 10 vice admins. This would be done through a special admin dashboard that allows the master to add new users with elevated privileges.
 
-                    <div id="registerMessage" class="hidden"></div>
+These vice admins will be created directly in the database by the master account and will not need to go through the normal user registration process.
 
-                    <div class="form-group">
-                        <label class="form-label" for="fullName">Full Name</label>
-                        <input 
-                            type="text" 
-                            id="fullName" 
-                            name="fullName" 
-                            class="form-input" 
-                            placeholder="Your full name"
-                            required
-                        >
-                    </div>
 
-                    <div class="form-group">
-                        <label class="form-label" for="registerUsername">Username</label>
-                        <input 
-                            type="text" 
-                            id="registerUsername" 
-                            name="username" 
-                            class="form-input" 
-                            placeholder="Choose a username"
-                            required
-                        >
-                    </div>
 
-                    <div class="form-group">
-                        <label class="form-label" for="registerEmail">Email Address</label>
-                        <input 
-                            type="email" 
-                            id="registerEmail" 
-                            name="email" 
-                            class="form-input" 
-                            placeholder="your@email.com"
-                            required
-                        >
-                    </div>
+4. Security Considerations:
 
-                    <div class="form-group">
-                        <label class="form-label" for="registerPassword">Password</label>
-                        <input 
-                            type="password" 
-                            id="registerPassword" 
-                            name="password" 
-                            class="form-input" 
-                            placeholder="Create a strong password"
-                            required
-                        >
-                        <div class="password-strength">
-                            <div class="strength-bar">
-                                <div class="strength-fill" id="strengthFill"></div>
-                            </div>
-                            <span id="strengthText">Password strength</span>
-                        </div>
-                    </div>
+Since the master account is created automatically and doesn’t go through normal verification, it’s important to ensure that this account is secure and not easily accessible to unauthorized users.
 
-                    <div class="form-group">
-                        <label class="form-label" for="confirmPassword">Confirm Password</label>
-                        <input 
-                            type="password" 
-                            id="confirmPassword" 
-                            name="confirmPassword" 
-                            class="form-input" 
-                            placeholder="Confirm your password"
-                            required
-                        >
-                    </div>
+The vice admins, while not requiring registration, should still have their own secure credentials and limited permissions as defined by the master account.
 
-                    <div class="checkbox-group">
-                        <input type="checkbox" id="agreeTerms" name="agreeTerms" required>
-                        <label for="agreeTerms">
-                            I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>
-                        </label>
-                    </div>
 
-                    <button type="submit" class="submit-btn" id="registerBtn">
-                        Create Your Soul Profile
-                    </button>
 
-                    <div class="form-link">
-                        Already have an account?
-                        <a onclick="showLogin()">Sign In</a>
-                    </div>
-                </form>
+5. Profile Separation:
 
-                <!-- Forgot Password Form -->
-                <form class="form hidden" id="forgotPasswordForm">
-                    <div class="form-header">
-                        <h2 class="form-title">Reset Password</h2>
-                        <p class="form-subtitle">Enter your email to receive reset instructions</p>
-                    </div>
-
-                    <div id="forgotMessage" class="hidden"></div>
-
-                    <div class="form-group">
-                        <label class="form-label" for="forgotEmail">Email Address</label>
-                        <input 
-                            type="email" 
-                            id="forgotEmail" 
-                            name="email" 
-                            class="form-input" 
-                            placeholder="your@email.com"
-                            required
-                        >
-                    </div>
-
-                    <button type="submit" class="submit-btn" id="forgotBtn">
-                        Send Reset Instructions
-                    </button>
-
-                    <div class="back-to-login">
-                        <a onclick="showLogin()">← Back to Sign In</a>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        function showLogin() {
-            document.getElementById('loginForm').classList.remove('hidden');
-            document.getElementById('registerForm').classList.add('hidden');
-            document.getElementById('forgotPasswordForm').classList.add('hidden');
-            document.getElementById('loginTab').classList.add('active');
-            document.getElementById('registerTab').classList.remove('active');
-            document.getElementById('tabIndicator').classList.remove('register');
-        }
-        function showRegister() {
-            document.getElementById('loginForm').classList.add('hidden');
-            document.getElementById('registerForm').classList.remove('hidden');
-            document.getElementById('forgotPasswordForm').classList.add('hidden');
-            document.getElementById('loginTab').classList.remove('active');
-            document.getElementById('registerTab').classList.add('active');
-            document.getElementById('tabIndicator').classList.add('register');
-        }
-        function showForgotPassword() {
-            document.getElementById('loginForm').classList.add('hidden');
-            document.getElementById('registerForm').classList.add('hidden');
-            document.getElementById('forgotPasswordForm').classList.remove('hidden');
-            document.getElementById('loginTab').classList.remove('active');
-            document.getElementById('registerTab').classList.remove('active');
-            document.getElementById('tabIndicator').classList.remove('register');
-        }
-        // Initialize default view
-        showLogin();
-    </script>
-    <script src="js/config.js"></script>
-    <script src="js/auth.js"></script>
-</body>
-</html>
+When a vice admin logs in, they should be redirected to a dashboard that reflects their privileges. This keeps the master account's controls separate from those of the vice admins.
