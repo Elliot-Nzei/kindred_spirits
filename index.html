@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kindred Spirits - Login</title>
+    <title>Metanoia - Login</title>
     <link rel="stylesheet" href="css/auth.css">
 </head>
 <body>
@@ -16,7 +16,7 @@
     <div class="container">
         <div class="left-panel">
             <div class="logo-section">
-                <h1 class="logo">Kindred Spirits</h1>
+                <h1 class="logo">Metanoia</h1>
                 <p class="tagline">Your journey of growth and connection begins here</p>
             </div>
             
@@ -42,10 +42,10 @@
                     <div id="loginMessage" class="hidden"></div>
 
                     <div class="form-group">
-                        <label class="form-label" for="loginUsername">Username</label>
+                        <label class="form-label" for="login-username">Username</label>
                         <input 
                             type="text" 
-                            id="loginUsername" 
+                            id="login-username" 
                             name="username" 
                             class="form-input" 
                             placeholder="Your username"
@@ -73,6 +73,8 @@
                         Sign In to Your Soul Profile
                     </button>
 
+                    <p class="error-message hidden" id="loginError"></p>
+
                     <div class="divider">
                         <span>or</span>
                     </div>
@@ -93,11 +95,11 @@
                     <div id="registerMessage" class="hidden"></div>
 
                     <div class="form-group">
-                        <label class="form-label" for="fullName">Full Name</label>
+                        <label class="form-label" for="register-fullname">Full Name</label>
                         <input 
                             type="text" 
-                            id="fullName" 
-                            name="fullName" 
+                            id="register-fullname" 
+                            name="full_name" 
                             class="form-input" 
                             placeholder="Your full name"
                             required
@@ -105,10 +107,10 @@
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label" for="registerUsername">Username</label>
+                        <label class="form-label" for="register-username">Username</label>
                         <input 
                             type="text" 
-                            id="registerUsername" 
+                            id="register-username" 
                             name="username" 
                             class="form-input" 
                             placeholder="Choose a username"
@@ -117,10 +119,10 @@
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label" for="registerEmail">Email Address</label>
+                        <label class="form-label" for="register-email">Email Address</label>
                         <input 
                             type="email" 
-                            id="registerEmail" 
+                            id="register-email" 
                             name="email" 
                             class="form-input" 
                             placeholder="your@email.com"
@@ -169,6 +171,9 @@
                         Create Your Soul Profile
                     </button>
 
+                    <p class="error-message hidden" id="registerError"></p>
+                    <p class="success-message hidden" id="registerSuccess"></p>
+
                     <div class="form-link">
                         Already have an account?
                         <a href="javascript:void(0);" onclick="showLogin()">Sign In</a>
@@ -200,6 +205,8 @@
                         Send Reset Instructions
                     </button>
 
+                    <p class="success-message hidden" id="forgotSuccess"></p>
+
                     <div class="back-to-login">
                         <a href="javascript:void(0);" onclick="showLogin()">← Back to Sign In</a>
                     </div>
@@ -223,39 +230,6 @@
             document.getElementById('loginForm').classList.add('hidden');
             document.getElementById('registerForm').classList.add('hidden');
             document.getElementById('forgotPasswordForm').classList.remove('hidden');
-        }
-        // Initialize default view
-        showLogin();
-    </script>
-    <script src="js/config.js"></script>
-    <script src="js/auth.js"></script>
-</body>
-</html>
-
-    <script>
-        function showLogin() {
-            document.getElementById('loginForm').classList.remove('hidden');
-            document.getElementById('registerForm').classList.add('hidden');
-            document.getElementById('forgotPasswordForm').classList.add('hidden');
-            document.getElementById('loginTab').classList.add('active');
-            document.getElementById('registerTab').classList.remove('active');
-            document.getElementById('tabIndicator').classList.remove('register');
-        }
-        function showRegister() {
-            document.getElementById('loginForm').classList.add('hidden');
-            document.getElementById('registerForm').classList.remove('hidden');
-            document.getElementById('forgotPasswordForm').classList.add('hidden');
-            document.getElementById('loginTab').classList.remove('active');
-            document.getElementById('registerTab').classList.add('active');
-            document.getElementById('tabIndicator').classList.add('register');
-        }
-        function showForgotPassword() {
-            document.getElementById('loginForm').classList.add('hidden');
-            document.getElementById('registerForm').classList.add('hidden');
-            document.getElementById('forgotPasswordForm').classList.remove('hidden');
-            document.getElementById('loginTab').classList.remove('active');
-            document.getElementById('registerTab').classList.remove('active');
-            document.getElementById('tabIndicator').classList.remove('register');
         }
         // Initialize default view
         showLogin();

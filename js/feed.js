@@ -38,6 +38,8 @@ const FeedManager = {
         const userAvatar = document.getElementById('new-comment-user-image');
         if (userAvatar && user.profile_picture) {
             userAvatar.src = `${API_BASE_URL}${user.profile_picture}`;
+        } else if (userAvatar) {
+            userAvatar.src = '/img/default-avatar.jpg'; // Fallback default image
         }
 
         // Update user avatar in welcome section
@@ -121,7 +123,7 @@ const FeedManager = {
         article.innerHTML = `
             <div class="p-4">
                 <div class="flex items-start space-x-3 mb-4">
-                    <a href="/pages/profile.html?user=${post.owner_username}" class="flex-shrink-0">
+                    <a href="/pages/soul_profile.html?user=${post.owner_username}" class="flex-shrink-0">
                         <img src="${profilePicture}" 
                              alt="${post.owner_username}'s Profile" 
                              class="w-10 h-10 rounded-full object-cover border-2 border-primary-light hover:border-primary transition-all duration-200"
@@ -130,7 +132,7 @@ const FeedManager = {
                     <div class="flex-1">
                         <div class="flex items-center justify-between">
                             <div>
-                                <a href="/pages/profile.html?user=${post.owner_username}" 
+                                <a href="/pages/soul_profile.html?user=${post.owner_username}" 
                                    class="font-semibold text-text-primary hover:text-primary transition-colors text-base">
                                     ${post.owner_username}
                                 </a>
@@ -547,7 +549,7 @@ const FeedManager = {
         commentDiv.innerHTML = `
             <div class="flex items-start space-x-3">
                 <img src="${comment.owner_profile_picture ? API_BASE_URL + comment.owner_profile_picture : '/img/default-avatar.jpg'}" 
-                     class="w-8 h-8 rounded-full object-cover">
+                     class="w-8 h-8 rounded-full object-cover" onerror="this.src='/img/default-avatar.jpg'; this.onerror=null;">
                 <div class="flex-1">
                     <div class="flex items-center space-x-2">
                         <span class="font-medium text-sm">${comment.owner_username}</span>
@@ -927,7 +929,7 @@ const FeedManager = {
         // Convert @mentions to links
         content = content.replace(
             /@(\w+)/g,
-            '<a href="/pages/profile.html?user=$1" class="text-primary hover:underline">@$1</a>'
+            '<a href="/pages/soul_profile.html?user=$1" class="text-primary hover:underline">@$1</a>'
         );
         
         // Convert #hashtags

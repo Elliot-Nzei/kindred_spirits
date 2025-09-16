@@ -594,7 +594,7 @@ async def follow_user(
         sender_id=current_user.id,
         type="follow",
         message=f"{current_user.username} started following you",
-        link=f"/pages/profile.html?user={current_user.username}"
+        link=f"/pages/soul_profile.html?user={current_user.username}"
     )
     db.add(notification)
     db.commit()

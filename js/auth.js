@@ -319,7 +319,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Check authentication on protected pages
     const protectedPages = [
         'community_feed_dashboard.html',
-        'profile.html',
+        'soul_profile.html',
         'settings.html',
         'notifications.html'
     ];

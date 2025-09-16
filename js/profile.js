@@ -62,7 +62,8 @@ const ProfileManager = {
 
     // Render profile information
     renderProfile() {
-        const defaultAvatar = '/img/default-avatar.jpg';
+        // Change fallback if needed
+        const defaultAvatar = '/img/default-avatar.jpg'; // Make sure this file exists!
         const profilePicture = this.currentProfile.profile_picture 
             ? `${API_BASE_URL}${this.currentProfile.profile_picture}` 
             : defaultAvatar;
@@ -567,6 +568,15 @@ const ProfileManager = {
             if (response.ok) {
                 const data = await response.json();
                 this.currentProfile.profile_picture = data.profile_picture;
+                
+                // Update localStorage with the new profile picture
+                const currentUserData = window.AuthManager.getCurrentUser();
+                currentUserData.profile_picture = data.profile_picture;
+                // AuthManager.setAuthData expects an object with access_token, user_id, username, email
+                // We need to reconstruct this object or modify setAuthData to accept partial updates
+                // For now, let's directly update localStorage for profile_picture
+                localStorage.setItem('profile_picture', data.profile_picture);
+
                 this.renderProfile();
                 this.showSuccess('Profile picture updated');
             }
