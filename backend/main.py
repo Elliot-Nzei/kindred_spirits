@@ -53,7 +53,13 @@ def create_master_user():
         # Check if master user already exists
         master_user = db.query(User).filter(User.username == "masteradmin").first()
         if master_user:
-            print("Master user already exists.")
+            if not master_user.is_master:
+                print("Updating existing master user to set is_master flag...")
+                master_user.is_master = True
+                db.commit()
+                print("Master user updated successfully!")
+            else:
+                print("Master user already exists and is correctly configured.")
         else:
             print("Creating master user...")
             hashed_password = get_password_hash("p@ssw0rd")
@@ -456,6 +462,13 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = 
             detail="Incorrect username or password",
             headers={"WWW-Authenticate": "Bearer"},
         )
+
+    # Ensure masteradmin always has the is_master flag
+    if user.username == "masteradmin" and not user.is_master:
+        user.is_master = True
+        db.commit()
+        db.refresh(user)
+        print("Applied is_master flag to masteradmin during login.")
     
     # Create access token
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
@@ -509,6 +522,38 @@ async def create_vice_admin(
     response.following_count = 0
     response.posts_count = 0
     return response
+
+@app.get("/api/admin/stats")
+async def get_admin_stats(
+    db: Session = Depends(get_db),
+    master_user: User = Depends(get_current_master_user)
+):
+    total_users = db.query(User).count()
+    new_users_month = db.query(User).filter(User.joined_date >= datetime.now(timezone.utc) - timedelta(days=30)).count()
+    total_posts = db.query(Post).count()
+    vice_admins_count = db.query(User).filter(User.is_vice_admin == True).count()
+    return {
+        "total_users": total_users,
+        "new_users_month": new_users_month,
+        "total_posts": total_posts,
+        "vice_admins_count": vice_admins_count
+    }
+
+@app.get("/api/admin/vice-admins", response_model=List[UserResponse])
+async def get_vice_admins(
+    db: Session = Depends(get_db),
+    master_user: User = Depends(get_current_master_user)
+):
+    vice_admins = db.query(User).filter(User.is_vice_admin == True).all()
+    response = []
+    for admin in vice_admins:
+        admin_response = UserResponse.from_orm(admin)
+        admin_response.followers_count = 0
+        admin_response.following_count = 0
+        admin_response.posts_count = 0
+        response.append(admin_response)
+    return response
+
 
 # --- User Profile Routes ---
 @app.get("/api/users/me", response_model=UserResponse)

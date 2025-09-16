@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vice Admin Dashboard</title>
+    <link rel="stylesheet" href="../css/output.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body class="bg-gray-100 font-sans">
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <aside class="w-64 bg-gray-800 text-white flex flex-col">
+            <div class="p-4 border-b border-gray-700">
+                <h1 class="text-2xl font-bold">Metanoia</h1>
+                <span class="text-sm text-gray-400">Vice Admin Dashboard</span>
+            </div>
+            <nav class="flex-1 p-4">
+                <ul>
+                    <li class="mb-2">
+                        <a href="#" class="flex items-center p-2 bg-gray-700 rounded-lg">
+                            <i class="fas fa-tachometer-alt mr-3"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="mb-2">
+                        <a href="#" class="flex items-center p-2 hover:bg-gray-700 rounded-lg">
+                            <i class="fas fa-file-alt mr-3"></i>
+                            <span>Content Moderation</span>
+                        </a>
+                    </li>
+                    <li class="mb-2">
+                        <a href="#" class="flex items-center p-2 hover:bg-gray-700 rounded-lg">
+                            <i class="fas fa-headset mr-3"></i>
+                            <span>Support Tickets</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            <div class="p-4 border-t border-gray-700">
+                <button data-logout class="w-full flex items-center p-2 bg-red-500 hover:bg-red-600 rounded-lg">
+                    <i class="fas fa-sign-out-alt mr-3"></i>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 p-8 overflow-y-auto">
+            <header class="flex justify-between items-center mb-8">
+                <h2 class="text-3xl font-bold text-gray-800">Vice Admin Dashboard</h2>
+                <div class="flex items-center">
+                    <span class="mr-4 text-gray-600">Welcome, Vice Admin!</span>
+                    <img src="../img/default-avatar.jpg" alt="Avatar" class="w-10 h-10 rounded-full">
+                </div>
+            </header>
+
+            <div class="bg-white p-8 rounded-lg shadow-md">
+                <h3 class="text-2xl font-bold text-gray-800 mb-4">Welcome</h3>
+                <p class="text-gray-600">You have been granted vice admin privileges. Your role is to assist in the moderation and management of the community. Please use your privileges responsibly.</p>
+            </div>
+
+            <!-- Placeholder for vice admin specific content -->
+            <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h4 class="font-bold text-lg mb-2">Content Moderation Queue</h4>
+                    <p class="text-gray-600">No items currently in the queue.</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h4 class="font-bold text-lg mb-2">Open Support Tickets</h4>
+                    <p class="text-gray-600">No open tickets.</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="../js/config.js"></script>
+    <script src="../js/auth.js"></script>
+</body>
+</html>

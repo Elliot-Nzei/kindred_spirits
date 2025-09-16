@@ -1,51 +1,18 @@
-PS C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits> make run-backend
-"Starting FastAPI backend..."
-backend\venv\Scripts\uvicorn backend.main:app --reload
-INFO:     Will watch for changes in these directories: ['C:\\Users\\USER\\Documents\\PROJECTS_2025\\kindred_spirits']
-INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
-INFO:     Started reloader process [12028] using StatReload
-Process SpawnProcess-1:
-Traceback (most recent call last):
-  File "C:\Program Files\Python311\Lib\multiprocessing\process.py", line 314, in _bootstrap
-    self.run()
-  File "C:\Program Files\Python311\Lib\multiprocessing\process.py", line 108, in run       
-    self._target(*self._args, **self._kwargs)
-  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\uvicorn\_subprocess.py", line 80, in subprocess_started
-    target(sockets=sockets)
-  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\uvicorn\server.py", line 67, in run
-    return asyncio.run(self.serve(sockets=sockets))
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Program Files\Python311\Lib\asyncio\runners.py", line 190, in run
-    return runner.run(main)
-           ^^^^^^^^^^^^^^^^
-  File "C:\Program Files\Python311\Lib\asyncio\runners.py", line 118, in run
-    return self._loop.run_until_complete(task)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Program Files\Python311\Lib\asyncio\base_events.py", line 654, in run_until_complete
-    return future.result()
-           ^^^^^^^^^^^^^^^
-  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\uvicorn\server.py", line 71, in serve
-    await self._serve(sockets)
-  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\uvicorn\server.py", line 78, in _serve        
-    config.load()
-  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\uvicorn\config.py", line 436, in load
-    self.loaded_app = import_from_string(self.app)
-                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\venv\Lib\site-packages\uvicorn\importer.py", line 19, in import_from_string
-    module = importlib.import_module(module_str)
-             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Program Files\Python311\Lib\importlib\__init__.py", line 126, in import_module
-    return _bootstrap._gcd_import(name[level:], package, level)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "<frozen importlib._bootstrap>", line 1204, in _gcd_import
-  File "<frozen importlib._bootstrap>", line 1176, in _find_and_load
-  File "<frozen importlib._bootstrap>", line 1147, in _find_and_load_unlocked
-  File "<frozen importlib._bootstrap>", line 690, in _load_unlocked
-  File "<frozen importlib._bootstrap_external>", line 936, in exec_module
-  File "<frozen importlib._bootstrap_external>", line 1074, in get_code
-  File "<frozen importlib._bootstrap_external>", line 1004, in source_to_code
-  File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
-  File "C:\Users\USER\Documents\PROJECTS_2025\kindred_spirits\backend\main.py", line 60
-    hashed_password = get_password_hash("p @def get_db():
-                                        ^
-SyntaxError: unterminated string literal (detected at line 60)
+**About the Metanoia Platform**
+
+Metanoia is a unique social platform designed for individuals on a path of spiritual growth and personal development. It serves as a sacred community space where like-minded souls can connect, share, and support one another on their journeys.
+
+**Core Purpose:**
+
+The primary goal of Metanoia is to foster a nurturing online environment for holistic well-being and conscious connection. It blends social networking with tools and content aimed at personal transformation and mindfulness.
+
+**Key Features:**
+
+*   **Community Feed:** A central dashboard where users can share updates, stories, and images. It includes standard social features like likes, comments, and post bookmarking.
+*   **Soul Profile:** Each user has a personal profile that represents their identity within the community.
+*   **Personal Growth Pathway:** A guided, milestone-based system that helps users track their progress in various aspects of their personal development journey.
+*   **Practice Studio:** Offers guided practices such as meditation and breathwork to help users cultivate mindfulness and inner peace.
+*   **Workshop Gateway:** A portal to exclusive, in-depth workshops on topics like inner wisdom and spiritual awakening, often led by guides.
+*   **Daily Wisdom & Reflection:** Provides daily inspiration through quotes and prompts to encourage introspection and sharing.
+*   **Soul Compass:** A recommendation engine that suggests relevant content, practices, and workshops based on a user's activity and progress.
+*   **Notifications & Connections:** Users can follow each other, receive notifications for interactions, and build a network of kindred spirits.

@@ -33,6 +33,8 @@ const AuthManager = {
         if (data.profile_picture) {
             localStorage.setItem('profile_picture', data.profile_picture);
         }
+        localStorage.setItem('is_master', data.is_master);
+        localStorage.setItem('is_vice_admin', data.is_vice_admin);
     },
 
     // Clear authentication data
@@ -202,10 +204,16 @@ document.addEventListener('DOMContentLoaded', () => {
             setLoading(submitBtn, true);
             hideError(errorDiv);
 
-            await AuthAPI.login(username, password);
+            const userData = await AuthAPI.login(username, password);
             
-            // Redirect to dashboard
-            window.location.href = '/pages/community_feed_dashboard.html';
+            // Redirect based on role
+            if (userData.is_master) {
+                window.location.href = '/pages/master_admin_dashboard.html';
+            } else if (userData.is_vice_admin) {
+                window.location.href = '/pages/vice_admin_dashboard.html';
+            } else {
+                window.location.href = '/pages/community_feed_dashboard.html';
+            }
         } catch (error) {
             showError(errorDiv, error.message);
         } finally {
