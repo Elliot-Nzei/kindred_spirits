@@ -1,11 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const createViceAdminForm = document.getElementById('createViceAdminForm');
-    const messageDiv = document.getElementById('message');
-    const viceAdminList = document.getElementById('viceAdminList');
-    const viceAdminCount = document.getElementById('viceAdminCount');
+    const userList = document.getElementById('userList');
     const totalUsers = document.getElementById('totalUsers');
     const newUsersMonth = document.getElementById('newUsersMonth');
     const totalPosts = document.getElementById('totalPosts');
+    const viceAdminCount = document.getElementById('viceAdminCount');
 
     // Fetch and display stats
     async function fetchStats() {
@@ -24,77 +22,81 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Fetch and display vice admins
-    async function fetchViceAdmins() {
+    // Fetch and display users
+    async function fetchUsers() {
         try {
-            const response = await AuthAPI.request('/api/admin/vice-admins');
+            const response = await AuthAPI.request('/api/admin/users');
             if (!response.ok) {
-                const error = await response.json();
-                throw new Error(error.detail || 'Failed to fetch vice admins');
+                throw new Error('Failed to fetch users');
             }
-            const admins = await response.json();
-            viceAdminList.innerHTML = '';
-            admins.forEach(admin => {
+            const users = await response.json();
+            userList.innerHTML = '';
+            users.forEach(user => {
                 const row = document.createElement('tr');
+                row.dataset.userId = user.id;
+
+                let role = 'Member';
+                if (user.is_master) role = 'Master';
+                else if (user.is_vice_admin) role = 'Vice-Admin';
+                else if (user.is_guide) role = 'Guide';
+
                 row.innerHTML = `
-                    <td class="py-2 px-4 border-b">${admin.username}</td>
-                    <td class="py-2 px-4 border-b">${admin.email}</td>
-                    <td class="py-2 px-4 border-b">${admin.full_name}</td>
+                    <td class="py-2 px-4 border-b">${user.username}</td>
+                    <td class="py-2 px-4 border-b">${user.email}</td>
+                    <td class="py-2 px-4 border-b">${user.full_name || ''}</td>
+                    <td class="py-2 px-4 border-b">${role}</td>
                     <td class="py-2 px-4 border-b">
-                        <button class="text-blue-500 hover:underline">Edit</button>
-                        <button class="text-red-500 hover:underline ml-4">Delete</button>
+                        ${!user.is_master ? `
+                        <select class="role-select border rounded-lg px-2 py-1">
+                            <option value="member" ${role === 'Member' ? 'selected' : ''}>Member</option>
+                            <option value="guide" ${role === 'Guide' ? 'selected' : ''}>Guide</option>
+                            <option value="vice_admin" ${role === 'Vice-Admin' ? 'selected' : ''}>Vice-Admin</option>
+                        </select>
+                        ` : '<span class="text-gray-500">N/A</span>'}
                     </td>
                 `;
-                viceAdminList.appendChild(row);
+                userList.appendChild(row);
             });
         } catch (error) {
             console.error(error.message);
-            viceAdminList.innerHTML = '<tr><td colspan="4" class="text-center py-4">Failed to load vice admins.</td></tr>';
+            userList.innerHTML = '<tr><td colspan="5" class="text-center py-4">Failed to load users.</td></tr>';
         }
     }
 
-    if (createViceAdminForm) {
-        createViceAdminForm.addEventListener('submit', async (event) => {
-            event.preventDefault();
-
-            const username = document.getElementById('username').value;
-            const email = document.getElementById('email').value;
-            const fullName = document.getElementById('full_name').value;
-            const password = document.getElementById('password').value;
+    // Handle role change
+    userList.addEventListener('change', async (event) => {
+        if (event.target.classList.contains('role-select')) {
+            const userId = event.target.closest('tr').dataset.userId;
+            const newRole = event.target.value;
 
             try {
-                const response = await AuthAPI.request('/api/admin/create-vice-admin', {
-                    method: 'POST',
+                const response = await AuthAPI.request(`/api/admin/users/${userId}/role`, {
+                    method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({
-                        username,
-                        email,
-                        full_name: fullName,
-                        password
-                    })
+                    body: JSON.stringify({ role: newRole })
                 });
 
                 if (!response.ok) {
                     const error = await response.json();
-                    throw new Error(error.detail || 'Failed to create vice admin');
+                    throw new Error(error.detail || 'Failed to update role');
                 }
+                
+                // Refresh the user list and stats to show the change
+                fetchUsers();
+                fetchStats();
 
-                const data = await response.json();
-                messageDiv.textContent = `Successfully created vice admin: ${data.username}`;
-                messageDiv.className = 'text-green-500';
-                createViceAdminForm.reset();
-                fetchViceAdmins(); // Refresh the list
-                fetchStats(); // Refresh the stats
             } catch (error) {
-                messageDiv.textContent = error.message;
-                messageDiv.className = 'text-red-500';
+                console.error(error.message);
+                alert('Failed to update role: ' + error.message);
+                // Revert the select box on failure
+                fetchUsers(); 
             }
-        });
-    }
+        }
+    });
 
-    // Initial fetch
+    // Initial data fetch
     fetchStats();
-    fetchViceAdmins();
+    fetchUsers();
 });

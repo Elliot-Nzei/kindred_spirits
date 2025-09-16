@@ -105,6 +105,7 @@ class User(Base):
     is_verified = Column(Boolean, default=False)
     is_master = Column(Boolean, default=False)
     is_vice_admin = Column(Boolean, default=False)
+    is_guide = Column(Boolean, default=False)
     
     # Relationships
     posts = relationship("Post", back_populates="owner", cascade="all, delete-orphan")
@@ -238,6 +239,7 @@ class Token(BaseModel):
     profile_picture: Optional[str]
     is_master: bool = False
     is_vice_admin: bool = False
+    is_guide: bool = False
 
 class TokenData(BaseModel):
     username: Optional[str] = None
@@ -484,7 +486,8 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = 
         email=user.email,
         profile_picture=user.profile_picture,
         is_master=user.is_master,
-        is_vice_admin=user.is_vice_admin
+        is_vice_admin=user.is_vice_admin,
+        is_guide=user.is_guide
     )
 
 @app.post("/api/admin/create-vice-admin", response_model=UserResponse)
@@ -521,6 +524,60 @@ async def create_vice_admin(
     response.followers_count = 0
     response.following_count = 0
     response.posts_count = 0
+    return response
+
+@app.get("/api/admin/users", response_model=List[UserResponse])
+async def get_all_users(
+    db: Session = Depends(get_db),
+    master_user: User = Depends(get_current_master_user)
+):
+    users = db.query(User).all()
+    response = []
+    for user in users:
+        user_response = UserResponse.from_orm(user)
+        user_response.followers_count = db.query(Follow).filter(Follow.followed_id == user.id).count()
+        user_response.following_count = db.query(Follow).filter(Follow.follower_id == user.id).count()
+        user_response.posts_count = db.query(Post).filter(Post.owner_id == user.id).count()
+        response.append(user_response)
+    return response
+
+class RoleUpdate(BaseModel):
+    role: str # Can be 'member', 'guide', 'vice_admin'
+
+@app.put("/api/admin/users/{user_id}/role", response_model=UserResponse)
+async def update_user_role(
+    user_id: int,
+    role_update: RoleUpdate,
+    db: Session = Depends(get_db),
+    master_user: User = Depends(get_current_master_user)
+):
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    if user.is_master:
+        raise HTTPException(status_code=400, detail="Cannot change the role of a master admin")
+
+    role = role_update.role.lower()
+    if role == 'member':
+        user.is_vice_admin = False
+        user.is_guide = False
+    elif role == 'guide':
+        user.is_vice_admin = False
+        user.is_guide = True
+    elif role == 'vice_admin':
+        user.is_vice_admin = True
+        user.is_guide = False
+    else:
+        raise HTTPException(status_code=400, detail=f"Invalid role: {role_update.role}")
+
+    db.commit()
+    db.refresh(user)
+
+    response = UserResponse.from_orm(user)
+    response.followers_count = db.query(Follow).filter(Follow.followed_id == user.id).count()
+    response.following_count = db.query(Follow).filter(Follow.follower_id == user.id).count()
+    response.posts_count = db.query(Post).filter(Post.owner_id == user.id).count()
     return response
 
 @app.get("/api/admin/stats")
@@ -1361,6 +1418,15 @@ async def read_index():
 @app.get("/api/health")
 async def health_check():
     return {"status": "healthy", "timestamp": datetime.utcnow()}
+
+@app.delete("/api/dev/delete-db")
+async def delete_db():
+    db_path = os.path.join(os.path.dirname(__file__), "sql_app.db")
+    if os.path.exists(db_path):
+        os.remove(db_path)
+        return {"message": "sql_app.db deleted"}
+    else:
+        return {"message": "sql_app.db not found"}
 
 # IMPORTANT: If you see "no such column: users.is_master" error,
 # delete the old sql_app.db file in your backend directory and restart the backend.

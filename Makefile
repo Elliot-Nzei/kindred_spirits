@@ -24,3 +24,9 @@ clean:
 	@echo "Done!"
 
 .PHONY: clean
+
+delete-db:
+	@echo "Requesting backend to delete sql_app.db..."
+	curl -X DELETE http://127.0.0.1:8000/api/dev/delete-db
+
+.PHONY: delete-db
