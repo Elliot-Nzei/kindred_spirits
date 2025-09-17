@@ -57,7 +57,8 @@ def create_master_user():
                 print("Updating existing master user to set is_master flag...")
                 master_user.is_master = True
                 db.commit()
-                print("Master user updated successfully!")
+                db.refresh(master_user) # Refresh to get the latest state
+                print(f"Master user updated successfully! is_master: {master_user.is_master}")
             else:
                 print("Master user already exists and is correctly configured.")
         else:
@@ -73,7 +74,7 @@ def create_master_user():
             db.add(db_user)
             db.commit()
             db.refresh(db_user)
-            print(f"Master user '{db_user.username}' created successfully!")
+            print(f"Master user '{db_user.username}' created successfully! is_master: {db_user.is_master}")
     except Exception as e:
         print(f"Error creating master user: {e}")
         db.rollback()
@@ -392,6 +393,7 @@ async def get_current_user_optional(token: Optional[str] = Depends(oauth2_scheme
         return None
 
 async def get_current_master_user(current_user: User = Depends(get_current_user)):
+    print(f"get_current_master_user called for user: {current_user.username}, is_master: {current_user.is_master}")
     if not current_user.is_master:
         raise HTTPException(status_code=403, detail="Not a master admin")
     return current_user
@@ -470,7 +472,8 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = 
         user.is_master = True
         db.commit()
         db.refresh(user)
-        print("Applied is_master flag to masteradmin during login.")
+        print(f"Applied is_master flag to masteradmin during login. is_master: {user.is_master}")
+    print(f"Login attempt for user: {user.username}, is_master: {user.is_master}")
     
     # Create access token
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
@@ -1397,13 +1400,14 @@ async def get_stats(
     }
 
 # --- Serve Static Files ---
-app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
-app.mount("/css", StaticFiles(directory="css"), name="css")
-app.mount("/js", StaticFiles(directory="js"), name="js")
-app.mount("/img", StaticFiles(directory="img"), name="img")
-app.mount("/pages", StaticFiles(directory="pages"), name="pages")
-app.mount("/public", StaticFiles(directory="public"), name="public")
-app.mount("/data", StaticFiles(directory="data"), name="data")
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+app.mount("/uploads", StaticFiles(directory=os.path.join(BASE_DIR, "..", "uploads")), name="uploads")
+app.mount("/css", StaticFiles(directory=os.path.join(BASE_DIR, "..", "css")), name="css")
+app.mount("/js", StaticFiles(directory=os.path.join(BASE_DIR, "..", "js")), name="js")
+app.mount("/img", StaticFiles(directory=os.path.join(BASE_DIR, "..", "img")), name="img")
+app.mount("/pages", StaticFiles(directory=os.path.join(BASE_DIR, "..", "pages")), name="pages")
+app.mount("/public", StaticFiles(directory=os.path.join(BASE_DIR, "..", "public")), name="public")
+app.mount("/data", StaticFiles(directory=os.path.join(BASE_DIR, "..", "data")), name="data")
 
 # --- Root Routes ---
 @app.get("/")

@@ -1,186 +1,466 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const userList = document.getElementById('userList');
-    const totalUsers = document.getElementById('totalUsers');
-    const newUsersMonth = document.getElementById('newUsersMonth');
-    const totalPosts = document.getElementById('totalPosts');
-    const viceAdminCount = document.getElementById('viceAdminCount');
-    const searchInput = document.getElementById('user-search-input');
+class UserManager {
+    constructor() {
+        this.allUsers = [];
+        this.filteredUsers = {
+            viceAdmin: [],
+            guide: [],
+            member: []
+        };
+        this.currentSearchTerm = '';
+        this.isUpdating = false; // Prevent concurrent updates
+    }
 
-    let allUsers = []; // Cache for all users
+    /**
+     * Main render function - single source of truth for UI updates
+     * @param {Array} users - Array of user objects
+     * @param {boolean} preserveSearch - Whether to maintain current search state
+     */
+    renderUsers(users, preserveSearch = false) {
+        if (this.isUpdating) return; // Prevent concurrent renders
+        
+        this.allUsers = [...users]; // Deep copy to prevent reference issues
+        
+        // Clear only dynamic user lists (preserve master admin list)
+        const listsToUpdate = {
+            viceAdmin: document.getElementById('viceAdminList'),
+            guide: document.getElementById('guideList'),
+            member: document.getElementById('memberList')
+        };
 
-    // --- Toast Notification ---
-    function showToast(message, type = 'success') {
+        // Clear existing content
+        Object.values(listsToUpdate).forEach(list => {
+            if (list) list.innerHTML = '';
+        });
+
+        // Reset filtered users
+        this.filteredUsers = {
+            viceAdmin: [],
+            guide: [],
+            member: []
+        };
+
+        // Categorize and render users
+        users.forEach(user => {
+            const userRow = this.createUserRow(user);
+            
+            let userRole = 'member';
+            if (user.is_master) {
+                userRole = 'master';
+            } else if (user.is_vice_admin) {
+                userRole = 'vice_admin';
+            } else if (user.is_guide) {
+                userRole = 'guide';
+            }
+
+            switch(userRole) {
+                case 'master':
+                    // Master admin is handled separately, not part of dynamic lists
+                    break;
+                case 'vice_admin':
+                    this.filteredUsers.viceAdmin.push(user);
+                    if (listsToUpdate.viceAdmin) {
+                        listsToUpdate.viceAdmin.appendChild(userRow);
+                    }
+                    break;
+                case 'guide':
+                    this.filteredUsers.guide.push(user);
+                    if (listsToUpdate.guide) {
+                        listsToUpdate.guide.appendChild(userRow);
+                    }
+                    break;
+                case 'member':
+                    this.filteredUsers.member.push(user);
+                    if (listsToUpdate.member) {
+                        listsToUpdate.member.appendChild(userRow);
+                    }
+                    break;
+            }
+        });
+
+        // Apply search filter if one exists and we want to preserve it
+        if (preserveSearch && this.currentSearchTerm) {
+            this.filterUsers(this.currentSearchTerm);
+        }
+
+        // Update counts
+        this.updateUserCounts();
+    }
+
+    /**
+     * Create HTML row for a user
+     * @param {Object} user - User object
+     * @returns {HTMLElement} - User row element
+     */
+    createUserRow(user) {
+        const row = document.createElement('tr');
+        row.setAttribute('data-user-id', user.id);
+        // Determine the user's role based on boolean flags
+        let userRole = 'member';
+        if (user.is_master) {
+            userRole = 'master';
+        } else if (user.is_vice_admin) {
+            userRole = 'vice_admin';
+        } else if (user.is_guide) {
+            userRole = 'guide';
+        }
+
+        row.className = user.is_suspended ? 'suspended-user' : ''; // Use user.is_suspended
+
+        row.innerHTML = `
+            <td>
+                <div class="user-info">
+                    <img src="${user.profile_picture || '../img/default-avatar.jpg'}" 
+                         alt="Profile" class="user-avatar">
+                    <div>
+                        <div class="user-name">${this.escapeHtml(user.username)}</div>
+                        <div class="user-email">${this.escapeHtml(user.email)}</div>
+                    </div>
+                </div>
+            </td>
+            <td>
+                <span class="role-badge role-${userRole.toLowerCase().replace(/\s+/g, '-')}">
+                    ${userRole.charAt(0).toUpperCase() + userRole.slice(1).replace('_', ' ')}
+                </span>
+            </td>
+            <td>
+                <span class="status-badge ${user.is_suspended ? 'suspended' : 'active'}">
+                    ${user.is_suspended ? 'Suspended' : 'Active'}
+                </span>
+            </td>
+            <td>
+                <div class="action-buttons">
+                    <select class="role-selector" onchange="userManager.updateUserRole('${user.id}', this.value)">
+                        <option value="member" ${userRole === 'member' ? 'selected' : ''}>Member</option>
+                        <option value="guide" ${userRole === 'guide' ? 'selected' : ''}>Guide</option>
+                        <option value="vice_admin" ${userRole === 'vice_admin' ? 'selected' : ''}>Vice-Admin</option>
+                    </select>
+                    <button class="btn-action ${user.is_suspended ? 'btn-activate' : 'btn-suspend'}" 
+                            onclick="userManager.toggleUserSuspension('${user.id}', ${!user.is_suspended})">
+                        ${user.is_suspended ? 'Activate' : 'Suspend'}
+                    </button>
+                </div>
+            </td>
+        `;
+
+        return row;
+    }
+
+    /**
+     * Update a single user's row in real-time without full re-render
+     * @param {string} userId - User ID to update
+     * @param {Object} updatedUser - Updated user object
+     */
+    async updateUserRow(userId, updatedUser) {
+        if (this.isUpdating) return; // Prevent concurrent updates
+        
+        this.isUpdating = true;
+
+        try {
+            // Find and update user in allUsers array
+            const userIndex = this.allUsers.findIndex(user => user.id === userId);
+            if (userIndex === -1) {
+                console.warn(`User ${userId} not found in allUsers`);
+                await this.fetchUsers(); // Fallback to full refresh
+                return;
+            }
+
+            // Update user data
+            this.allUsers[userIndex] = { ...this.allUsers[userIndex], ...updatedUser };
+
+            // Remove old row from DOM
+            const oldRow = document.querySelector(`tr[data-user-id="${userId}"]`);
+            if (oldRow) {
+                // Add fade-out animation
+                oldRow.style.transition = 'opacity 0.3s ease';
+                oldRow.style.opacity = '0';
+                
+                setTimeout(() => {
+                    if (oldRow.parentNode) {
+                        oldRow.parentNode.removeChild(oldRow);
+                    }
+                }, 300);
+            }
+
+            // Wait for fade-out to complete before re-rendering
+            setTimeout(() => {
+                // Re-render with updated data, preserving search state
+                this.renderUsers(this.allUsers, true);
+                
+                // Highlight the updated user row
+                this.highlightUpdatedRow(userId);
+                
+                this.isUpdating = false;
+            }, 350);
+
+        } catch (error) {
+            console.error('Error updating user row:', error);
+            this.isUpdating = false;
+            // Fallback to full refresh on error
+            await this.fetchUsers();
+        }
+    }
+
+    /**
+     * Highlight updated user row with animation
+     * @param {string} userId - User ID to highlight
+     */
+    highlightUpdatedRow(userId) {
+        setTimeout(() => {
+            const newRow = document.querySelector(`tr[data-user-id="${userId}"]`);
+            if (newRow) {
+                newRow.classList.add('row-updated');
+                newRow.style.backgroundColor = '#e8f5e8';
+                
+                setTimeout(() => {
+                    newRow.style.transition = 'background-color 1s ease';
+                    newRow.style.backgroundColor = '';
+                    setTimeout(() => {
+                        newRow.classList.remove('row-updated');
+                        newRow.style.transition = '';
+                    }, 1000);
+                }, 100);
+            }
+        }, 100);
+    }
+
+    /**
+     * Update user role via API
+     * @param {string} userId - User ID
+     * @param {string} newRole - New role
+     */
+    async updateUserRole(userId, newRole) {
+        try {
+            // Show loading state
+            this.setUserRowLoading(userId, true);
+
+            const response = await AuthAPI.request(`/api/admin/users/${userId}/role`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ role: newRole.toLowerCase() }) // Ensure role is lowercase for backend
+            });
+
+            if (!response.ok) {
+                throw new Error(`Failed to update role: ${response.statusText}`);
+            }
+
+            const result = await response.json();
+            
+            // Update user row with new data
+            await this.updateUserRow(userId, result); // Pass the full updated user object from the server
+
+            // Show success message
+            this.showNotification(`User role updated to ${newRole}`, 'success');
+
+        } catch (error) {
+            console.error('Error updating user role:', error);
+            this.showNotification('Failed to update user role', 'error');
+            
+            // Reset the selector to original value
+            const selector = document.querySelector(`tr[data-user-id="${userId}"] .role-selector`);
+            if (selector) {
+                const originalUser = this.allUsers.find(user => user.id === userId);
+                if (originalUser) {
+                    selector.value = originalUser.role;
+                }
+            }
+        } finally {
+            this.setUserRowLoading(userId, false);
+        }
+    }
+
+    /**
+     * Toggle user suspension status
+     * @param {string} userId - User ID
+     * @param {boolean} suspend - Whether to suspend (true) or activate (false)
+     */
+    async toggleUserSuspension(userId, suspend) {
+        try {
+            this.setUserRowLoading(userId, true);
+
+            const response = await AuthAPI.request(`/api/admin/users/${userId}/suspension`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ suspend: suspend })
+            });
+
+            if (!response.ok) {
+                throw new Error(`Failed to ${suspend ? 'suspend' : 'activate'} user: ${response.statusText}`);
+            }
+
+            const result = await response.json();
+            
+            // Update user row
+            await this.updateUserRow(userId, result); // Pass the full updated user object from the server
+
+            // Show success message
+            this.showNotification(`User ${suspend ? 'suspended' : 'activated'} successfully`, 'success');
+
+        } catch (error) {
+            console.error('Error toggling user suspension:', error);
+            this.showNotification(`Failed to ${suspend ? 'suspend' : 'activate'} user`, 'error');
+        } finally {
+            this.setUserRowLoading(userId, false);
+        }
+    }
+
+    /**
+     * Filter users based on search term
+     * @param {string} searchTerm - Search term
+     */
+    filterUsers(searchTerm) {
+        this.currentSearchTerm = searchTerm.toLowerCase();
+
+        const filterUserArray = (users) => {
+            return users.filter(user => 
+                user.username.toLowerCase().includes(this.currentSearchTerm) || // Use username
+                user.email.toLowerCase().includes(this.currentSearchTerm)
+            );
+        };
+
+        // Filter each role category
+        const filteredCategories = {
+            viceAdmin: filterUserArray(this.allUsers.filter(user => 
+                user.is_vice_admin
+            )),
+            guide: filterUserArray(this.allUsers.filter(user => 
+                user.is_guide
+            )),
+            member: filterUserArray(this.allUsers.filter(user => 
+                !user.is_master && !user.is_vice_admin && !user.is_guide
+            ))
+        };
+
+        // Update DOM
+        Object.keys(filteredCategories).forEach(role => {
+            const listElement = document.getElementById(`${role}List`);
+            if (listElement) {
+                listElement.innerHTML = '';
+                filteredCategories[role].forEach(user => {
+                    listElement.appendChild(this.createUserRow(user));
+                });
+            }
+        });
+
+        // Update filteredUsers state
+        this.filteredUsers = filteredCategories;
+    }
+
+    /**
+     * Fetch users from API
+     */
+    async fetchUsers() {
+        try {
+            const response = await AuthAPI.request('/api/admin/users', {
+                headers: {
+                    'Authorization': `Bearer ${AuthManager.getAuthToken()}` // Use AuthManager
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error(`Failed to fetch users: ${response.statusText}`);
+            }
+
+            const users = await response.json();
+            this.renderUsers(users);
+            
+        } catch (error) {
+            console.error('Error fetching users:', error);
+            this.showNotification('Failed to load users', 'error');
+        }
+    }
+
+    /**
+     * Utility functions
+     */
+    setUserRowLoading(userId, loading) {
+        const row = document.querySelector(`tr[data-user-id="${userId}"]`);
+        if (row) {
+            if (loading) {
+                row.classList.add('loading');
+                row.style.opacity = '0.6';
+            } else {
+                row.classList.remove('loading');
+                row.style.opacity = '1';
+            }
+        }
+    }
+
+    updateUserCounts() {
+        // Assuming you have elements like totalUsers, newUsersMonth, totalPosts, viceAdminCount
+        // These would need to be updated based on your stats API or by counting from allUsers
+        // For now, let's just update the counts for viceAdmin, guide, and member sections
+        const viceAdminCountElement = document.getElementById('viceAdminCount');
+        if (viceAdminCountElement) {
+            viceAdminCountElement.textContent = this.filteredUsers.viceAdmin.length;
+        }
+
+        const guideCountElement = document.getElementById('guideCount'); // Assuming you have this ID
+        if (guideCountElement) {
+            guideCountElement.textContent = this.filteredUsers.guide.length;
+        }
+
+        const memberCountElement = document.getElementById('memberCount'); // Assuming you have this ID
+        if (memberCountElement) {
+            memberCountElement.textContent = this.filteredUsers.member.length;
+        }
+    }
+
+    escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    getAuthToken() {
+        return AuthManager.getAuthToken(); // Use AuthManager
+    }
+
+    showNotification(message, type = 'info') {
+        // Implementation depends on your notification system
+        console.log(`${type.toUpperCase()}: ${message}`);
+        
+        // Example implementation with toast
         const toast = document.createElement('div');
-        const bgColor = type === 'error' ? 'bg-red-500' : 'bg-green-500';
-        toast.className = `fixed bottom-4 right-4 ${bgColor} text-white px-4 py-2 rounded-lg z-50 shadow-lg animate-slide-up`;
+        toast.className = `toast toast-${type}`;
         toast.textContent = message;
+        toast.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 12px 24px;
+            border-radius: 4px;
+            color: white;
+            font-weight: bold;
+            z-index: 1000;
+            background-color: ${type === 'success' ? '#4CAF50' : type === 'error' ? '#f44336' : '#2196F3'};
+            animation: slideIn 0.3s ease;
+        `;
+        
         document.body.appendChild(toast);
         
         setTimeout(() => {
-            toast.style.opacity = '0';
-            setTimeout(() => toast.remove(), 300);
+            toast.style.animation = 'slideOut 0.3s ease';
+            setTimeout(() => document.body.removeChild(toast), 300);
         }, 3000);
     }
+}
 
-    // --- API Functions ---
-    async function fetchStats() {
-        try {
-            const response = await AuthAPI.request(`/api/admin/stats?_t=${new Date().getTime()}`);
-            if (!response.ok) throw new Error('Failed to fetch stats');
-            const stats = await response.json();
-            totalUsers.textContent = stats.total_users;
-            newUsersMonth.textContent = stats.new_users_month;
-            totalPosts.textContent = stats.total_posts;
-            viceAdminCount.textContent = stats.vice_admins_count;
-        } catch (error) {
-            console.error(error.message);
-        }
-    }
+// Initialize the user manager
+const userManager = new UserManager();
 
-    async function fetchUsers() {
-        try {
-            const response = await AuthAPI.request(`/api/admin/users?_t=${new Date().getTime()}`);
-            if (!response.ok) throw new Error('Failed to fetch users');
-            allUsers = await response.json();
-            renderUsers(allUsers);
-        } catch (error) {
-            console.error(error.message);
-            userList.innerHTML = `<tr><td colspan="5" class="text-center py-4 text-red-500">Failed to load users.</td></tr>`;
-        }
-    }
-
-    // --- Render Functions ---
-    function renderUsers(users) {
-        userList.innerHTML = '';
-        if (users.length === 0) {
-            userList.innerHTML = `<tr><td colspan="5" class="text-center py-4 text-gray-500">No users found.</td></tr>`;
-            return;
-        }
-
-        users.forEach(user => {
-            const row = document.createElement('tr');
-            row.dataset.userId = user.id;
-            if (user.is_suspended) {
-                row.classList.add('bg-gray-200', 'opacity-70');
-            }
-
-            // Standardized role determination
-            const roleDisplayMap = { 'master': 'Master', 'vice_admin': 'Vice-Admin', 'guide': 'Guide', 'member': 'Member' };
-            const role = roleDisplayMap[user.role] || 'Member';
-
-            const status = user.is_suspended ? 
-                '<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">Suspended</span>' : 
-                '<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Active</span>';
-
-            row.innerHTML = `
-                <td class="py-3 px-4 text-sm text-gray-700">${user.username}</td>
-                <td class="py-3 px-4 text-sm text-gray-700">${user.email}</td>
-                <td class="py-3 px-4 text-sm text-gray-700">${role}</td>
-                <td class="py-3 px-4 text-sm text-gray-700">${status}</td>
-                <td class="py-3 px-4 text-sm">
-                    ${user.role !== 'master' ? `
-                    <select class="role-select border rounded-lg px-2 py-1 text-sm mr-2">
-                        <option value="member" ${user.role === 'member' ? 'selected' : ''}>Member</option>
-                        <option value="guide" ${user.role === 'guide' ? 'selected' : ''}>Guide</option>
-                        <option value="vice_admin" ${user.role === 'vice_admin' ? 'selected' : ''}>Vice-Admin</option>
-                    </select>
-                    <button class="suspend-btn px-2 py-1 rounded-lg text-xs ${user.is_suspended ? 'bg-yellow-500 text-white' : 'bg-red-500 text-white'}">
-                        ${user.is_suspended ? 'Unsuspend' : 'Suspend'}
-                    </button>
-                    ` : `<span class="px-2 py-1 text-sm text-gray-500 font-medium">Master</span>`}
-                </td>
-            `;
-            userList.appendChild(row);
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', () => {
+    userManager.fetchUsers();
+    
+    // Setup search functionality
+    const searchInput = document.getElementById('userSearch');
+    if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+            userManager.filterUsers(e.target.value);
         });
     }
-
-    // --- Event Handlers ---
-    userList.addEventListener('click', (event) => {
-        if (event.target.classList.contains('suspend-btn')) {
-            const row = event.target.closest('tr');
-            const userId = row.dataset.userId;
-            const isSuspended = row.classList.contains('bg-gray-200');
-            handleSuspendToggle(userId, isSuspended);
-        }
-    });
-
-    userList.addEventListener('change', async (event) => {
-        if (event.target.classList.contains('role-select')) {
-            const row = event.target.closest('tr');
-            const userId = row.dataset.userId;
-            const newRoleValue = event.target.value;
-
-            const user = allUsers.find(u => u.id == userId);
-            if (!user) return;
-
-            // Store original state for potential rollback
-            const originalRole = user.role;
-
-            // --- Optimistic UI and Data Update ---
-            const roleDisplayMap = { 'member': 'Member', 'guide': 'Guide', 'vice_admin': 'Vice-Admin' };
-            row.children[2].textContent = roleDisplayMap[newRoleValue] || 'Member'; // Update role column text
-            user.role = newRoleValue;
-
-            try {
-                const response = await AuthAPI.request(`/api/admin/users/${userId}/role`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ role: newRoleValue })
-                });
-
-                if (!response.ok) {
-                    const error = await response.json();
-                    throw new Error(error.detail || 'Failed to update role');
-                }
-
-                showToast('User role updated successfully!');
-                await fetchStats(); // Update stats like vice-admin count
-
-            } catch (error) {
-                showToast(error.message, 'error');
-
-                // --- Rollback on failure ---
-                const userToRevert = allUsers.find(u => u.id == userId);
-                if (userToRevert) {
-                    userToRevert.role = originalRole;
-                }
-                // Re-render the table from the corrected local data to guarantee consistency
-                renderUsers(allUsers);
-            }
-        }
-    });
-
-    async function handleSuspendToggle(userId, isSuspended) {
-        const action = isSuspended ? 'unsuspend' : 'suspend';
-        if (!confirm(`Are you sure you want to ${action} this user?`)) return;
-
-        try {
-            const response = await AuthAPI.request(`/api/admin/users/${userId}/${action}`, { method: 'POST' });
-            if (!response.ok) {
-                const error = await response.json();
-                throw new Error(error.detail || `Failed to ${action} user`);
-            }
-            showToast(`User ${action}ed successfully!`);
-            await fetchUsers(); // Refetch to update status
-        } catch (error) {
-            showToast(error.message, 'error');
-        }
-    }
-
-    searchInput.addEventListener('input', (event) => {
-        const searchTerm = event.target.value.toLowerCase();
-        const filteredUsers = allUsers.filter(user => 
-            user.username.toLowerCase().includes(searchTerm) || 
-            user.email.toLowerCase().includes(searchTerm)
-        );
-        renderUsers(filteredUsers);
-    });
-
-    // --- Initial Load ---
-    function initialize() {
-        fetchStats();
-        fetchUsers();
-    }
-
-    initialize();
 });

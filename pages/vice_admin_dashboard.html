@@ -5,79 +5,650 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vice Admin Dashboard - Metanoia</title>
     <link rel="stylesheet" href="../css/main.css">
-    <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script>
-</head>
-<body class="bg-gray-50 font-sans">
-    <div class="flex h-screen bg-gray-100">
+    <link rel="stylesheet" href="../css/vice_admin.css"> <!-- New CSS link -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    </head>
+    <script defer src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js"></script>
+    <!-- IMPORTANT: If the mobile menu button is not working, check the browser console for JavaScript errors. -->
+<body class="bg-gray-50 font-sans" x-data="{ sidebarOpen: false, isLargeScreen: () => window.innerWidth >= 1024 }" x-init="$watch('sidebarOpen', value => { if (value) { document.body.classList.add('overflow-hidden'); } else { document.body.classList.remove('overflow-hidden'); } }); $watch('isLargeScreen()', value => { if (value) sidebarOpen = false; }); ">
+    <div class="flex h-screen bg-gray-100 relative">
+        <!-- Mobile Sidebar Toggle -->
+        <div class="lg:hidden fixed inset-0 bg-gray-900 bg-opacity-50 z-30" x-show="sidebarOpen" x-transition.opacity @click="sidebarOpen = false"></div>
+        <button @click="sidebarOpen = !sidebarOpen" class="lg:hidden fixed top-4 left-4 z-40 p-2 rounded-md bg-white shadow-md text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+        </button>
+
         <!-- Sidebar -->
-        <aside class="w-64 bg-white shadow-md flex flex-col">
+        <aside class="w-64 bg-white shadow-lg flex-col lg:flex-shrink-0 lg:static lg:translate-x-0 fixed inset-y-0 left-0 z-40 transform -translate-x-full transition-transform duration-200 ease-in-out"
+               :class="{ 'translate-x-0': sidebarOpen || isLargeScreen(), '-translate-x-full': !sidebarOpen && !isLargeScreen(), 'hidden': !isLargeScreen() && !sidebarOpen }"
+               @click.away="sidebarOpen = false">
             <div class="p-4 border-b border-gray-200 flex items-center space-x-3">
                 <img src="../img/logo_only.jpg" alt="Metanoia Logo" class="w-10 h-10 rounded-full object-cover">
                 <div>
-                    <h1 class="text-lg font-semibold text-primary">Metanoia</h1>
+                    <h1 class="text-lg font-semibold text-blue-600">Metanoia</h1>
                     <span class="text-sm text-gray-500">Vice-Admin Dashboard</span>
                 </div>
             </div>
-            <nav class="flex-1 p-4 space-y-2">
-                <a href="#" class="flex items-center p-2 text-gray-700 bg-primary-50 rounded-lg font-medium">
-                    <svg class="w-5 h-5 mr-3 text-primary" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a8 8 0 100 16 8 8 0 000-16zm0 14a6 6 0 110-12 6 6 0 010 12zM10 8a2 2 0 100-4 2 2 0 000 4z"/></svg>
+
+            <nav class="flex-1 p-4 space-y-2" role="navigation">
+                <a href="#overview" class="nav-link flex items-center p-3 text-gray-700 bg-blue-50 rounded-lg font-medium transition-colors hover:bg-blue-100 focus-ring" aria-current="page">
+                    <svg class="w-5 h-5 mr-3 text-blue-600" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                        <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"/>
+                    </svg>
                     <span>Overview</span>
                 </a>
-                <a href="#content-moderation" class="flex items-center p-2 text-gray-600 hover:bg-gray-100 rounded-lg">
-                     <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+
+                <a href="#" data-section-target="content-moderation" class="nav-link open-section-modal flex items-center p-3 text-gray-600 hover:bg-gray-100 hover:text-gray-900 rounded-lg transition-colors focus-ring">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
                     <span>Content Moderation</span>
                 </a>
-                <a href="#practice-uploads" class="flex items-center p-2 text-gray-600 hover:bg-gray-100 rounded-lg">
-                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-4-4V7a4 4 0 014-4h10a4 4 0 014 4v5a4 4 0 01-4 4H7z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+
+                <a href="#" data-section-target="practice-uploads" class="nav-link open-section-modal flex items-center p-3 text-gray-600 hover:bg-gray-100 hover:text-gray-900 rounded-lg transition-colors focus-ring">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"/>
+                    </svg>
                     <span>Practice Uploads</span>
                 </a>
-                <a href="#workshops" class="flex items-center p-2 text-gray-600 hover:bg-gray-100 rounded-lg">
-                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+
+                <a href="#" data-section-target="workshops" class="nav-link open-section-modal flex items-center p-3 text-gray-600 hover:bg-gray-100 hover:text-gray-900 rounded-lg transition-colors focus-ring">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                    </svg>
                     <span>Workshops</span>
                 </a>
-                <a href="#daily-wisdom-suggestions" class="flex items-center p-2 text-gray-600 hover:bg-gray-100 rounded-lg">
-                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v11.494m-9-5.747h18"></path></svg>
+
+                <a href="#" data-section-target="daily-wisdom" class="nav-link open-section-modal flex items-center p-3 text-gray-600 hover:bg-gray-100 hover:text-gray-900 rounded-lg transition-colors focus-ring">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                    </svg>
                     <span>Daily Wisdom</span>
                 </a>
-                 <a href="#user-support" class="flex items-center p-2 text-gray-600 hover:bg-gray-100 rounded-lg">
-                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+
+                <a href="#" data-section-target="user-support" class="nav-link open-section-modal flex items-center p-3 text-gray-600 hover:bg-gray-100 hover:text-gray-900 rounded-lg transition-colors focus-ring">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636a9 9 0 010 12.728m0 0l-2.829-2.829m2.829 2.829L21 21M15.536 8.464a5 5 0 010 7.072m0 0l-2.829-2.829m-4.243 2.829a4.978 4.978 0 01-1.414-2.83m-1.414 5.658a9 9 0 01-2.167-9.238m7.824 2.167a1 1 0 111.414 1.414m-1.414-1.414L3 3"/>
+                    </svg>
                     <span>User Support</span>
                 </a>
             </nav>
+
             <div class="p-4 border-t border-gray-200 mt-auto">
                 <div class="flex items-center space-x-3">
-                    <img src="../img/default-avatar.jpg" alt="Admin Avatar" class="w-10 h-10 rounded-full object-cover">
+                    <div class="w-10 h-10 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-full flex items-center justify-center">
+                        <span class="text-white font-semibold text-sm">VA</span>
+                    </div>
                     <div>
                         <p class="font-medium text-gray-800">Vice-Admin</p>
-                        <button data-logout class="text-sm text-red-500 hover:underline">Logout</button>
+                        <button data-logout class="text-sm text-red-500 hover:text-red-700 hover:underline transition-colors">
+                            Logout
+                        </button>
                     </div>
                 </div>
             </div>
         </aside>
 
         <!-- Main Content -->
-        <main class="flex-1 p-8 overflow-y-auto">
-            <header class="mb-8">
-                <h2 class="text-3xl font-bold text-gray-800">Vice-Admin Dashboard</h2>
-                <p class="text-gray-500">Welcome. Your role is to assist the Master Admin and nurture the community.</p>
+        <main class="flex-1 overflow-y-auto custom-scrollbar">
+            <!-- Header -->
+            <header id="overview" class="bg-white shadow-sm border-b border-gray-200 p-8">
+                <div class="max-w-7xl mx-auto">
+                    <h2 class="text-3xl font-bold text-gray-900">Vice-Admin Dashboard</h2>
+                    <p class="text-gray-600 mt-2">Welcome. Your role is to assist the Master Admin and nurture the community.</p>
+                </div>
             </header>
 
-            <!-- Content Moderation Queue -->
-            <div id="content-moderation" class="bg-white p-8 rounded-lg shadow-sm mb-8">
-                <h3 class="text-2xl font-bold text-gray-800 mb-6">Content Moderation Queue</h3>
-                <div class="text-gray-500">
-                    <!-- Reported posts and comments will be listed here -->
-                    <p>No items currently in the queue.</p>
+            <div class="p-8">
+                <!-- Stats Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8 max-w-7xl mx-auto">
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover-lift transition-all duration-300">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h3 class="text-sm font-medium text-gray-500">Pending Reports</h3>
+                                <p id="pendingReports" class="text-3xl font-bold text-gray-900 mt-1">0</p>
+                            </div>
+                            <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
+                                <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.664-.833-2.464 0L4.268 16.5c-.77.833.192 2.5 1.732 2.5z"/>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover-lift transition-all duration-300">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h3 class="text-sm font-medium text-gray-500">Resolved Today</h3>
+                                <p id="resolvedToday" class="text-3xl font-bold text-gray-900 mt-1">0</p>
+                            </div>
+                            <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                                <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover-lift transition-all duration-300">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h3 class="text-sm font-medium text-gray-500">Total Posts</h3>
+                                <p id="totalPosts" class="text-3xl font-bold text-gray-900 mt-1">0</p>
+                            </div>
+                            <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                                <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover-lift transition-all duration-300">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h3 class="text-sm font-medium text-gray-500">Active Users</h3>
+                                <p id="activeUsers" class="text-3xl font-bold text-gray-900 mt-1">0</p>
+                            </div>
+                            <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                                <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Content Moderation Section -->
+                <div id="content-moderation" class="max-w-7xl mx-auto mb-8">
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+                        <div class="px-8 py-6 border-b border-gray-100">
+                            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                                <div>
+                                    <h3 class="text-2xl font-bold text-gray-900">Content Moderation Queue</h3>
+                                    <p class="text-gray-600 mt-1">Review and moderate reported content</p>
+                                </div>
+                                <div class="mt-4 sm:mt-0 flex space-x-4">
+                                    <div class="relative">
+                                        <input
+                                            type="text"
+                                            id="content-moderation-search"
+                                            placeholder="Search reports..."
+                                            class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                                        >
+                                        <svg class="absolute left-3 top-2.5 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                                        </svg>
+                                    </div>
+                                    <label for="content-moderation-filter" class="sr-only">Filter Content Moderation Status</label>
+                                    <select id="content-moderation-filter" aria-label="Filter Content Moderation Status" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                        <option value="all">All Status</option>
+                                        <option value="pending">Pending</option>
+                                        <option value="approved">Approved</option>
+                                        <option value="rejected">Rejected</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="overflow-hidden">
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full divide-y divide-gray-200">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Content</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Reported By</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Reason</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="contentModerationList" class="bg-white divide-y divide-gray-200">
+                                        <tr class="loading">
+                                            <td colspan="6" class="px-6 py-4 text-center text-gray-500">Loading content reports...</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Practice Uploads Section -->
+                <div id="practice-uploads" class="max-w-7xl mx-auto mb-8">
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+                        <div class="px-8 py-6 border-b border-gray-100">
+                            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                                <div>
+                                    <h3 class="text-2xl font-bold text-gray-900">Practice Uploads</h3>
+                                    <p class="text-gray-600 mt-1">Review and approve user practice submissions</p>
+                                </div>
+                                <div class="mt-4 sm:mt-0 flex space-x-4">
+                                    <div class="relative">
+                                        <input
+                                            type="text"
+                                            id="practice-uploads-search"
+                                            placeholder="Search uploads..."
+                                            class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                                        >
+                                        <svg class="absolute left-3 top-2.5 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                                        </svg>
+                                    </div>
+                                    <label for="practice-uploads-filter" class="sr-only">Filter Practice Uploads Status</label>
+                                    <select id="practice-uploads-filter" aria-label="Filter Practice Uploads Status" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                        <option value="all">All Status</option>
+                                        <option value="pending">Pending</option>
+                                        <option value="approved">Approved</option>
+                                        <option value="rejected">Rejected</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="overflow-hidden">
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full divide-y divide-gray-200">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Uploaded By</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="practiceUploadsList" class="bg-white divide-y divide-gray-200">
+                                        <tr>
+                                            <td colspan="6" class="px-6 py-8 text-center text-gray-500">No practice uploads found.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Workshops Section -->
+                <div id="workshops" class="max-w-7xl mx-auto mb-8">
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+                        <div class="px-8 py-6 border-b border-gray-100">
+                            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                                <div>
+                                    <h3 class="text-2xl font-bold text-gray-900">Workshops Management</h3>
+                                    <p class="text-gray-600 mt-1">Manage community workshops and events</p>
+                                </div>
+                                <div class="mt-4 sm:mt-0 flex space-x-4">
+                                    <div class="relative">
+                                        <input
+                                            type="text"
+                                            id="workshops-search"
+                                            placeholder="Search workshops..."
+                                            class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                                        >
+                                        <svg class="absolute left-3 top-2.5 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                                        </svg>
+                                    </div>
+                                    <button id="createWorkshopBtn" type="button" class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors">
+                                        <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                                        </svg>
+                                        Create Workshop
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="overflow-hidden">
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full divide-y divide-gray-200">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Facilitator</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Participants</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="workshopsList" class="bg-white divide-y divide-gray-200">
+                                        <tr>
+                                            <td colspan="5" class="px-6 py-8 text-center text-gray-500">No workshops found.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Daily Wisdom Section -->
+                <div id="daily-wisdom" class="max-w-7xl mx-auto mb-8">
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+                        <div class="px-8 py-6 border-b border-gray-100">
+                            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                                <div>
+                                    <h3 class="text-2xl font-bold text-gray-900">Daily Wisdom</h3>
+                                    <p class="text-gray-600 mt-1">Manage daily wisdom content and suggestions</p>
+                                </div>
+                                <div class="mt-4 sm:mt-0">
+                                    <button id="addWisdomBtn" type="button" class="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg transition-colors">
+                                        <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                                        </svg>
+                                        Add Wisdom
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="overflow-hidden">
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full divide-y divide-gray-200">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Content</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Author</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="dailyWisdomList" class="bg-white divide-y divide-gray-200">
+                                        <tr>
+                                            <td colspan="4" class="px-6 py-8 text-center text-gray-500">No daily wisdom entries found.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- User Support Section -->
+                <div id="user-support" class="max-w-7xl mx-auto mb-8">
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+                        <div class="px-8 py-6 border-b border-gray-100">
+                            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                                <div>
+                                    <h3 class="text-2xl font-bold text-gray-900">User Support</h3>
+                                    <p class="text-gray-600 mt-1">Manage user support tickets and inquiries</p>
+                                </div>
+                                <div class="mt-4 sm:mt-0 flex space-x-4">
+                                    <div class="relative">
+                                        <input
+                                            type="text"
+                                            id="user-support-search"
+                                            placeholder="Search tickets..."
+                                            class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                                        >
+                                        <svg class="absolute left-3 top-2.5 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                                        </svg>
+                                    </div>
+                                    <label for="user-support-filter" class="sr-only">Filter User Support Status</label>
+                                    <select id="user-support-filter" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" aria-label="Filter User Support Status">
+                                        <option value="all">All Status</option>
+                                        <option value="open">Open</option>
+                                        <option value="pending">Pending</option>
+                                        <option value="resolved">Resolved</option>
+                                        <option value="closed">Closed</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="overflow-hidden">
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full divide-y divide-gray-200">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Subject</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Priority</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="userSupportList" class="bg-white divide-y divide-gray-200">
+                                        <tr>
+                                            <td colspan="6" class="px-6 py-8 text-center text-gray-500">No support tickets found.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-
-            <!-- Other sections for a vice-admin -->
-
         </main>
     </div>
 
-    <script src="../js/config.js"></script>
-    <script src="../js/auth.js"></script>
-    <!-- <script src="../js/vice_admin.js"></script> -->
-</body>
-</html>
+    <!-- Generic Section Modal -->
+    <div id="sectionModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50 hidden">
+        <div class="relative top-20 mx-auto p-5 border w-11/12 md:w-3/4 lg:w-2/3 shadow-lg rounded-md bg-white">
+            <div class="flex justify-between items-center pb-3">
+                <h3 class="text-2xl font-bold text-gray-900" id="sectionModalTitle"></h3>
+                <button class="text-gray-500 hover:text-gray-700 text-3xl leading-none font-semibold" onclick="document.getElementById('sectionModal').classList.add('hidden')">&times;</button>
+            </div>
+            <div class="mt-2 text-gray-600" id="sectionModalBody">
+                <!-- Content will be loaded here -->
+            </div>
+            <div class="items-center px-4 py-3">
+                <button id="sectionModalClose" class="px-4 py-2 bg-indigo-500 text-white text-base font-medium rounded-md w-full shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500" onclick="document.getElementById('sectionModal').classList.add('hidden')">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <!-- Content Details Modal -->
+    <div id="contentModal" class="modal">
+        <div class="modal-content">
+            <div class="flex justify-between items-center mb-4">
+                <h4 class="text-lg font-bold">Content Details</h4>
+                <button class="close-modal text-gray-500 hover:text-gray-700" aria-label="Close modal">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <div id="contentModalBody">
+                <!-- Content will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Upload Details Modal -->
+    <div id="uploadModal" class="modal">
+        <div class="modal-content">
+            <div class="flex justify-between items-center mb-4">
+                <h4 class="text-lg font-bold">Upload Details</h4>
+                <button class="close-modal text-gray-500 hover:text-gray-700" aria-label="Close modal">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <div id="uploadModalBody">
+                <!-- Upload details will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Support Ticket Modal -->
+    <div id="ticketModal" class="modal">
+        <div class="modal-content">
+            <div class="flex justify-between items-center mb-4">
+                <h4 class="text-lg font-bold">Support Ticket Details</h4>
+                <button class="close-modal text-gray-500 hover:text-gray-700" aria-label="Close modal">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <div id="ticketModalBody">
+                <!-- Ticket details will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Response Modal -->
+    <div id="responseModal" class="modal">
+        <div class="modal-content">
+            <div class="flex justify-between items-center mb-4">
+                <h4 class="text-lg font-bold">Respond to Ticket</h4>
+                <button class="close-modal text-gray-500 hover:text-gray-700">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <div id="responseModalBody">
+                <form id="responseForm" class="space-y-4">
+                    <div>
+                        <label for="responseText" class="block text-sm font-medium text-gray-700">Response</label>
+                        <textarea
+                            id="responseText"
+                            name="response"
+                            rows="6"
+                            class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                            placeholder="Enter your response..."
+                            required
+                        ></textarea>
+                    </div>
+                    <div class="flex justify-end space-x-3">
+                        <button type="button" class="close-modal px-4 py-2 text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-lg transition-colors">
+                            Cancel
+                        </button>
+                        <button type="submit" class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors">
+                            Send Response
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Workshop Creation Modal -->
+    <div id="workshopModal" class="modal">
+        <div class="modal-content">
+            <div class="flex justify-between items-center mb-4">
+                <h4 class="text-lg font-bold">Create Workshop</h4>
+                <button class="close-modal text-gray-500 hover:text-gray-700">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <div id="workshopModalBody">
+                <form id="workshopForm" class="space-y-4">
+                    <div>
+                        <label for="workshopTitle" class="block text-sm font-medium text-gray-700">Workshop Title</label>
+                        <input
+                            type="text"
+                            id="workshopTitle"
+                            name="title"
+                            class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                            required
+                        >
+                    </div>
+                    <div>
+                        <label for="workshopDescription" class="block text-sm font-medium text-gray-700">Description</label>
+                        <textarea
+                            id="workshopDescription"
+                            name="description"
+                            rows="4"
+                            class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                        ></textarea>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label for="workshopDate" class="block text-sm font-medium text-gray-700">Date</label>
+                            <input
+                                type="date"
+                                id="workshopDate"
+                                name="date"
+                                class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                                required
+                            >
+                        </div>
+                        <div>
+                            <label for="workshopTime" class="block text-sm font-medium text-gray-700">Time</label>
+                            <input
+                                type="time"
+                                id="workshopTime"
+                                name="time"
+                                class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                                required
+                            >
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label for="workshopFacilitator" class="block text-sm font-medium text-gray-700">Facilitator</label>
+                            <input
+                                type="text"
+                                id="workshopFacilitator"
+                                name="facilitator"
+                                class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                                required
+                            >
+                        </div>
+                        <div>
+                            <label for="workshopCapacity" class="block text-sm font-medium text-gray-700">Max Participants</label>
+                            <input
+                                type="number"
+                                id="workshopCapacity"
+                                name="capacity"
+                                min="1"
+                                class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                            >
+                        </div>
+                    </div>
+                    <div class="flex justify-end space-x-3">
+                        <button type="button" class="close-modal px-4 py-2 text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-lg transition-colors">
+                            Cancel
+                        </button>
+                        <button type="submit" class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors">
+                            Create Workshop
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Daily Wisdom Modal -->
+    <div id="wisdomModal" class="modal">
+        <div class="modal-content">
+            <div class="flex justify-between items-center mb-4">
+                <h4 class="text-lg font-bold">Add Daily Wisdom</h4>
+                <button class="close-modal text-gray-500 hover:text-gray-700">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <div id="wisdomModalBody">
+                <form id="wisdomForm" class="space-y-4">
+                    <div>
+                        <label for="wisdomContent" class="block text-sm font-medium text-gray-700">Wisdom Content</label>
+                        <textarea
+                            id="wisdomContent"
+                            name="content"
+                            rows="4"
+                            class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                            placeholder="Enter daily wisdom content..."
+                            required
+                        ></textarea>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label for="wisdomAuthor" class="block text-sm font-medium text-gray-700">Author</label>
+                            <input
+                                type="text"
+                                id="wisdomAuthor"
+                                name="author"
+                                class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                                placeholder="Author name"
+                       <script src="../js/vice_admin_modals.js"></script>

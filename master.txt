@@ -166,21 +166,7 @@
                 </div>
 
                 <!-- User Management Section -->
-                <!-- User Management Section -->
                 <div id="user-management-sections" class="space-y-8 max-w-7xl mx-auto">
-                    <div class="mb-8">
-                        <div class="relative">
-                            <input 
-                                type="text" 
-                                id="userSearch" 
-                                placeholder="Search users..." 
-                                class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                            >
-                            <svg class="absolute left-3 top-2.5 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                            </svg>
-                        </div>
-                    </div>
                     <!-- Master Admin Section -->
                     <div id="master-admin-section" class="bg-white rounded-xl shadow-sm border border-gray-100">
                         <div class="px-8 py-6 border-b border-gray-100">
@@ -192,13 +178,17 @@
                                 <table class="min-w-full divide-y divide-gray-200">
                                     <thead class="bg-gray-50">
                                         <tr>
-                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Username</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
                                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
                                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody id="masterAdminList" class="bg-white divide-y divide-gray-200">
+                                        <tr class="loading">
+                                            <td colspan="5" class="px-6 py-4 text-center text-gray-500">Loading Master Admin...</td>
+                                        </tr>
                                     </tbody>
                                 </table>
                             </div>
@@ -213,7 +203,19 @@
                                     <h3 class="text-2xl font-bold text-gray-900">Vice-Admin Management</h3>
                                     <p class="text-gray-600 mt-1">Users with elevated administrative privileges</p>
                                 </div>
-                                
+                                <div class="mt-4 sm:mt-0 sm:w-1/3">
+                                    <div class="relative">
+                                        <input 
+                                            type="text" 
+                                            id="vice-admin-search-input" 
+                                            placeholder="Search Vice-Admins..." 
+                                            class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                                        >
+                                        <svg class="absolute left-3 top-2.5 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                                        </svg>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="overflow-hidden">
@@ -221,13 +223,17 @@
                                 <table class="min-w-full divide-y divide-gray-200">
                                     <thead class="bg-gray-50">
                                         <tr>
-                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Username</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
                                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
                                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody id="viceAdminList" class="bg-white divide-y divide-gray-200">
+                                        <tr>
+                                            <td colspan="5" class="px-6 py-8 text-center text-gray-500">No Vice-Admins found.</td>
+                                        </tr>
                                     </tbody>
                                 </table>
                             </div>
@@ -242,7 +248,19 @@
                                     <h3 class="text-2xl font-bold text-gray-900">Guide Management</h3>
                                     <p class="text-gray-600 mt-1">Community guides and mentors</p>
                                 </div>
-                                
+                                <div class="mt-4 sm:mt-0 sm:w-1/3">
+                                    <div class="relative">
+                                        <input 
+                                            type="text" 
+                                            id="guide-search-input" 
+                                            placeholder="Search Guides..." 
+                                            class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                                        >
+                                        <svg class="absolute left-3 top-2.5 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                                        </svg>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="overflow-hidden">
@@ -250,13 +268,17 @@
                                 <table class="min-w-full divide-y divide-gray-200">
                                     <thead class="bg-gray-50">
                                         <tr>
-                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Username</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
                                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
                                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody id="guideList" class="bg-white divide-y divide-gray-200">
+                                        <tr>
+                                            <td colspan="5" class="px-6 py-8 text-center text-gray-500">No Guides found.</td>
+                                        </tr>
                                     </tbody>
                                 </table>
                             </div>
@@ -271,7 +293,19 @@
                                     <h3 class="text-2xl font-bold text-gray-900">Member Management</h3>
                                     <p class="text-gray-600 mt-1">Regular community members</p>
                                 </div>
-                                
+                                <div class="mt-4 sm:mt-0 sm:w-1/3">
+                                    <div class="relative">
+                                        <input 
+                                            type="text" 
+                                            id="member-search-input" 
+                                            placeholder="Search Members..." 
+                                            class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                                        >
+                                        <svg class="absolute left-3 top-2.5 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                                        </svg>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="overflow-hidden">
@@ -279,13 +313,17 @@
                                 <table class="min-w-full divide-y divide-gray-200">
                                     <thead class="bg-gray-50">
                                         <tr>
-                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Username</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
                                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
                                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody id="memberList" class="bg-white divide-y divide-gray-200">
+                                        <tr>
+                                            <td colspan="5" class="px-6 py-8 text-center text-gray-500">No Members found.</td>
+                                        </tr>
                                     </tbody>
                                 </table>
                             </div>
