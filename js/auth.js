@@ -35,6 +35,7 @@ const AuthManager = {
         }
         localStorage.setItem('is_master', data.is_master);
         localStorage.setItem('is_vice_admin', data.is_vice_admin);
+        localStorage.setItem('is_guide', data.is_guide);
     },
 
     // Clear authentication data
@@ -211,6 +212,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 window.location.href = '/pages/master_admin_dashboard.html';
             } else if (userData.is_vice_admin) {
                 window.location.href = '/pages/vice_admin_dashboard.html';
+            } else if (userData.is_guide) {
+                window.location.href = '/pages/guide_dashboard.html';
             } else {
                 window.location.href = '/pages/community_feed_dashboard.html';
             }

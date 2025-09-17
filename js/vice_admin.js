@@ -26,6 +26,23 @@ document.addEventListener('DOMContentLoaded', () => {
             contentModerationFilter: document.getElementById('content-moderation-filter'),
             practiceUploadsFilter: document.getElementById('practice-uploads-filter'),
             userSupportFilter: document.getElementById('user-support-filter')
+        },
+        buttons: {
+            createWorkshop: document.getElementById('createWorkshopBtn'),
+            addWisdom: document.getElementById('addWisdomBtn')
+        },
+        modals: {
+            contentModal: document.getElementById('contentModal'),
+            uploadModal: document.getElementById('uploadModal'),
+            ticketModal: document.getElementById('ticketModal'),
+            responseModal: document.getElementById('responseModal'),
+            workshopModal: document.getElementById('workshopModal'),
+            wisdomModal: document.getElementById('wisdomModal')
+        },
+        forms: {
+            responseForm: document.getElementById('responseForm'),
+            workshopForm: document.getElementById('workshopForm'),
+            wisdomForm: document.getElementById('wisdomForm')
         }
     };
 
@@ -44,6 +61,8 @@ document.addEventListener('DOMContentLoaded', () => {
         userSupport: []
     };
 
+    let currentTicketId = null; // For response modal
+
     // --- Toast Notification ---
     function showToast(message, type = 'success') {
         const toast = document.createElement('div');
@@ -56,6 +75,38 @@ document.addEventListener('DOMContentLoaded', () => {
             toast.style.opacity = '0';
             setTimeout(() => toast.remove(), 300);
         }, 3000);
+    }
+
+    // --- Modal Management ---
+    function openModal(modalElement) {
+        if (modalElement) {
+            modalElement.style.display = 'flex';
+            modalElement.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+    }
+
+    function closeModal(modalElement) {
+        if (modalElement) {
+            modalElement.style.display = 'none';
+            modalElement.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+    }
+
+    function setupModalCloseHandlers() {
+        // Close modal when clicking close button or outside modal
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('close-modal')) {
+                const modal = e.target.closest('.modal');
+                if (modal) closeModal(modal);
+            }
+            
+            // Close modal when clicking outside
+            if (e.target.classList.contains('modal')) {
+                closeModal(e.target);
+            }
+        });
     }
 
     // --- API Functions ---
@@ -168,8 +219,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!response.ok) throw new Error('Failed to moderate content');
             
             showToast(`Content ${action === 'approve' ? 'approved' : 'removed'} successfully`);
-            fetchContentReports();
-            fetchStats();
+            await fetchContentReports();
+            await fetchStats();
         } catch (error) {
             console.error('Error moderating content:', error);
             showToast('Failed to moderate content', 'error');
@@ -188,7 +239,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!response.ok) throw new Error('Failed to approve upload');
             
             showToast('Practice upload approved successfully');
-            fetchPracticeUploads();
+            await fetchPracticeUploads();
         } catch (error) {
             console.error('Error approving upload:', error);
             showToast('Failed to approve upload', 'error');
@@ -207,7 +258,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!response.ok) throw new Error('Failed to reject upload');
             
             showToast('Practice upload rejected');
-            fetchPracticeUploads();
+            await fetchPracticeUploads();
         } catch (error) {
             console.error('Error rejecting upload:', error);
             showToast('Failed to reject upload', 'error');
@@ -226,17 +277,61 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!apiResponse.ok) throw new Error('Failed to respond to support ticket');
             
             showToast('Support response sent successfully');
-            fetchUserSupport();
+            await fetchUserSupport();
+            closeModal(elements.modals.responseModal);
         } catch (error) {
             console.error('Error responding to support:', error);
             showToast('Failed to send response', 'error');
         }
     }
 
+    async function createWorkshop(workshopData) {
+        try {
+            if (typeof AuthAPI === 'undefined') throw new Error('AuthAPI not loaded');
+            const response = await AuthAPI.request('/api/vice-admin/create-workshop', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(workshopData)
+            });
+
+            if (!response.ok) throw new Error('Failed to create workshop');
+            
+            showToast('Workshop created successfully');
+            await fetchWorkshops();
+            closeModal(elements.modals.workshopModal);
+            elements.forms.workshopForm?.reset();
+        } catch (error) {
+            console.error('Error creating workshop:', error);
+            showToast('Failed to create workshop', 'error');
+        }
+    }
+
+    async function addDailyWisdom(wisdomData) {
+        try {
+            if (typeof AuthAPI === 'undefined') throw new Error('AuthAPI not loaded');
+            const response = await AuthAPI.request('/api/vice-admin/add-wisdom', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(wisdomData)
+            });
+
+            if (!response.ok) throw new Error('Failed to add daily wisdom');
+            
+            showToast('Daily wisdom added successfully');
+            await fetchDailyWisdom();
+            closeModal(elements.modals.wisdomModal);
+            elements.forms.wisdomForm?.reset();
+        } catch (error) {
+            console.error('Error adding wisdom:', error);
+            showToast('Failed to add wisdom', 'error');
+        }
+    }
+
     // --- Utility Functions ---
     function showError(listElement, message) {
         if (listElement) {
-            listElement.innerHTML = `<tr><td colspan="5" class="text-center py-4 text-red-500">${message}</td></tr>`;
+            const colspan = listElement.closest('table')?.querySelectorAll('th').length || 5;
+            listElement.innerHTML = `<tr><td colspan="${colspan}" class="text-center py-4 text-red-500">${message}</td></tr>`;
         }
     }
 
@@ -473,7 +568,6 @@ document.addEventListener('DOMContentLoaded', () => {
         renderUserSupport(filtered);
     }
 
-    // Add workshop search filter
     function filterWorkshops(query) {
         let filtered = data.workshops;
         if (query) {
@@ -509,6 +603,12 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
+        if (elements.searchInputs.workshops) {
+            elements.searchInputs.workshops.addEventListener('input', (e) => {
+                filterWorkshops(e.target.value);
+            });
+        }
+
         // Filter functionality
         if (elements.filters.contentModerationFilter) {
             elements.filters.contentModerationFilter.addEventListener('change', (e) => {
@@ -531,99 +631,245 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-        // Workshop search event
-        const workshopsSearch = document.getElementById('workshops-search');
-        if (workshopsSearch) {
-            workshopsSearch.addEventListener('input', (e) => {
-                filterWorkshops(e.target.value);
+        // Button event listeners
+        if (elements.buttons.createWorkshop) {
+            elements.buttons.createWorkshop.addEventListener('click', () => {
+                openModal(elements.modals.workshopModal);
             });
         }
 
-        // Content moderation actions
-        document.addEventListener('click', (e) => {
+        if (elements.buttons.addWisdom) {
+            elements.buttons.addWisdom.addEventListener('click', () => {
+                openModal(elements.modals.wisdomModal);
+            });
+        }
+
+        // Form submissions
+        if (elements.forms.responseForm) {
+            elements.forms.responseForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const formData = new FormData(e.target);
+                const response = formData.get('response');
+                
+                if (currentTicketId && response?.trim()) {
+                    await respondToSupport(currentTicketId, response.trim());
+                    e.target.reset();
+                }
+            });
+        }
+
+        if (elements.forms.workshopForm) {
+            elements.forms.workshopForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const formData = new FormData(e.target);
+                
+                const workshopData = {
+                    title: formData.get('title'),
+                    description: formData.get('description'),
+                    date: formData.get('date'),
+                    time: formData.get('time'),
+                    facilitator: formData.get('facilitator'),
+                    capacity: parseInt(formData.get('capacity')) || null
+                };
+                
+                await createWorkshop(workshopData);
+            });
+        }
+
+        if (elements.forms.wisdomForm) {
+            elements.forms.wisdomForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const formData = new FormData(e.target);
+                
+                const wisdomData = {
+                    content: formData.get('content'),
+                    author: formData.get('author'),
+                    date: formData.get('date') || new Date().toISOString().split('T')[0]
+                };
+                
+                await addDailyWisdom(wisdomData);
+            });
+        }
+
+        // Content moderation and other actions
+        document.addEventListener('click', async (e) => {
+            // Content moderation actions
             if (e.target.classList.contains('approve-content-btn')) {
                 const reportId = Number(e.target.dataset.id);
                 if (confirm('Are you sure you want to approve this content?')) {
-                    moderateContent(reportId, 'approve');
+                    await moderateContent(reportId, 'approve');
                 }
             }
 
             if (e.target.classList.contains('reject-content-btn')) {
                 const reportId = Number(e.target.dataset.id);
                 const reason = prompt('Please provide a reason for rejection:');
-                if (reason !== null) {
-                    moderateContent(reportId, 'reject', reason);
+                if (reason !== null && reason.trim()) {
+                    await moderateContent(reportId, 'reject', reason.trim());
                 }
             }
 
+            // Practice upload actions
             if (e.target.classList.contains('approve-upload-btn')) {
                 const uploadId = Number(e.target.dataset.id);
                 if (confirm('Are you sure you want to approve this upload?')) {
-                    approvePracticeUpload(uploadId);
+                    await approvePracticeUpload(uploadId);
                 }
             }
 
             if (e.target.classList.contains('reject-upload-btn')) {
                 const uploadId = Number(e.target.dataset.id);
                 const reason = prompt('Please provide a reason for rejection:');
-                if (reason !== null) {
-                    rejectPracticeUpload(uploadId, reason);
-                }
-            }
-
-            if (e.target.classList.contains('respond-ticket-btn')) {
-                const ticketId = Number(e.target.dataset.id);
-                const response = prompt('Enter your response to this support ticket:');
-                if (response !== null && response.trim()) {
-                    respondToSupport(ticketId, response.trim());
+                if (reason !== null && reason.trim()) {
+                    await rejectPracticeUpload(uploadId, reason.trim());
                 }
             }
 
             // View upload details
             if (e.target.classList.contains('view-upload-btn')) {
                 const uploadId = Number(e.target.dataset.id);
-                const modal = document.getElementById('uploadModal');
-                const body = document.getElementById('uploadModalBody');
-                if (modal && body) {
-                    const upload = data.practiceUploads.find(u => u.id === uploadId);
-                    if (upload) {
+                const upload = data.practiceUploads.find(u => u.id === uploadId);
+                
+                if (upload && elements.modals.uploadModal) {
+                    const body = elements.modals.uploadModal.querySelector('#uploadModalBody');
+                    if (body) {
                         body.innerHTML = `
-                            <div>
-                                <h5 class="font-bold mb-2">${upload.title || 'Untitled'}</h5>
-                                <p><strong>Uploaded By:</strong> ${upload.uploaded_by || 'Anonymous'}</p>
-                                <p><strong>Type:</strong> ${upload.type || 'Unknown'}</p>
-                                <p><strong>Date:</strong> ${formatDate(upload.created_at)}</p>
-                                <p><strong>Status:</strong> ${upload.status}</p>
-                                <p><strong>Description:</strong> ${upload.description || 'N/A'}</p>
+                            <div class="space-y-3">
+                                <div>
+                                    <h5 class="font-bold text-lg mb-2">${upload.title || 'Untitled'}</h5>
+                                </div>
+                                <div class="grid grid-cols-2 gap-4 text-sm">
+                                    <div>
+                                        <span class="font-medium text-gray-700">Uploaded By:</span>
+                                        <p class="text-gray-600">${upload.uploaded_by || 'Anonymous'}</p>
+                                    </div>
+                                    <div>
+                                        <span class="font-medium text-gray-700">Type:</span>
+                                        <p class="text-gray-600">${upload.type || 'Unknown'}</p>
+                                    </div>
+                                    <div>
+                                        <span class="font-medium text-gray-700">Date:</span>
+                                        <p class="text-gray-600">${formatDate(upload.created_at)}</p>
+                                    </div>
+                                    <div>
+                                        <span class="font-medium text-gray-700">Status:</span>
+                                        <div class="mt-1">${getStatusBadge(upload.status)}</div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <span class="font-medium text-gray-700">Description:</span>
+                                    <p class="text-gray-600 mt-1 bg-gray-50 p-3 rounded-md">${upload.description || 'No description provided'}</p>
+                                </div>
+                                ${upload.file_url ? `
+                                    <div>
+                                        <span class="font-medium text-gray-700">File:</span>
+                                        <a href="${upload.file_url}" target="_blank" class="text-blue-600 hover:text-blue-800 underline block mt-1">
+                                            View File
+                                        </a>
+                                    </div>
+                                ` : ''}
                             </div>
                         `;
-                    } else {
-                        body.innerHTML = '<p class="text-red-500">Upload not found.</p>';
+                        openModal(elements.modals.uploadModal);
                     }
                 }
             }
 
-            // View ticket details
+            // Support ticket actions
             if (e.target.classList.contains('view-ticket-btn')) {
                 const ticketId = Number(e.target.dataset.id);
-                const modal = document.getElementById('ticketModal');
-                const body = document.getElementById('ticketModalBody');
-                if (modal && body) {
-                    const ticket = data.userSupport.find(t => t.id === ticketId);
-                    if (ticket) {
+                const ticket = data.userSupport.find(t => t.id === ticketId);
+                
+                if (ticket && elements.modals.ticketModal) {
+                    const body = elements.modals.ticketModal.querySelector('#ticketModalBody');
+                    if (body) {
                         body.innerHTML = `
-                            <div>
-                                <h5 class="font-bold mb-2">${ticket.subject || 'No Subject'}</h5>
-                                <p><strong>User:</strong> ${ticket.user || 'Anonymous'}</p>
-                                <p><strong>Priority:</strong> ${ticket.priority}</p>
-                                <p><strong>Status:</strong> ${ticket.status}</p>
-                                <p><strong>Date:</strong> ${formatDate(ticket.created_at)}</p>
-                                <p><strong>Message:</strong> ${ticket.message || 'N/A'}</p>
+                            <div class="space-y-3">
+                                <div>
+                                    <h5 class="font-bold text-lg mb-2">${ticket.subject || 'No Subject'}</h5>
+                                </div>
+                                <div class="grid grid-cols-2 gap-4 text-sm">
+                                    <div>
+                                        <span class="font-medium text-gray-700">User:</span>
+                                        <p class="text-gray-600">${ticket.user || 'Anonymous'}</p>
+                                    </div>
+                                    <div>
+                                        <span class="font-medium text-gray-700">Priority:</span>
+                                        <div class="mt-1">${getPriorityBadge(ticket.priority)}</div>
+                                    </div>
+                                    <div>
+                                        <span class="font-medium text-gray-700">Status:</span>
+                                        <div class="mt-1">${getStatusBadge(ticket.status)}</div>
+                                    </div>
+                                    <div>
+                                        <span class="font-medium text-gray-700">Date:</span>
+                                        <p class="text-gray-600">${formatDate(ticket.created_at)}</p>
+                                    </div>
+                                </div>
+                                <div>
+                                    <span class="font-medium text-gray-700">Message:</span>
+                                    <div class="text-gray-600 mt-1 bg-gray-50 p-3 rounded-md">${ticket.message || 'No message provided'}</div>
+                                </div>
+                                ${ticket.responses && ticket.responses.length > 0 ? `
+                                    <div>
+                                        <span class="font-medium text-gray-700">Previous Responses:</span>
+                                        <div class="mt-2 space-y-2">
+                                            ${ticket.responses.map(response => `
+                                                <div class="bg-blue-50 p-3 rounded-md text-sm">
+                                                    <div class="font-medium text-blue-800">${response.responder || 'Support Team'}</div>
+                                                    <div class="text-blue-700 text-xs mb-1">${formatDate(response.created_at)}</div>
+                                                    <div class="text-blue-900">${response.message}</div>
+                                                </div>
+                                            `).join('')}
+                                        </div>
+                                    </div>
+                                ` : ''}
                             </div>
                         `;
-                    } else {
-                        body.innerHTML = '<p class="text-red-500">Ticket not found.</p>';
+                        openModal(elements.modals.ticketModal);
                     }
+                }
+            }
+
+            if (e.target.classList.contains('respond-ticket-btn')) {
+                const ticketId = Number(e.target.dataset.id);
+                currentTicketId = ticketId;
+                
+                if (elements.modals.responseModal) {
+                    const responseTextarea = elements.modals.responseModal.querySelector('#responseText');
+                    if (responseTextarea) {
+                        responseTextarea.value = '';
+                        responseTextarea.focus();
+                    }
+                    openModal(elements.modals.responseModal);
+                }
+            }
+
+            // Workshop actions
+            if (e.target.classList.contains('edit-workshop-btn')) {
+                const workshopId = Number(e.target.dataset.id);
+                // TODO: Implement workshop editing
+                showToast('Workshop editing not yet implemented', 'warning');
+            }
+
+            if (e.target.classList.contains('view-participants-btn')) {
+                const workshopId = Number(e.target.dataset.id);
+                // TODO: Implement participants view
+                showToast('Participants view not yet implemented', 'warning');
+            }
+
+            // Daily wisdom actions
+            if (e.target.classList.contains('edit-wisdom-btn')) {
+                const wisdomId = Number(e.target.dataset.id);
+                // TODO: Implement wisdom editing
+                showToast('Wisdom editing not yet implemented', 'warning');
+            }
+
+            if (e.target.classList.contains('delete-wisdom-btn')) {
+                const wisdomId = Number(e.target.dataset.id);
+                if (confirm('Are you sure you want to delete this wisdom entry?')) {
+                    // TODO: Implement wisdom deletion
+                    showToast('Wisdom deletion not yet implemented', 'warning');
                 }
             }
         });
@@ -643,35 +889,75 @@ document.addEventListener('DOMContentLoaded', () => {
                     navLinks.forEach(l => {
                         l.classList.remove('bg-blue-50', 'font-medium', 'text-gray-700');
                         l.classList.add('text-gray-600');
+                        l.removeAttribute('aria-current');
                     });
-                                        link.classList.remove('text-gray-600');
-                                        link.classList.add('bg-blue-50', 'font-medium', 'text-gray-700');
-                                    });
-                                });
-                            }
-                        }
-                    
-                        // --- Initialization ---
-                        fetchStats();
-                        fetchContentReports();
-                        fetchPracticeUploads();
-                        fetchWorkshops();
-                        fetchDailyWisdom();
-                        """                        fetchUserSupport();
-                        attachEventListeners();
+                    link.classList.remove('text-gray-600');
+                    link.classList.add('bg-blue-50', 'font-medium', 'text-gray-700');
+                    link.setAttribute('aria-current', 'page');
+                }
+            });
+        });
 
-                        const logoutButton = document.querySelector('[data-logout]');
-                        if (logoutButton) {
-                            logoutButton.addEventListener('click', async () => {
-                                try {
-                                    await AuthManager.logout();
-                                    window.location.href = '../index.html';
-                                } catch (error) {
-                                    console.error('Logout error:', error);
-                                    showToast('Error during logout', 'error');
-                                }
-                            });
+        // Logout functionality
+        const logoutButton = document.querySelector('[data-logout]');
+        if (logoutButton) {
+            logoutButton.addEventListener('click', async (e) => {
+                e.preventDefault();
+                if (confirm('Are you sure you want to logout?')) {
+                    try {
+                        if (typeof AuthManager !== 'undefined') {
+                            await AuthManager.logout();
                         }
-                    });
-               ""
-               
+                        window.location.href = '../index.html';
+                    } catch (error) {
+                        console.error('Logout error:', error);
+                        showToast('Error during logout', 'error');
+                        // Fallback: redirect anyway
+                        setTimeout(() => {
+                            window.location.href = '../index.html';
+                        }, 1000);
+                    }
+                }
+            });
+        }
+    }
+
+    // --- Initialization ---
+    async function initializeDashboard() {
+        console.log('vice_admin.js: Initializing dashboard...');
+        
+        try {
+            // Setup modal handlers first
+            setupModalCloseHandlers();
+            
+            // Attach all event listeners
+            attachEventListeners();
+            
+            // Check if AuthAPI is available
+            if (typeof AuthAPI === 'undefined') {
+                showToast('Authentication system not loaded. Some features may not work.', 'warning');
+                return;
+            }
+            
+            // Load all data concurrently for better performance
+            const fetchPromises = [
+                fetchStats(),
+                fetchContentReports(),
+                fetchPracticeUploads(),
+                fetchWorkshops(),
+                fetchDailyWisdom(),
+                fetchUserSupport()
+            ];
+            
+            await Promise.allSettled(fetchPromises);
+            console.log('vice_admin.js: Dashboard initialization complete.');
+            
+        } catch (error) {
+            console.error('vice_admin.js: Error during initialization:', error);
+            showToast('Error initializing dashboard', 'error');
+        }
+    }
+
+    // Start initialization
+    initializeDashboard();
+});

@@ -5,23 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vice Admin Dashboard - Metanoia</title>
     <link rel="stylesheet" href="../css/main.css">
-    <link rel="stylesheet" href="../css/vice_admin.css"> <!-- New CSS link -->
+    <link rel="stylesheet" href="../css/vice_admin.css">
     <script src="https://cdn.tailwindcss.com"></script>
-    </head>
-    <script defer src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js"></script>
-    <!-- IMPORTANT: If the mobile menu button is not working, check the browser console for JavaScript errors. -->
-<body class="bg-gray-50 font-sans" x-data="{ sidebarOpen: false, isLargeScreen: () => window.innerWidth >= 1024 }" x-init="$watch('sidebarOpen', value => { if (value) { document.body.classList.add('overflow-hidden'); } else { document.body.classList.remove('overflow-hidden'); } }); $watch('isLargeScreen()', value => { if (value) sidebarOpen = false; }); ">
-    <div class="flex h-screen bg-gray-100 relative">
-        <!-- Mobile Sidebar Toggle -->
-        <div class="lg:hidden fixed inset-0 bg-gray-900 bg-opacity-50 z-30" x-show="sidebarOpen" x-transition.opacity @click="sidebarOpen = false"></div>
-        <button @click="sidebarOpen = !sidebarOpen" class="lg:hidden fixed top-4 left-4 z-40 p-2 rounded-md bg-white shadow-md text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500" aria-label="Open sidebar menu">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
-        </button>
-
+    
+</head>
+<body class="bg-gray-50 font-sans">
+    <div class="flex h-screen bg-gray-100">
         <!-- Sidebar -->
-        <aside class="w-64 bg-white shadow-lg flex-col lg:flex-shrink-0 lg:static lg:translate-x-0 fixed inset-y-0 left-0 z-40 transform -translate-x-full transition-transform duration-200 ease-in-out"
-               :class="{ 'translate-x-0': sidebarOpen || isLargeScreen(), '-translate-x-full': !sidebarOpen && !isLargeScreen(), 'hidden': !isLargeScreen() && !sidebarOpen }"
-               @click.away="sidebarOpen = false">
+        <aside class="w-64 bg-white shadow-lg flex flex-col">
             <div class="p-4 border-b border-gray-200 flex items-center space-x-3">
                 <img src="../img/logo_only.jpg" alt="Metanoia Logo" class="w-10 h-10 rounded-full object-cover">
                 <div>
@@ -29,7 +20,7 @@
                     <span class="text-sm text-gray-500">Vice-Admin Dashboard</span>
                 </div>
             </div>
-
+            
             <nav class="flex-1 p-4 space-y-2" role="navigation">
                 <a href="#overview" class="nav-link flex items-center p-3 text-gray-700 bg-blue-50 rounded-lg font-medium transition-colors hover:bg-blue-100 focus-ring" aria-current="page">
                     <svg class="w-5 h-5 mr-3 text-blue-600" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
@@ -651,4 +642,33 @@
                                 name="author"
                                 class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
                                 placeholder="Author name"
-                       
+                            />
+                        </div>
+                    </div>
+                    <div class="flex justify-end space-x-3">
+                        <button type="button" class="close-modal px-4 py-2 text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-lg transition-colors">
+                            Cancel
+                        </button>
+                        <button type="submit" class="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg transition-colors">
+                            Add Wisdom
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading overlay for better UX -->
+    <div id="loading-overlay" class="fixed inset-0 bg-gray-900 bg-opacity-50 z-50 hidden items-center justify-center">
+        <div class="bg-white rounded-lg p-6 flex items-center space-x-4">
+            <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-purple-600"></div>
+            <span class="text-gray-700">Processing...</span>
+        </div>
+    </div>
+
+    <script src="../js/config.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/vice_admin.js"></script>
+    <script src="../js/vice_admin_modals.js"></script>
+</body>
+</html>

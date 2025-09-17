@@ -15,6 +15,21 @@ class UserManager {
     }
 
     /**
+     * Get role color class
+     * @param {string} role - The user role
+     * @returns {string} - Tailwind CSS color class
+     */
+    getRoleClass(role) {
+        const roleClasses = {
+            'master': 'bg-blue-500 text-white',
+            'vice_admin': 'bg-purple-500 text-white',
+            'guide': 'bg-green-500 text-white',
+            'member': 'bg-gray-500 text-white'
+        };
+        return roleClasses[role] || 'bg-gray-400 text-white';
+    }
+
+    /**
      * Main render function - single source of truth for UI updates
      * @param {Array} users - Array of user objects
      * @param {boolean} preserveSearch - Whether to maintain current search state
@@ -129,7 +144,7 @@ class UserManager {
                 </div>
             </td>
             <td>
-                <span class="role-badge role-${userRole.toLowerCase().replace(/\s+/g, '-')}">
+                <span class="role-badge ${this.getRoleClass(userRole)}">
                     ${userRole.charAt(0).toUpperCase() + userRole.slice(1).replace('_', ' ')}
                 </span>
             </td>
@@ -178,7 +193,7 @@ class UserManager {
                 </div>
             </td>
             <td>
-                <span class="role-badge role-master">
+                <span class="role-badge ${this.getRoleClass('master')}">
                     Master Admin
                 </span>
             </td>
@@ -218,6 +233,8 @@ class UserManager {
 
             // Update user data
             this.allUsers[userIndex] = { ...this.allUsers[userIndex], ...updatedUser };
+            localStorage.setItem('allUsers', JSON.stringify(this.allUsers));
+
 
             // Remove old row from DOM
             const oldRow = document.querySelector(`tr[data-user-id="${userId}"]`);
@@ -419,18 +436,24 @@ class UserManager {
      */
     async fetchUsers() {
         try {
-            const response = await AuthAPI.request('/api/admin/users', {
-                headers: {
-                    'Authorization': `Bearer ${AuthManager.getAuthToken()}` // Use AuthManager
+            const cachedUsers = localStorage.getItem('allUsers');
+            if (cachedUsers) {
+                this.renderUsers(JSON.parse(cachedUsers));
+            } else {
+                const response = await AuthAPI.request('/api/admin/users', {
+                    headers: {
+                        'Authorization': `Bearer ${AuthManager.getAuthToken()}` // Use AuthManager
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch users: ${response.statusText}`);
                 }
-            });
 
-            if (!response.ok) {
-                throw new Error(`Failed to fetch users: ${response.statusText}`);
+                const users = await response.json();
+                localStorage.setItem('allUsers', JSON.stringify(users));
+                this.renderUsers(users);
             }
-
-            const users = await response.json();
-            this.renderUsers(users);
             
             // Fetch and update dashboard statistics
             await this.fetchDashboardStats();

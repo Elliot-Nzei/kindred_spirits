@@ -272,6 +272,9 @@ class UserResponse(UserBase):
     website: Optional[str]
     joined_date: datetime
     is_verified: bool
+    is_master: bool
+    is_vice_admin: bool
+    is_guide: bool
     followers_count: int = 0
     following_count: int = 0
     posts_count: int = 0
@@ -396,6 +399,11 @@ async def get_current_master_user(current_user: User = Depends(get_current_user)
     print(f"get_current_master_user called for user: {current_user.username}, is_master: {current_user.is_master}")
     if not current_user.is_master:
         raise HTTPException(status_code=403, detail="Not a master admin")
+    return current_user
+
+async def get_current_vice_admin_user(current_user: User = Depends(get_current_user)):
+    if not current_user.is_vice_admin:
+        raise HTTPException(status_code=403, detail="Not a vice admin")
     return current_user
 
 # --- FastAPI App Setup ---
@@ -613,6 +621,65 @@ async def get_vice_admins(
         admin_response.posts_count = 0
         response.append(admin_response)
     return response
+
+
+# --- Vice-Admin Routes ---
+@app.get("/api/vice-admin/stats")
+async def get_vice_admin_stats(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    # Dummy data for now
+    pending_reports = 0
+    resolved_today = 0
+    total_posts = db.query(Post).count()
+    active_users = db.query(User).filter(User.is_active == True).count()
+    return {
+        "pending_reports": pending_reports,
+        "resolved_today": resolved_today,
+        "total_posts": total_posts,
+        "active_users": active_users,
+    }
+
+@app.get("/api/vice-admin/content-reports")
+async def get_content_reports(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    # Dummy data for now
+    return []
+
+@app.get("/api/vice-admin/practice-uploads")
+async def get_practice_uploads(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    # Dummy data for now
+    return []
+
+@app.get("/api/vice-admin/workshops")
+async def get_workshops(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    # Dummy data for now
+    return []
+
+@app.get("/api/vice-admin/daily-wisdom")
+async def get_daily_wisdom(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    # Dummy data for now
+    return []
+
+@app.get("/api/vice-admin/user-support")
+async def get_user_support(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    # Dummy data for now
+    return []
 
 
 # --- User Profile Routes ---
