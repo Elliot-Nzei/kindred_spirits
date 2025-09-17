@@ -1,7 +1,11 @@
+// Enhanced Master Admin Dashboard User Management
+// Fixes the user row duplication issue during role updates
+
 class UserManager {
     constructor() {
         this.allUsers = [];
         this.filteredUsers = {
+            masterAdmin: [],
             viceAdmin: [],
             guide: [],
             member: []
@@ -22,18 +26,20 @@ class UserManager {
         
         // Clear only dynamic user lists (preserve master admin list)
         const listsToUpdate = {
+            masterAdmin: document.getElementById('masterAdminList'),
             viceAdmin: document.getElementById('viceAdminList'),
             guide: document.getElementById('guideList'),
             member: document.getElementById('memberList')
         };
 
-        // Clear existing content
+        // Clear existing content for all lists
         Object.values(listsToUpdate).forEach(list => {
             if (list) list.innerHTML = '';
         });
 
         // Reset filtered users
         this.filteredUsers = {
+            masterAdmin: [],
             viceAdmin: [],
             guide: [],
             member: []
@@ -54,7 +60,12 @@ class UserManager {
 
             switch(userRole) {
                 case 'master':
-                    // Master admin is handled separately, not part of dynamic lists
+                    this.filteredUsers.masterAdmin.push(user);
+                    if (listsToUpdate.masterAdmin) {
+                        // Master admin rows should not be editable (no role selector)
+                        const masterRow = this.createMasterAdminRow(user);
+                        listsToUpdate.masterAdmin.appendChild(masterRow);
+                    }
                     break;
                 case 'vice_admin':
                     this.filteredUsers.viceAdmin.push(user);
@@ -138,6 +149,47 @@ class UserManager {
                             onclick="userManager.toggleUserSuspension('${user.id}', ${!user.is_suspended})">
                         ${user.is_suspended ? 'Activate' : 'Suspend'}
                     </button>
+                </div>
+            </td>
+        `;
+
+        return row;
+    }
+
+    /**
+     * Create HTML row for a master admin user (non-editable)
+     * @param {Object} user - User object
+     * @returns {HTMLElement} - User row element
+     */
+    createMasterAdminRow(user) {
+        const row = document.createElement('tr');
+        row.setAttribute('data-user-id', user.id);
+        row.className = user.is_suspended ? 'suspended-user' : '';
+
+        row.innerHTML = `
+            <td>
+                <div class="user-info">
+                    <img src="${user.profile_picture || '../img/default-avatar.jpg'}" 
+                         alt="Profile" class="user-avatar">
+                    <div>
+                        <div class="user-name">${this.escapeHtml(user.username)}</div>
+                        <div class="user-email">${this.escapeHtml(user.email)}</div>
+                    </div>
+                </div>
+            </td>
+            <td>
+                <span class="role-badge role-master">
+                    Master Admin
+                </span>
+            </td>
+            <td>
+                <span class="status-badge ${user.is_suspended ? 'suspended' : 'active'}">
+                    ${user.is_suspended ? 'Suspended' : 'Active'}
+                </span>
+            </td>
+            <td>
+                <div class="action-buttons">
+                    <span class="text-sm text-gray-500 font-medium">System Administrator</span>
                 </div>
             </td>
         `;
@@ -323,6 +375,9 @@ class UserManager {
 
         // Filter each role category
         const filteredCategories = {
+            masterAdmin: filterUserArray(this.allUsers.filter(user => 
+                user.is_master
+            )),
             viceAdmin: filterUserArray(this.allUsers.filter(user => 
                 user.is_vice_admin
             )),
@@ -336,11 +391,21 @@ class UserManager {
 
         // Update DOM
         Object.keys(filteredCategories).forEach(role => {
-            const listElement = document.getElementById(`${role}List`);
+            let listElement;
+            if (role === 'masterAdmin') {
+                listElement = document.getElementById('masterAdminList');
+            } else {
+                listElement = document.getElementById(`${role}List`);
+            }
+            
             if (listElement) {
                 listElement.innerHTML = '';
                 filteredCategories[role].forEach(user => {
-                    listElement.appendChild(this.createUserRow(user));
+                    if (role === 'masterAdmin') {
+                        listElement.appendChild(this.createMasterAdminRow(user));
+                    } else {
+                        listElement.appendChild(this.createUserRow(user));
+                    }
                 });
             }
         });
@@ -367,9 +432,96 @@ class UserManager {
             const users = await response.json();
             this.renderUsers(users);
             
+            // Fetch and update dashboard statistics
+            await this.fetchDashboardStats();
+            
         } catch (error) {
             console.error('Error fetching users:', error);
             this.showNotification('Failed to load users', 'error');
+        }
+    }
+
+    /**
+     * Fetch dashboard statistics from API
+     */
+    async fetchDashboardStats() {
+        try {
+            const response = await AuthAPI.request('/api/admin/stats', {
+                headers: {
+                    'Authorization': `Bearer ${AuthManager.getAuthToken()}`
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error(`Failed to fetch stats: ${response.statusText}`);
+            }
+
+            const stats = await response.json();
+            this.updateDashboardStats(stats);
+            
+        } catch (error) {
+            console.error('Error fetching dashboard stats:', error);
+            // Fall back to calculating stats from available data
+            this.calculateStatsFromUsers();
+        }
+    }
+
+    /**
+     * Update dashboard statistics in the UI
+     * @param {Object} stats - Statistics object from API
+     */
+    updateDashboardStats(stats) {
+        // Update main dashboard stats
+        const totalUsersElement = document.getElementById('totalUsers');
+        if (totalUsersElement && stats.total_users !== undefined) {
+            totalUsersElement.textContent = stats.total_users.toLocaleString();
+        }
+
+        const newUsersMonthElement = document.getElementById('newUsersMonth');
+        if (newUsersMonthElement && stats.new_users_month !== undefined) {
+            newUsersMonthElement.textContent = stats.new_users_month.toLocaleString();
+        }
+
+        const totalPostsElement = document.getElementById('totalPosts');
+        if (totalPostsElement && stats.total_posts !== undefined) {
+            totalPostsElement.textContent = stats.total_posts.toLocaleString();
+        }
+
+        const viceAdminCountElement = document.getElementById('viceAdminCount');
+        if (viceAdminCountElement && stats.vice_admins_count !== undefined) {
+            viceAdminCountElement.textContent = stats.vice_admins_count.toLocaleString();
+        }
+    }
+
+    /**
+     * Calculate basic stats from current user data (fallback method)
+     */
+    calculateStatsFromUsers() {
+        if (!this.allUsers.length) return;
+
+        // Calculate total users
+        const totalUsersElement = document.getElementById('totalUsers');
+        if (totalUsersElement) {
+            totalUsersElement.textContent = this.allUsers.length.toLocaleString();
+        }
+
+        // Calculate vice admin count
+        const viceAdminCount = this.allUsers.filter(user => user.is_vice_admin).length;
+        const viceAdminCountElement = document.getElementById('viceAdminCount');
+        if (viceAdminCountElement) {
+            viceAdminCountElement.textContent = viceAdminCount.toLocaleString();
+        }
+
+        // For new users this month and total posts, we need backend data
+        // Set placeholder values or fetch from backend
+        const newUsersMonthElement = document.getElementById('newUsersMonth');
+        if (newUsersMonthElement && newUsersMonthElement.textContent === '0') {
+            newUsersMonthElement.textContent = '--';
+        }
+
+        const totalPostsElement = document.getElementById('totalPosts');
+        if (totalPostsElement && totalPostsElement.textContent === '0') {
+            totalPostsElement.textContent = '--';
         }
     }
 
@@ -390,23 +542,65 @@ class UserManager {
     }
 
     updateUserCounts() {
-        // Assuming you have elements like totalUsers, newUsersMonth, totalPosts, viceAdminCount
-        // These would need to be updated based on your stats API or by counting from allUsers
-        // For now, let's just update the counts for viceAdmin, guide, and member sections
+        // Update the vice admin count in the main dashboard stats
         const viceAdminCountElement = document.getElementById('viceAdminCount');
         if (viceAdminCountElement) {
-            viceAdminCountElement.textContent = this.filteredUsers.viceAdmin.length;
+            viceAdminCountElement.textContent = this.filteredUsers.viceAdmin.length.toLocaleString();
         }
 
-        const guideCountElement = document.getElementById('guideCount'); // Assuming you have this ID
+        // Update total users count with current loaded users
+        const totalUsersElement = document.getElementById('totalUsers');
+        if (totalUsersElement && this.allUsers.length > 0) {
+            totalUsersElement.textContent = this.allUsers.length.toLocaleString();
+        }
+
+        // If you have separate count elements for each section (not in the HTML you provided)
+        const guideCountElement = document.getElementById('guideCount');
         if (guideCountElement) {
-            guideCountElement.textContent = this.filteredUsers.guide.length;
+            guideCountElement.textContent = this.filteredUsers.guide.length.toLocaleString();
         }
 
-        const memberCountElement = document.getElementById('memberCount'); // Assuming you have this ID
+        const memberCountElement = document.getElementById('memberCount');
         if (memberCountElement) {
-            memberCountElement.textContent = this.filteredUsers.member.length;
+            memberCountElement.textContent = this.filteredUsers.member.length.toLocaleString();
         }
+
+        // Calculate and display additional stats from loaded users
+        this.updateCalculatedStats();
+    }
+
+    /**
+     * Update calculated statistics from current user data
+     */
+    updateCalculatedStats() {
+        if (!this.allUsers.length) return;
+
+        // Calculate users by role
+        const roleStats = {
+            master: this.allUsers.filter(user => user.is_master).length,
+            viceAdmin: this.allUsers.filter(user => user.is_vice_admin).length,
+            guide: this.allUsers.filter(user => user.is_guide).length,
+            member: this.allUsers.filter(user => !user.is_master && !user.is_vice_admin && !user.is_guide).length,
+            suspended: this.allUsers.filter(user => user.is_suspended).length,
+            active: this.allUsers.filter(user => !user.is_suspended).length
+        };
+
+        // Update main stats if backend data isn't available
+        const totalUsersElement = document.getElementById('totalUsers');
+        if (totalUsersElement) {
+            totalUsersElement.textContent = this.allUsers.length.toLocaleString();
+        }
+
+        const viceAdminCountElement = document.getElementById('viceAdminCount');
+        if (viceAdminCountElement) {
+            viceAdminCountElement.textContent = roleStats.viceAdmin.toLocaleString();
+        }
+
+        // Log stats for debugging
+        console.log('User Statistics:', {
+            total: this.allUsers.length,
+            ...roleStats
+        });
     }
 
     escapeHtml(text) {
@@ -453,14 +647,48 @@ class UserManager {
 const userManager = new UserManager();
 
 // Initialize on page load
-document.addEventListener('DOMContentLoaded', () => {
-    userManager.fetchUsers();
-    
-    // Setup search functionality
-    const searchInput = document.getElementById('userSearch');
-    if (searchInput) {
-        searchInput.addEventListener('input', (e) => {
-            userManager.filterUsers(e.target.value);
-        });
+document.addEventListener('DOMContentLoaded', async () => {
+    // Show loading state
+    const loadingOverlay = document.getElementById('loading-overlay');
+    if (loadingOverlay) {
+        loadingOverlay.classList.remove('hidden');
+        loadingOverlay.classList.add('flex');
+    }
+
+    try {
+        // Initialize user manager and load data
+        await userManager.fetchUsers();
+        
+        // Setup search functionality
+        const searchInput = document.getElementById('userSearch');
+        if (searchInput) {
+            searchInput.addEventListener('input', (e) => {
+                userManager.filterUsers(e.target.value);
+            });
+        }
+
+        // Setup logout functionality
+        const logoutButton = document.querySelector('[data-logout]');
+        if (logoutButton) {
+            logoutButton.addEventListener('click', async () => {
+                try {
+                    await AuthManager.logout();
+                    window.location.href = '../index.html';
+                } catch (error) {
+                    console.error('Logout error:', error);
+                    userManager.showNotification('Error during logout', 'error');
+                }
+            });
+        }
+
+    } catch (error) {
+        console.error('Error initializing dashboard:', error);
+        userManager.showNotification('Failed to initialize dashboard', 'error');
+    } finally {
+        // Hide loading state
+        if (loadingOverlay) {
+            loadingOverlay.classList.add('hidden');
+            loadingOverlay.classList.remove('flex');
+        }
     }
 });
