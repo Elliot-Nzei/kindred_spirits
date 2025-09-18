@@ -13,7 +13,7 @@
     <div class="flex bg-gray-100">
         <!-- Sidebar -->
         <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-20 hidden md:hidden"></div>
-        <aside id="sidebar" class="fixed inset-y-0 left-0 z-30 w-64 bg-white shadow-lg flex flex-col transform -translate-x-full md:relative md:translate-x-0 transition-transform duration-200 ease-in-out">
+        <aside id="sidebar" class="fixed inset-y-0 left-0 z-30 w-64 bg-white shadow-lg flex flex-col transform -translate-x-full md:translate-x-0 transition-transform duration-200 ease-in-out">
             <div class="p-4 border-b border-gray-200 flex items-center space-x-3">
                 <img src="../img/logo_only.jpg" alt="Metanoia Logo" class="w-10 h-10 rounded-full object-cover">
                 <div>
@@ -22,7 +22,7 @@
                 </div>
             </div>
             
-            <nav class="flex-1 p-4 space-y-2" role="navigation">
+            <nav class="flex-1 p-4 space-y-2 overflow-y-auto" role="navigation">
                 <a href="#overview" class="nav-link flex items-center p-3 text-gray-700 bg-blue-50 rounded-lg font-medium transition-colors hover:bg-blue-100 focus-ring" aria-current="page">
                     <svg class="w-5 h-5 mr-3 text-blue-600" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
                         <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"/>
@@ -82,7 +82,7 @@
         </aside>
 
         <!-- Main Content -->
-        <main class="flex-1">
+        <main class="flex-1 md:ml-64">
             <!-- Header -->
             <header id="overview" class="bg-white shadow-sm border-b border-gray-200 p-4 lg:p-8">
                 <div class="max-w-7xl mx-auto flex items-center justify-between">
