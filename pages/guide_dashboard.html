@@ -9,9 +9,10 @@
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-50 font-sans">
-    <div class="flex h-screen bg-gray-100">
+    <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-20 hidden md:hidden"></div>
+    <div class="flex bg-gray-100">
         <!-- Sidebar -->
-        <aside class="w-64 bg-white shadow-lg flex flex-col">
+        <aside id="sidebar" class="fixed inset-y-0 left-0 z-30 w-64 bg-white shadow-lg flex flex-col transform -translate-x-full md:translate-x-0 transition-transform duration-200 ease-in-out">
             <div class="p-4 border-b border-gray-200 flex items-center space-x-3">
                 <img src="../img/logo_only.jpg" alt="Metanoia Logo" class="w-10 h-10 rounded-full object-cover">
                 <div>
@@ -20,8 +21,8 @@
                 </div>
             </div>
             
-            <nav class="flex-1 p-4 space-y-2" role="navigation">
-                <a href="#overview" class="flex items-center p-3 text-gray-700 bg-blue-50 rounded-lg font-medium transition-colors hover:bg-blue-100 focus-ring" aria-current="page">
+            <nav class="flex-1 p-4 space-y-2 overflow-y-auto" role="navigation">
+                <a href="#overview" class="nav-link flex items-center p-3 text-gray-700 bg-blue-50 rounded-lg font-medium transition-colors hover:bg-blue-100 focus-ring" aria-current="page">
                     <svg class="w-5 h-5 mr-3 text-blue-600" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
                         <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"/>
                     </svg>
@@ -67,16 +68,23 @@
         </aside>
 
         <!-- Main Content -->
-        <main class="flex-1 overflow-y-auto">
+        <main class="flex-1 md:ml-64">
             <!-- Header -->
-            <header id="overview" class="bg-white shadow-sm border-b border-gray-200 p-8">
-                <div class="max-w-7xl mx-auto">
-                    <h2 class="text-3xl font-bold text-gray-900">Guide Dashboard</h2>
-                    <p class="text-gray-600 mt-2">Share your wisdom. Lead with heart. This is your space to contribute.</p>
+            <header id="overview" class="bg-white shadow-sm border-b border-gray-200 p-4 lg:p-8">
+                <div class="max-w-7xl mx-auto flex items-center justify-between">
+                    <div class="flex items-center">
+                        <button id="mobile-menu-button" aria-label="Open sidebar menu" class="block md:hidden p-2 rounded-md text-gray-500 hover:text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500 mr-2 z-50">
+                            <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                            </svg>
+                        </button>
+                        <div>
+                            <h2 class="text-2xl lg:text-3xl font-bold text-gray-900">Guide Dashboard</h2>
+                            <p class="text-gray-600 mt-1 lg:mt-2 hidden sm:block">Share your wisdom. Lead with heart. This is your space to contribute.</p>
+                        </div>
+                    </div>
                 </div>
-            </header>
-
-            <div class="p-8">
+            <div class="p-4 md:p-8">
                 <!-- My Workshops -->
                 <div id="workshops" class="bg-white rounded-xl shadow-sm border border-gray-100 mb-8">
                     <div class="px-8 py-6 border-b border-gray-100">
@@ -155,5 +163,71 @@
     <script src="../js/logout_modal.js"></script>
     <script src="../js/auth.js"></script>
     <script src="../js/guide.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- START NEW LOGOUT MODAL LOGIC ---
+            const logoutButton = document.querySelector('[data-logout]');
+            const logoutModal = document.getElementById('logoutModal');
+            const logoutConfirmBtn = document.getElementById('logout-confirm-btn');
+            const logoutCancelBtn = document.getElementById('logout-cancel-btn');
+
+            if (logoutButton && logoutModal && logoutConfirmBtn && logoutCancelBtn) {
+                // Clone the button to remove any previously attached event listeners.
+                const newLogoutButton = logoutButton.cloneNode(true);
+                logoutButton.parentNode.replaceChild(newLogoutButton, logoutButton);
+
+                // Add the new event listener to show the custom modal.
+                newLogoutButton.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    logoutModal.classList.remove('hidden');
+                });
+
+                // Add listener for the 'No' button to hide the modal.
+                logoutCancelBtn.addEventListener('click', () => {
+                    logoutModal.classList.add('hidden');
+                });
+
+                // Add listener for the 'Yes' button to perform the logout.
+                logoutConfirmBtn.addEventListener('click', () => {
+                    if (window.AuthManager && typeof window.AuthManager.logout === 'function') {
+                        window.AuthManager.logout();
+                    } else {
+                        console.error('AuthManager.logout() not found. Cannot perform logout.');
+                        alert('A critical error occurred. Unable to logout.');
+                    }
+                });
+            }
+            // --- END NEW LOGOUT MODAL LOGIC ---
+
+            // --- START SIDEBAR TOGGLE LOGIC ---
+            const sidebar = document.getElementById('sidebar');
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const sidebarOverlay = document.getElementById('sidebar-overlay');
+            const navLinks = document.querySelectorAll('#sidebar .nav-link');
+
+            const toggleMenu = () => {
+                sidebar.classList.toggle('-translate-x-full');
+                sidebarOverlay.classList.toggle('hidden');
+            };
+
+            if (mobileMenuButton) {
+                mobileMenuButton.addEventListener('click', toggleMenu);
+            }
+
+            if (sidebarOverlay) {
+                sidebarOverlay.addEventListener('click', toggleMenu);
+            }
+            
+            // Close sidebar when a nav link is clicked on mobile
+            navLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    if (window.innerWidth < 768) { // md breakpoint
+                        toggleMenu();
+                    }
+                });
+            });
+            // --- END SIDEBAR TOGGLE LOGIC ---
+        });
+    </script>
 </body>
 </html>
