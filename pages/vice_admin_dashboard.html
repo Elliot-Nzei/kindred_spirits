@@ -12,7 +12,8 @@
 <body class="bg-gray-50 font-sans overflow-hidden">
     <div class="flex h-screen bg-gray-100">
         <!-- Sidebar -->
-        <aside class="w-64 bg-white shadow-lg flex flex-col">
+        <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-20 hidden md:hidden"></div>
+        <aside id="sidebar" class="fixed inset-y-0 left-0 z-30 w-64 bg-white shadow-lg flex flex-col transform -translate-x-full md:relative md:translate-x-0 transition-transform duration-200 ease-in-out">
             <div class="p-4 border-b border-gray-200 flex items-center space-x-3">
                 <img src="../img/logo_only.jpg" alt="Metanoia Logo" class="w-10 h-10 rounded-full object-cover">
                 <div>
@@ -83,10 +84,19 @@
         <!-- Main Content -->
         <main class="flex-1 overflow-y-auto custom-scrollbar">
             <!-- Header -->
-            <header id="overview" class="bg-white shadow-sm border-b border-gray-200 p-8">
-                <div class="max-w-7xl mx-auto">
-                    <h2 class="text-3xl font-bold text-gray-900">Vice-Admin Dashboard</h2>
-                    <p class="text-gray-600 mt-2">Welcome. Your role is to assist the Master Admin and nurture the community.</p>
+            <header id="overview" class="bg-white shadow-sm border-b border-gray-200 p-4 lg:p-8">
+                <div class="max-w-7xl mx-auto flex items-center justify-between">
+                    <div class="flex items-center">
+                        <button id="mobile-menu-button" aria-label="Open sidebar menu" class="block md:hidden p-2 rounded-md text-gray-500 hover:text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500 mr-2 z-50">
+                            <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                            </svg>
+                        </button>
+                        <div>
+                            <h2 class="text-2xl lg:text-3xl font-bold text-gray-900">Vice-Admin Dashboard</h2>
+                            <p class="text-gray-600 mt-1 lg:mt-2 hidden sm:block">Welcome. Your role is to assist the Master Admin and nurture the community.</p>
+                        </div>
+                    </div>
                 </div>
             </header>
 
@@ -670,5 +680,35 @@
     <script src="../js/auth.js"></script>
     <script src="../js/vice_admin.js"></script>
     <script src="../js/vice_admin_modals.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const sidebar = document.getElementById('sidebar');
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const sidebarOverlay = document.getElementById('sidebar-overlay');
+            const navLinks = document.querySelectorAll('#sidebar .nav-link');
+
+            const toggleMenu = () => {
+                sidebar.classList.toggle('-translate-x-full');
+                sidebarOverlay.classList.toggle('hidden');
+            };
+
+            if (mobileMenuButton) {
+                mobileMenuButton.addEventListener('click', toggleMenu);
+            }
+
+            if (sidebarOverlay) {
+                sidebarOverlay.addEventListener('click', toggleMenu);
+            }
+            
+            // Close sidebar when a nav link is clicked on mobile
+            navLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    if (window.innerWidth < 768) { // md breakpoint
+                        toggleMenu();
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>
