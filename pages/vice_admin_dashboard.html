@@ -423,6 +423,26 @@
         </main>
     </div>
 
+    <!-- Logout Confirmation Modal -->
+    <div id="logoutModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 h-full w-full z-50 hidden flex items-center justify-center">
+        <div class="relative mx-auto p-6 border w-full max-w-sm shadow-lg rounded-md bg-white">
+            <div class="text-center">
+                <h3 class="text-lg font-medium text-gray-900">Confirm Logout</h3>
+                <div class="mt-2 px-7 py-3">
+                    <p class="text-sm text-gray-500">Are you sure you want to logout?</p>
+                </div>
+                <div class="flex justify-center space-x-4 mt-4">
+                    <button id="logout-confirm-btn" class="px-4 py-2 bg-red-500 text-white text-base font-medium rounded-md shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500">
+                        Yes
+                    </button>
+                    <button id="logout-cancel-btn" class="px-4 py-2 bg-gray-200 text-gray-800 text-base font-medium rounded-md shadow-sm hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500">
+                        No
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Generic Section Modal -->
     <div id="sectionModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50 hidden">
         <div class="relative top-20 mx-auto p-5 border w-11/12 md:w-3/4 lg:w-2/3 shadow-lg rounded-md bg-white">
@@ -677,11 +697,45 @@
     </div>
 
     <script src="../js/config.js"></script>
-    <script src="../js/auth.js"></script>
+    <script src="../js/auth.js?v=1.1"></script>
     <script src="../js/vice_admin.js"></script>
     <script src="../js/vice_admin_modals.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            // --- START NEW LOGOUT MODAL LOGIC ---
+            const logoutButton = document.querySelector('[data-logout]');
+            const logoutModal = document.getElementById('logoutModal');
+            const logoutConfirmBtn = document.getElementById('logout-confirm-btn');
+            const logoutCancelBtn = document.getElementById('logout-cancel-btn');
+
+            if (logoutButton && logoutModal && logoutConfirmBtn && logoutCancelBtn) {
+                // Clone the button to remove any previously attached event listeners.
+                const newLogoutButton = logoutButton.cloneNode(true);
+                logoutButton.parentNode.replaceChild(newLogoutButton, logoutButton);
+
+                // Add the new event listener to show the custom modal.
+                newLogoutButton.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    logoutModal.classList.remove('hidden');
+                });
+
+                // Add listener for the 'No' button to hide the modal.
+                logoutCancelBtn.addEventListener('click', () => {
+                    logoutModal.classList.add('hidden');
+                });
+
+                // Add listener for the 'Yes' button to perform the logout.
+                logoutConfirmBtn.addEventListener('click', () => {
+                    if (window.AuthManager && typeof window.AuthManager.logout === 'function') {
+                        window.AuthManager.logout();
+                    } else {
+                        console.error('AuthManager.logout() not found. Cannot perform logout.');
+                        alert('A critical error occurred. Unable to logout.');
+                    }
+                });
+            }
+            // --- END NEW LOGOUT MODAL LOGIC ---
+
             const sidebar = document.getElementById('sidebar');
             const mobileMenuButton = document.getElementById('mobile-menu-button');
             const sidebarOverlay = document.getElementById('sidebar-overlay');

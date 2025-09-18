@@ -344,11 +344,32 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('[data-logout], .logout-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
             e.preventDefault();
-            if (confirm('Are you sure you want to logout?')) {
-                AuthManager.logout();
+            
+            const logoutModal = document.getElementById('logoutModal');
+            if (logoutModal) {
+                logoutModal.classList.remove('hidden');
             }
         });
     });
+
+    // Handle custom logout confirmation
+    const logoutModal = document.getElementById('logoutModal');
+    if (logoutModal) {
+        const logoutConfirmBtn = document.getElementById('logout-confirm-btn');
+        const logoutCancelBtn = document.getElementById('logout-cancel-btn');
+
+        if (logoutConfirmBtn) {
+            logoutConfirmBtn.addEventListener('click', () => {
+                AuthManager.logout();
+            });
+        }
+
+        if (logoutCancelBtn) {
+            logoutCancelBtn.addEventListener('click', () => {
+                logoutModal.classList.add('hidden');
+            });
+        }
+    }
 
     // Auto-logout on token expiration
     if (AuthManager.isAuthenticated()) {
