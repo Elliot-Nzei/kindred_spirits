@@ -197,3 +197,10 @@ html {
 .btn-activate:hover {
     background-color: #388e3c;
 }
+
+@media (max-width: 767px) { /* Small screens */
+    .min-w-full td, .min-w-full th {
+        padding-left: 8px; /* px-2 equivalent */
+        padding-right: 8px; /* px-2 equivalent */
+    }
+}
