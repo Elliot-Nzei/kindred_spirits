@@ -204,7 +204,13 @@ class UserManager {
             </td>
             <td>
                 <div class="action-buttons">
-                    <span class="text-sm text-gray-500 font-medium">System Administrator</span>
+                    ${user.id === AuthManager.getCurrentUser().id ?
+                        `<span class="text-sm text-gray-500 font-medium">System Administrator</span>` :
+                        `<button class="btn-action ${user.is_suspended ? 'btn-activate' : 'btn-suspend'}"
+                                onclick="userManager.toggleUserSuspension('${user.id}', ${!user.is_suspended})">
+                            ${user.is_suspended ? 'Activate' : 'Suspend'}
+                        </button>`
+                    }
                 </div>
             </td>
         `;
