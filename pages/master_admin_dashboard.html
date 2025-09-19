@@ -7,167 +7,253 @@
     <link rel="stylesheet" href="../css/main.css">
     <link rel="stylesheet" href="../css/master_dashboard.css">
     <script src="https://cdn.tailwindcss.com"></script>
-    
+    <meta name="description" content="Master Admin Dashboard for managing Metanoia community users and content">
+    <link rel="preload" href="../img/logo_only.jpg" as="image">
+    <link rel="preload" href="../img/default-avatar.jpg" as="image">
 </head>
-<body class="bg-gray-50 font-sans overflow-x-hidden">
-    <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-20 hidden md:hidden"></div>
-    <div class="flex bg-gray-100 w-full">
-        <!-- Sidebar -->
-        <aside id="sidebar" class="fixed inset-y-0 left-0 z-30 w-64 bg-white shadow-lg flex flex-col transform -translate-x-full md:translate-x-0 transition-transform duration-200 ease-in-out">
+<body class="bg-gray-50 font-sans overflow-x-hidden" data-theme="light">
+    <!-- Network Status Indicator -->
+    <div id="network-status" class="network-status hidden" role="alert" aria-live="polite">
+        <span class="network-status-text">You are offline</span>
+    </div>
+
+    <!-- Accessibility Skip Link -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <!-- Sidebar Overlay for Mobile -->
+    <div id="sidebar-overlay" 
+         class="fixed inset-0 bg-black bg-opacity-50 z-20 hidden md:hidden transition-opacity duration-200"
+         aria-hidden="true"></div>
+
+    <div class="flex bg-gray-100 w-full min-h-screen">
+        <!-- Enhanced Sidebar -->
+        <aside id="sidebar" 
+               class="fixed inset-y-0 left-0 z-30 w-64 bg-white shadow-lg flex flex-col transform -translate-x-full md:translate-x-0 transition-transform duration-200 ease-in-out"
+               role="navigation"
+               aria-label="Main navigation">
+            
+            <!-- Logo and Header -->
             <div class="p-4 border-b border-gray-200 flex items-center space-x-3">
-                <img src="../img/logo_only.jpg" alt="Metanoia Logo" class="w-10 h-10 rounded-full object-cover">
+                <img src="../img/logo_only.jpg" 
+                     alt="Metanoia Logo" 
+                     class="w-10 h-10 rounded-full object-cover"
+                     onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMjAiIGZpbGw9IiMzYjgyZjYiLz4KPHRleHQgeD0iMjAiIHk9IjI1IiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTgiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5NPC90ZXh0Pgo8L3N2Zz4K'">
                 <div>
                     <h1 class="text-lg font-semibold text-blue-600">Metanoia</h1>
                     <span class="text-sm text-gray-500">Master Dashboard</span>
                 </div>
             </div>
             
-            <nav class="flex-1 p-4 space-y-2 overflow-y-auto" role="navigation">
-                <a href="#overview" class="nav-link flex items-center p-3 text-gray-700 bg-blue-50 rounded-lg font-medium transition-colors hover:bg-blue-100 focus-ring" aria-current="page">
+            <!-- Enhanced Navigation -->
+            <nav class="flex-1 p-4 space-y-2 overflow-y-auto" role="navigation" aria-label="Dashboard sections">
+                <a href="#overview" 
+                   class="nav-link flex items-center p-3 text-gray-700 bg-blue-50 rounded-lg font-medium transition-colors hover:bg-blue-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500" 
+                   aria-current="page">
                     <svg class="w-5 h-5 mr-3 text-blue-600" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
                         <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"/>
                     </svg>
                     <span>Overview</span>
                 </a>
                 
-                <a href="#user-management-sections" class="flex items-center p-3 text-gray-600 hover:bg-gray-100 hover:text-gray-900 rounded-lg transition-colors focus-ring">
+                <a href="#user-management-sections" 
+                   class="nav-link flex items-center p-3 text-gray-600 hover:bg-gray-100 hover:text-gray-900 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500">
                     <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M15 21a6 6 0 00-9-5.197"/>
                     </svg>
                     <span>User Management</span>
+                    <span id="user-count-badge" class="ml-auto text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">0</span>
                 </a>
                 
-                <a href="#content-moderation" class="flex items-center p-3 text-gray-600 hover:bg-gray-100 hover:text-gray-900 rounded-lg transition-colors focus-ring">
+                <a href="#content-moderation" 
+                   class="nav-link flex items-center p-3 text-gray-600 hover:bg-gray-100 hover:text-gray-900 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500">
                     <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                     </svg>
                     <span>Content Moderation</span>
+                    <span class="ml-auto text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full">Soon</span>
                 </a>
                 
-                <a href="#practice-studio" class="flex items-center p-3 text-gray-600 hover:bg-gray-100 hover:text-gray-900 rounded-lg transition-colors focus-ring">
+                <a href="#practice-studio" 
+                   class="nav-link flex items-center p-3 text-gray-600 hover:bg-gray-100 hover:text-gray-900 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500">
                     <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/>
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                     </svg>
                     <span>Practice Studio</span>
+                    <span class="ml-auto text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full">Soon</span>
                 </a>
                 
-                <a href="#workshop-gateway" class="flex items-center p-3 text-gray-600 hover:bg-gray-100 hover:text-gray-900 rounded-lg transition-colors focus-ring">
+                <a href="#workshop-gateway" 
+                   class="nav-link flex items-center p-3 text-gray-600 hover:bg-gray-100 hover:text-gray-900 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500">
                     <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
                     </svg>
                     <span>Workshop Gateway</span>
+                    <span class="ml-auto text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full">Soon</span>
                 </a>
                 
-                <a href="#soul-compass" class="flex items-center p-3 text-gray-600 hover:bg-gray-100 hover:text-gray-900 rounded-lg transition-colors focus-ring">
+                <a href="#soul-compass" 
+                   class="nav-link flex items-center p-3 text-gray-600 hover:bg-gray-100 hover:text-gray-900 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500">
                     <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
                     </svg>
                     <span>Soul Compass</span>
+                    <span class="ml-auto text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full">Soon</span>
                 </a>
                 
-                <a href="#daily-wisdom" class="flex items-center p-3 text-gray-600 hover:bg-gray-100 hover:text-gray-900 rounded-lg transition-colors focus-ring">
+                <a href="#daily-wisdom" 
+                   class="nav-link flex items-center p-3 text-gray-600 hover:bg-gray-100 hover:text-gray-900 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500">
                     <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
                     </svg>
                     <span>Daily Wisdom</span>
+                    <span class="ml-auto text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full">Soon</span>
                 </a>
                 
-                <a href="#notifications" class="flex items-center p-3 text-gray-600 hover:bg-gray-100 hover:text-gray-900 rounded-lg transition-colors focus-ring">
+                <a href="#notifications" 
+                   class="nav-link flex items-center p-3 text-gray-600 hover:bg-gray-100 hover:text-gray-900 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500">
                     <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
                     </svg>
                     <span>Notifications</span>
+                    <span id="notification-badge" class="ml-auto text-xs bg-red-100 text-red-800 px-2 py-1 rounded-full hidden">0</span>
                 </a>
             </nav>
             
+            <!-- Enhanced User Profile Section -->
             <div class="p-4 border-t border-gray-200 mt-auto">
                 <div class="flex items-center space-x-3">
-                    <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
-                        <span class="text-white font-semibold text-sm">MA</span>
-                    </div>
-                    <div>
-                        <p class="font-medium text-gray-800">Master Admin</p>
-                        <button data-logout class="text-sm text-red-500 hover:text-red-700 hover:underline transition-colors">
-                            Logout
-                        </button>
+                    <img id="sidebar-profile-picture" 
+                         src="../img/default-avatar.jpg" 
+                         alt="Current user profile picture" 
+                         class="w-10 h-10 rounded-full object-cover border-2 border-gray-200"
+                         onerror="this.src='../img/default-avatar.jpg'">
+                    <div class="flex-1 min-w-0">
+                        <p id="sidebar-username" class="font-medium text-gray-800 truncate">Master Admin</p>
+                        <p class="text-xs text-gray-500">System Administrator</p>
                     </div>
                 </div>
+                <button data-logout 
+                        class="mt-3 w-full text-left text-sm text-red-500 hover:text-red-700 hover:bg-red-50 px-2 py-1 rounded transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500">
+                    <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                    </svg>
+                    Logout
+                </button>
             </div>
         </aside>
 
         <!-- Main Content -->
-        <main class="flex-1 md:ml-64 overflow-x-hidden">
-            <!-- Header -->
+        <main id="main-content" class="flex-1 md:ml-64 overflow-x-hidden" role="main">
+            <!-- Enhanced Header -->
             <header id="overview" class="bg-white shadow-sm border-b border-gray-200 p-4 lg:p-8">
                 <div class="max-w-7xl mx-auto flex items-center justify-between">
                     <div class="flex items-center">
-                        <button id="mobile-menu-button" aria-label="Open sidebar menu" class="block md:hidden p-2 rounded-md text-gray-500 hover:text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500 mr-2 z-50">
-                            <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                        <button id="mobile-menu-button" 
+                                aria-label="Open navigation menu" 
+                                class="block md:hidden p-2 rounded-md text-gray-500 hover:text-gray-700 hover:bg-gray-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 mr-2 z-50">
+                            <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24" aria-hidden="true">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                             </svg>
                         </button>
                         <div>
-                            <h2 class="text-2xl lg:text-3xl font-bold text-gray-900">Dashboard Overview</h2>
+                            <h1 class="text-2xl lg:text-3xl font-bold text-gray-900">Dashboard Overview</h1>
                             <p class="text-gray-600 mt-1 lg:mt-2 hidden sm:block">Welcome back, Master Admin. Here's a snapshot of your community.</p>
+                        </div>
+                    </div>
+                    <!-- Quick Actions -->
+                    <div class="flex items-center space-x-4">
+                        <button id="refresh-data" 
+                                class="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+                                title="Refresh data"
+                                aria-label="Refresh dashboard data">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                            </svg>
+                        </button>
+                        <div id="last-updated" class="text-sm text-gray-500 hidden lg:block">
+                            Last updated: <span id="last-updated-time">--</span>
                         </div>
                     </div>
                 </div>
             </header>
 
             <div class="p-4 md:p-8">
-                <!-- Stats Cards -->
+                <!-- Enhanced Stats Cards -->
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8 max-w-7xl mx-auto">
+                    <!-- Total Users Card -->
                     <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
                         <div class="flex items-center justify-between">
                             <div>
-                                <h3 class="text-sm font-medium text-gray-500">Total Users</h3>
-                                <p id="totalUsers" class="text-3xl font-bold text-gray-900 mt-1">0</p>
+                                <h2 class="text-sm font-medium text-gray-500">Total Users</h2>
+                                <p id="totalUsers" class="text-3xl font-bold text-gray-900 mt-1">
+                                    <span class="skeleton-text">Loading...</span>
+                                </p>
+                                <p class="text-xs text-green-600 mt-2">
+                                    <span class="inline-flex items-center">
+                                        <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M3.293 9.707a1 1 0 010-1.414l6-6a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L4.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+                                        </svg>
+                                        Active community
+                                    </span>
+                                </p>
                             </div>
                             <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                                <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
                                 </svg>
                             </div>
                         </div>
                     </div>
                     
+                    <!-- New Users Card -->
                     <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
                         <div class="flex items-center justify-between">
                             <div>
-                                <h3 class="text-sm font-medium text-gray-500">New Users (Month)</h3>
-                                <p id="newUsersMonth" class="text-3xl font-bold text-gray-900 mt-1">0</p>
+                                <h2 class="text-sm font-medium text-gray-500">New Users (Month)</h2>
+                                <p id="newUsersMonth" class="text-3xl font-bold text-gray-900 mt-1">
+                                    <span class="skeleton-text">Loading...</span>
+                                </p>
+                                <p class="text-xs text-gray-500 mt-2">This month's growth</p>
                             </div>
                             <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                                <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
                                 </svg>
                             </div>
                         </div>
                     </div>
                     
+                    <!-- Total Posts Card -->
                     <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
                         <div class="flex items-center justify-between">
                             <div>
-                                <h3 class="text-sm font-medium text-gray-500">Total Posts</h3>
-                                <p id="totalPosts" class="text-3xl font-bold text-gray-900 mt-1">0</p>
+                                <h2 class="text-sm font-medium text-gray-500">Total Posts</h2>
+                                <p id="totalPosts" class="text-3xl font-bold text-gray-900 mt-1">
+                                    <span class="skeleton-text">Loading...</span>
+                                </p>
+                                <p class="text-xs text-gray-500 mt-2">Community content</p>
                             </div>
                             <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
-                                <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                                 </svg>
                             </div>
                         </div>
                     </div>
                     
+                    <!-- Vice Admins Card -->
                     <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
                         <div class="flex items-center justify-between">
                             <div>
-                                <h3 class="text-sm font-medium text-gray-500">Vice Admins</h3>
-                                <p id="viceAdminCount" class="text-3xl font-bold text-gray-900 mt-1">0</p>
+                                <h2 class="text-sm font-medium text-gray-500">Vice Admins</h2>
+                                <p id="viceAdminCount" class="text-3xl font-bold text-gray-900 mt-1">
+                                    <span class="skeleton-text">Loading...</span>
+                                </p>
+                                <p class="text-xs text-gray-500 mt-2">Administrative team</p>
                             </div>
                             <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
-                                <svg class="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>
                                 </svg>
                             </div>
@@ -175,305 +261,51 @@
                     </div>
                 </div>
 
-                <!-- User Management Section -->
-                <!-- User Management Section -->
+                <!-- Enhanced User Management Section -->
                 <div id="user-management-sections" class="space-y-8 max-w-7xl mx-auto">
+                    <!-- Enhanced Search Section -->
                     <div class="mb-8">
-                        <div class="relative">
-                            <input 
-                                type="text" 
-                                id="userSearch" 
-                                placeholder="Search users..." 
-                                class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                            >
-                            <svg class="absolute left-3 top-2.5 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                            </svg>
+                        <div class="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+                            <div class="relative flex-1 max-w-md">
+                                <label for="userSearch" class="sr-only">Search users by name, email, or role</label>
+                                <input 
+                                    type="text" 
+                                    id="userSearch" 
+                                    placeholder="Search users by name, email, or role..." 
+                                    class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                                    aria-describedby="search-help"
+                                >
+                                <svg class="absolute left-3 top-3.5 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                                </svg>
+                                <div id="search-results-count" class="absolute right-3 top-3.5 text-sm text-gray-500 hidden"></div>
+                            </div>
+                            
+                            <!-- Filters and Actions -->
+                            <div class="flex items-center space-x-2">
+                                <select id="role-filter" 
+                                        class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                                        aria-label="Filter by role">
+                                    <option value="">All Roles</option>
+                                    <option value="master">Master Admin</option>
+                                    <option value="vice_admin">Vice Admin</option>
+                                    <option value="guide">Guide</option>
+                                    <option value="member">Member</option>
+                                </select>
+                                
+                                <select id="status-filter" 
+                                        class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                                        aria-label="Filter by status">
+                                    <option value="">All Status</option>
+                                    <option value="active">Active</option>
+                                    <option value="suspended">Suspended</option>
+                                </select>
+                            </div>
                         </div>
+                        <p id="search-help" class="text-sm text-gray-500 mt-2">
+                            Search across usernames, emails, and roles. Use filters to narrow results.
+                        </p>
                     </div>
+
                     <!-- Master Admin Section -->
-                    <div id="master-admin-section" class="bg-white rounded-xl shadow-sm border border-gray-100">
-                        <div class="px-8 py-6 border-b border-gray-100">
-                            <h3 class="text-2xl font-bold text-gray-900">Master Admin</h3>
-                            <p class="text-gray-600 mt-1">System administrator with full privileges</p>
-                        </div>
-                        <div class="overflow-hidden">
-                            <div class="overflow-x-auto">
-                                <table class="min-w-full divide-y divide-gray-200">
-                                    <thead class="bg-gray-50">
-                                        <tr>
-                                            <th class="px-2 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
-                                            <th class="px-2 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
-                                            <th class="px-2 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                            <th class="px-2 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="masterAdminList" class="bg-white divide-y divide-gray-200">
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Vice-Admin Management Section -->
-                    <div id="vice-admin-section" class="bg-white rounded-xl shadow-sm border border-gray-100">
-                        <div class="px-8 py-6 border-b border-gray-100">
-                            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-                                <div>
-                                    <h3 class="text-2xl font-bold text-gray-900">Vice-Admin Management</h3>
-                                    <p class="text-gray-600 mt-1">Users with elevated administrative privileges</p>
-                                </div>
-                                
-                            </div>
-                        </div>
-                        <div class="overflow-hidden">
-                            <div class="overflow-x-auto">
-                                <table class="min-w-full divide-y divide-gray-200">
-                                    <thead class="bg-gray-50">
-                                        <tr>
-                                            <th class="px-2 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
-                                            <th class="px-2 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
-                                            <th class="px-2 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                            <th class="px-2 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="viceAdminList" class="bg-white divide-y divide-gray-200">
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Guide Management Section -->
-                    <div id="guide-section" class="bg-white rounded-xl shadow-sm border border-gray-100">
-                        <div class="px-8 py-6 border-b border-gray-100">
-                            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-                                <div>
-                                    <h3 class="text-2xl font-bold text-gray-900">Guide Management</h3>
-                                    <p class="text-gray-600 mt-1">Community guides and mentors</p>
-                                </div>
-                                
-                            </div>
-                        </div>
-                        <div class="overflow-hidden">
-                            <div class="overflow-x-auto">
-                                <table class="min-w-full divide-y divide-gray-200">
-                                    <thead class="bg-gray-50">
-                                        <tr>
-                                            <th class="px-2 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
-                                            <th class="px-2 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
-                                            <th class="px-2 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                            <th class="px-2 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="guideList" class="bg-white divide-y divide-gray-200">
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Member Management Section -->
-                    <div id="member-section" class="bg-white rounded-xl shadow-sm border border-gray-100">
-                        <div class="px-8 py-6 border-b border-gray-100">
-                            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-                                <div>
-                                    <h3 class="text-2xl font-bold text-gray-900">Member Management</h3>
-                                    <p class="text-gray-600 mt-1">Regular community members</p>
-                                </div>
-                                
-                            </div>
-                        </div>
-                        <div class="overflow-hidden">
-                            <div class="overflow-x-auto">
-                                <table class="min-w-full divide-y divide-gray-200">
-                                    <thead class="bg-gray-50">
-                                        <tr>
-                                            <th class="px-2 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
-                                            <th class="px-2 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
-                                            <th class="px-2 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                            <th class="px-2 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="memberList" class="bg-white divide-y divide-gray-200">
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Placeholder sections for future features -->
-                <div id="content-moderation" class="max-w-7xl mx-auto mt-12 bg-white rounded-xl shadow-sm border border-gray-100 p-8">
-                    <h3 class="text-2xl font-bold text-gray-900 mb-4">Content Moderation</h3>
-                    <div class="bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg p-12 text-center">
-                        <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
-                        </svg>
-                        <h4 class="mt-4 text-lg font-medium text-gray-900">Coming Soon</h4>
-                        <p class="mt-2 text-sm text-gray-500">Content moderation tools will be available here.</p>
-                    </div>
-                </div>
-
-                <div id="practice-studio" class="max-w-7xl mx-auto mt-8 bg-white rounded-xl shadow-sm border border-gray-100 p-8">
-                    <h3 class="text-2xl font-bold text-gray-900 mb-4">Practice Studio</h3>
-                    <div class="bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg p-12 text-center">
-                        <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/>
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                        </svg>
-                        <h4 class="mt-4 text-lg font-medium text-gray-900">Coming Soon</h4>
-                        <p class="mt-2 text-sm text-gray-500">Practice studio management tools will be available here.</p>
-                    </div>
-                </div>
-
-                <div id="workshop-gateway" class="max-w-7xl mx-auto mt-8 bg-white rounded-xl shadow-sm border border-gray-100 p-8">
-                    <h3 class="text-2xl font-bold text-gray-900 mb-4">Workshop Gateway</h3>
-                    <div class="bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg p-12 text-center">
-                        <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-                        </svg>
-                        <h4 class="mt-4 text-lg font-medium text-gray-900">Coming Soon</h4>
-                        <p class="mt-2 text-sm text-gray-500">Workshop gateway management will be available here.</p>
-                    </div>
-                </div>
-
-                <div id="soul-compass" class="max-w-7xl mx-auto mt-8 bg-white rounded-xl shadow-sm border border-gray-100 p-8">
-                    <h3 class="text-2xl font-bold text-gray-900 mb-4">Soul Compass</h3>
-                    <div class="bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg p-12 text-center">
-                        <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
-                        </svg>
-                        <h4 class="mt-4 text-lg font-medium text-gray-900">Coming Soon</h4>
-                        <p class="mt-2 text-sm text-gray-500">Soul compass features will be available here.</p>
-                    </div>
-                </div>
-
-                <div id="daily-wisdom" class="max-w-7xl mx-auto mt-8 bg-white rounded-xl shadow-sm border border-gray-100 p-8">
-                    <h3 class="text-2xl font-bold text-gray-900 mb-4">Daily Wisdom</h3>
-                    <div class="bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg p-12 text-center">
-                        <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
-                        </svg>
-                        <h4 class="mt-4 text-lg font-medium text-gray-900">Coming Soon</h4>
-                        <p class="mt-2 text-sm text-gray-500">Daily wisdom management will be available here.</p>
-                    </div>
-                </div>
-
-                <div id="notifications" class="max-w-7xl mx-auto mt-8 mb-8 bg-white rounded-xl shadow-sm border border-gray-100 p-8">
-                    <h3 class="text-2xl font-bold text-gray-900 mb-4">Notifications</h3>
-                    <div class="bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg p-12 text-center">
-                        <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
-                        </svg>
-                        <h4 class="mt-4 text-lg font-medium text-gray-900">Coming Soon</h4>
-                        <p class="mt-2 text-sm text-gray-500">Notification system will be available here.</p>
-                    </div>
-                </div>
-            </div>
-        </main>
-    </div>
-
-    <!-- Loading overlay for better UX -->
-    <div id="loading-overlay" class="fixed inset-0 bg-gray-900 bg-opacity-50 z-50 hidden items-center justify-center">
-        <div class="bg-white rounded-lg p-6 flex items-center space-x-4">
-            <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
-            <span class="text-gray-700">Processing...</span>
-        </div>
-    </div>
-
-    <!-- Logout Confirmation Modal -->
-    <div id="logoutModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center hidden z-50">
-        <div class="relative p-8 border w-full max-w-md mx-auto bg-white rounded-xl shadow-lg">
-            <div class="text-center">
-                <h3 class="text-2xl font-bold text-gray-900 mb-4">Confirm Logout</h3>
-                <p class="text-gray-600 mb-6">Are you sure you want to log out?</p>
-                <div class="flex justify-center space-x-4">
-                    <button id="logout-confirm-btn" class="px-6 py-3 bg-red-600 text-white font-semibold rounded-lg shadow-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-75 transition-colors">
-                        Logout
-                    </button>
-                    <button id="logout-cancel-btn" class="px-6 py-3 bg-gray-200 text-gray-800 font-semibold rounded-lg shadow-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-75 transition-colors">
-                        Cancel
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script src="../js/config.js"></script>
-    <script src="../js/logout_modal.js"></script>
-    <script src="../js/auth.js"></script>
-    <script src="../js/master_admin.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // --- START NEW LOGOUT MODAL LOGIC ---
-            const logoutButton = document.querySelector('[data-logout]');
-            const logoutModal = document.getElementById('logoutModal');
-            const logoutConfirmBtn = document.getElementById('logout-confirm-btn');
-            const logoutCancelBtn = document.getElementById('logout-cancel-btn');
-
-            if (logoutButton && logoutModal && logoutConfirmBtn && logoutCancelBtn) {
-                // Clone the button to remove any previously attached event listeners.
-                const newLogoutButton = logoutButton.cloneNode(true);
-                logoutButton.parentNode.replaceChild(newLogoutButton, logoutButton);
-
-                // Add the new event listener to show the custom modal.
-                newLogoutButton.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    logoutModal.classList.remove('hidden');
-                });
-
-                // Add listener for the 'No' button to hide the modal.
-                logoutCancelBtn.addEventListener('click', () => {
-                    logoutModal.classList.add('hidden');
-                });
-
-                // Add listener for the 'Yes' button to perform the logout.
-                logoutConfirmBtn.addEventListener('click', () => {
-                    if (window.AuthManager && typeof window.AuthManager.logout === 'function') {
-                        window.AuthManager.logout();
-                    } else {
-                        console.error('AuthManager.logout() not found. Cannot perform logout.');
-                        alert('A critical error occurred. Unable to logout.');
-                    }
-                });
-            }
-            // --- END NEW LOGOUT MODAL LOGIC ---
-
-            // --- START SIDEBAR TOGGLE LOGIC ---
-            const sidebar = document.getElementById('sidebar');
-            const mobileMenuButton = document.getElementById('mobile-menu-button');
-            const sidebarOverlay = document.getElementById('sidebar-overlay');
-            const navLinks = document.querySelectorAll('#sidebar .nav-link');
-
-            const toggleMenu = () => {
-                sidebar.classList.toggle('-translate-x-full');
-                sidebarOverlay.classList.toggle('hidden');
-            };
-
-            if (mobileMenuButton) {
-                mobileMenuButton.addEventListener('click', toggleMenu);
-            }
-
-            if (sidebarOverlay) {
-                sidebarOverlay.addEventListener('click', toggleMenu);
-            }
-            
-            // Close sidebar when a nav link is clicked on mobile
-            navLinks.forEach(link => {
-                link.addEventListener('click', () => {
-                    if (window.innerWidth < 768) { // md breakpoint
-                        toggleMenu();
-                    }
-                });
-            });
-            // --- END SIDEBAR TOGGLE LOGIC ---
-        });
-    </script>
-</body>
-</html>
-
-
-
-
-
+                    <section id="master-admin-section" class="bg-white rounded-xl shadow-sm border border-gray-100">

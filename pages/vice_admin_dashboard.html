@@ -68,11 +68,9 @@
 
             <div class="p-4 border-t border-gray-200 mt-auto">
                 <div class="flex items-center space-x-3">
-                    <div class="w-10 h-10 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-full flex items-center justify-center">
-                        <span class="text-white font-semibold text-sm">VA</span>
-                    </div>
+                    <img id="sidebar-profile-picture" src="../img/default-avatar.jpg" alt="User Avatar" class="w-10 h-10 rounded-full object-cover">
                     <div>
-                        <p class="font-medium text-gray-800">Vice-Admin</p>
+                        <p id="sidebar-username" class="font-medium text-gray-800">Vice-Admin</p>
                         <button data-logout class="text-sm text-red-500 hover:text-red-700 hover:underline transition-colors">
                             Logout
                         </button>
@@ -762,6 +760,19 @@
                     }
                 });
             });
+
+            const user = AuthManager.getCurrentUser();
+            if (user) {
+                const profilePictureElement = document.getElementById('sidebar-profile-picture');
+                const usernameElement = document.getElementById('sidebar-username');
+
+                if (profilePictureElement && user.profile_picture) {
+                    profilePictureElement.src = user.profile_picture;
+                }
+                if (usernameElement && user.username) {
+                    usernameElement.textContent = user.username;
+                }
+            }
         });
     </script>
 </body>

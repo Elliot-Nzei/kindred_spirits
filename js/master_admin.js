@@ -1,23 +1,108 @@
 // Enhanced Master Admin Dashboard User Management
-// Fixes the user row duplication issue during role updates
+// Improved version with better error handling, state management, and user experience
 
 class UserManager {
     constructor() {
         this.allUsers = [];
-        this.filteredUsers = {
-            masterAdmin: [],
-            viceAdmin: [],
-            guide: [],
-            member: []
-        };
+        this.filteredUsers = [];
         this.currentSearchTerm = '';
-        this.isUpdating = false; // Prevent concurrent updates
+        this.isUpdating = false;
+        this.isLoading = false;
+        this.cache = new Map();
+        this.debounceTimer = null;
+        this.retryAttempts = 0;
+        this.maxRetries = 3;
+        
+        // Bind methods to preserve context
+        this.handleSearch = this.handleSearch.bind(this);
+        this.handleRoleChange = this.handleRoleChange.bind(this);
+        this.handleSuspensionToggle = this.handleSuspensionToggle.bind(this);
     }
 
     /**
-     * Get role color class
-     * @param {string} role - The user role
-     * @returns {string} - Tailwind CSS color class
+     * Initialize the dashboard
+     */
+    async init() {
+        try {
+            this.showLoading(true);
+            await this.validateAuth();
+            await this.fetchUsers();
+            this.setupEventListeners();
+            this.updateUI();
+        } catch (error) {
+            this.handleError('Failed to initialize dashboard', error);
+        } finally {
+            this.showLoading(false);
+        }
+    }
+
+    /**
+     * Validate authentication and permissions
+     */
+    async validateAuth() {
+        if (!window.AuthManager) {
+            throw new Error('AuthManager not available');
+        }
+
+        const currentUser = AuthManager.getCurrentUser();
+        if (!currentUser || !currentUser.is_master) {
+            throw new Error('Unauthorized: Master admin privileges required');
+        }
+    }
+
+    /**
+     * Setup event listeners
+     */
+    setupEventListeners() {
+        const searchInput = document.getElementById('userSearch');
+        if (searchInput) {
+            // Remove existing listeners
+            searchInput.removeEventListener('input', this.handleSearch);
+            searchInput.addEventListener('input', this.handleSearch);
+        }
+
+        // Listen for window focus to refresh data
+        window.addEventListener('focus', this.handleWindowFocus.bind(this));
+        
+        // Handle online/offline events
+        window.addEventListener('online', this.handleOnline.bind(this));
+        window.addEventListener('offline', this.handleOffline.bind(this));
+    }
+
+    /**
+     * Handle search input with debouncing
+     */
+    handleSearch(event) {
+        clearTimeout(this.debounceTimer);
+        this.debounceTimer = setTimeout(() => {
+            this.filterUsers(event.target.value);
+        }, 300);
+    }
+
+    /**
+     * Handle role change events
+     */
+    handleRoleChange(userId, newRole) {
+        if (this.isUpdating) {
+            this.showNotification('Please wait for the current operation to complete', 'warning');
+            return;
+        }
+        this.updateUserRole(userId, newRole);
+    }
+
+    /**
+     * Handle suspension toggle events
+     */
+    handleSuspensionToggle(userId, suspend) {
+        if (this.isUpdating) {
+            this.showNotification('Please wait for the current operation to complete', 'warning');
+            return;
+        }
+        this.toggleUserSuspension(userId, suspend);
+    }
+
+    /**
+     * Get role color class with validation
      */
     getRoleClass(role) {
         const roleClasses = {
@@ -30,138 +115,125 @@ class UserManager {
     }
 
     /**
-     * Main render function - single source of truth for UI updates
-     * @param {Array} users - Array of user objects
-     * @param {boolean} preserveSearch - Whether to maintain current search state
+     * Determine user role from user object
      */
-    renderUsers(users, preserveSearch = false) {
-        if (this.isUpdating) return; // Prevent concurrent renders
-        
-        this.allUsers = [...users]; // Deep copy to prevent reference issues
-        
-        // Clear only dynamic user lists (preserve master admin list)
-        const listsToUpdate = {
-            masterAdmin: document.getElementById('masterAdminList'),
-            viceAdmin: document.getElementById('viceAdminList'),
-            guide: document.getElementById('guideList'),
-            member: document.getElementById('memberList')
-        };
-
-        // Clear existing content for all lists
-        Object.values(listsToUpdate).forEach(list => {
-            if (list) list.innerHTML = '';
-        });
-
-        // Reset filtered users
-        this.filteredUsers = {
-            masterAdmin: [],
-            viceAdmin: [],
-            guide: [],
-            member: []
-        };
-
-        // Categorize and render users
-        users.forEach(user => {
-            const userRow = this.createUserRow(user);
-            
-            let userRole = 'member';
-            if (user.is_master) {
-                userRole = 'master';
-            } else if (user.is_vice_admin) {
-                userRole = 'vice_admin';
-            } else if (user.is_guide) {
-                userRole = 'guide';
-            }
-
-            switch(userRole) {
-                case 'master':
-                    this.filteredUsers.masterAdmin.push(user);
-                    if (listsToUpdate.masterAdmin) {
-                        // Master admin rows should not be editable (no role selector)
-                        const masterRow = this.createMasterAdminRow(user);
-                        listsToUpdate.masterAdmin.appendChild(masterRow);
-                    }
-                    break;
-                case 'vice_admin':
-                    this.filteredUsers.viceAdmin.push(user);
-                    if (listsToUpdate.viceAdmin) {
-                        listsToUpdate.viceAdmin.appendChild(userRow);
-                    }
-                    break;
-                case 'guide':
-                    this.filteredUsers.guide.push(user);
-                    if (listsToUpdate.guide) {
-                        listsToUpdate.guide.appendChild(userRow);
-                    }
-                    break;
-                case 'member':
-                    this.filteredUsers.member.push(user);
-                    if (listsToUpdate.member) {
-                        listsToUpdate.member.appendChild(userRow);
-                    }
-                    break;
-            }
-        });
-
-        // Apply search filter if one exists and we want to preserve it
-        if (preserveSearch && this.currentSearchTerm) {
-            this.filterUsers(this.currentSearchTerm);
-        }
-
-        // Update counts
-        this.updateUserCounts();
+    getUserRole(user) {
+        if (user.is_master) return 'master';
+        if (user.is_vice_admin) return 'vice_admin';
+        if (user.is_guide) return 'guide';
+        return 'member';
     }
 
     /**
-     * Create HTML row for a user
-     * @param {Object} user - User object
-     * @returns {HTMLElement} - User row element
+     * Main render function with improved error handling
+     */
+    renderUsers(users = this.filteredUsers) {
+        if (this.isUpdating) return;
+
+        try {
+            const masterAdminList = document.getElementById('masterAdminList');
+            const allMembersList = document.getElementById('allMembersList');
+
+            if (masterAdminList) masterAdminList.innerHTML = '';
+            if (allMembersList) allMembersList.innerHTML = '';
+
+            if (!users || users.length === 0) {
+                this.renderEmptyState();
+                return;
+            }
+
+            const masterUsers = users.filter(user => user.is_master);
+            const regularUsers = users.filter(user => !user.is_master);
+
+            // Render master admins
+            masterUsers.forEach(user => {
+                if (masterAdminList) {
+                    const masterRow = this.createMasterAdminRow(user);
+                    masterAdminList.appendChild(masterRow);
+                }
+            });
+
+            // Render regular users
+            regularUsers.forEach(user => {
+                if (allMembersList) {
+                    const userRow = this.createUserRow(user);
+                    allMembersList.appendChild(userRow);
+                }
+            });
+
+            this.updateUserCounts();
+            this.updateSearchResults(users.length);
+        } catch (error) {
+            console.error('Error rendering users:', error);
+            this.showNotification('Failed to display users', 'error');
+        }
+    }
+
+    /**
+     * Render empty state
+     */
+    renderEmptyState() {
+        const allMembersList = document.getElementById('allMembersList');
+        if (allMembersList) {
+            const emptyRow = document.createElement('tr');
+            emptyRow.innerHTML = `
+                <td colspan="4" class="px-6 py-12 text-center text-gray-500">
+                    <svg class="mx-auto h-12 w-12 text-gray-300 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                    </svg>
+                    ${this.currentSearchTerm ? 'No users found matching your search.' : 'No users found.'}
+                </td>
+            `;
+            allMembersList.appendChild(emptyRow);
+        }
+    }
+
+    /**
+     * Create HTML row for a regular user with improved structure
      */
     createUserRow(user) {
         const row = document.createElement('tr');
         row.setAttribute('data-user-id', user.id);
-        // Determine the user's role based on boolean flags
-        let userRole = 'member';
-        if (user.is_master) {
-            userRole = 'master';
-        } else if (user.is_vice_admin) {
-            userRole = 'vice_admin';
-        } else if (user.is_guide) {
-            userRole = 'guide';
-        }
-
-        row.className = user.is_suspended ? 'suspended-user' : ''; // Use user.is_suspended
+        row.className = user.is_suspended ? 'suspended-user' : '';
+        
+        const userRole = this.getUserRole(user);
+        const roleDisplayName = this.getRoleDisplayName(userRole);
 
         row.innerHTML = `
-            <td>
+            <td class="px-2 sm:px-6 py-4 whitespace-nowrap">
                 <div class="user-info">
-                    <img src="${user.profile_picture || '../img/default-avatar.jpg'}" 
-                         alt="Profile" class="user-avatar">
+                    <img src="${this.escapeHtml(user.profile_picture || '../img/default-avatar.jpg')}" 
+                         alt="Profile picture for ${this.escapeHtml(user.username)}" 
+                         class="user-avatar"
+                         onerror="this.src='../img/default-avatar.jpg'">
                     <div>
                         <div class="user-name">${this.escapeHtml(user.username)}</div>
                         <div class="user-email">${this.escapeHtml(user.email)}</div>
                     </div>
                 </div>
             </td>
-            <td>
+            <td class="px-2 sm:px-6 py-4 whitespace-nowrap">
                 <span class="role-badge ${this.getRoleClass(userRole)}">
-                    ${userRole.charAt(0).toUpperCase() + userRole.slice(1).replace('_', ' ')}
+                    ${roleDisplayName}
                 </span>
             </td>
-            <td>
+            <td class="px-2 sm:px-6 py-4 whitespace-nowrap">
                 <span class="status-badge ${user.is_suspended ? 'suspended' : 'active'}">
                     ${user.is_suspended ? 'Suspended' : 'Active'}
                 </span>
             </td>
-            <td>
+            <td class="px-2 sm:px-6 py-4 whitespace-nowrap">
                 <div class="action-buttons">
-                    <select class="role-selector" onchange="userManager.updateUserRole('${user.id}', this.value)">
+                    <select class="role-selector" 
+                            onchange="userManager.handleRoleChange('${user.id}', this.value)"
+                            ${this.isUpdating ? 'disabled' : ''}>
                         <option value="member" ${userRole === 'member' ? 'selected' : ''}>Member</option>
                         <option value="guide" ${userRole === 'guide' ? 'selected' : ''}>Guide</option>
                         <option value="vice_admin" ${userRole === 'vice_admin' ? 'selected' : ''}>Vice-Admin</option>
                     </select>
                     <button class="btn-action ${user.is_suspended ? 'btn-activate' : 'btn-suspend'}" 
-                            onclick="userManager.toggleUserSuspension('${user.id}', ${!user.is_suspended})">
+                            onclick="userManager.handleSuspensionToggle('${user.id}', ${!user.is_suspended})"
+                            ${this.isUpdating ? 'disabled' : ''}>
                         ${user.is_suspended ? 'Activate' : 'Suspend'}
                     </button>
                 </div>
@@ -172,42 +244,49 @@ class UserManager {
     }
 
     /**
-     * Create HTML row for a master admin user (non-editable)
-     * @param {Object} user - User object
-     * @returns {HTMLElement} - User row element
+     * Create HTML row for a master admin user
      */
     createMasterAdminRow(user) {
         const row = document.createElement('tr');
         row.setAttribute('data-user-id', user.id);
         row.className = user.is_suspended ? 'suspended-user' : '';
 
+        const currentUser = AuthManager.getCurrentUser();
+        const isCurrentUser = user.id === currentUser?.id;
+
         row.innerHTML = `
-            <td>
+            <td class="px-2 sm:px-6 py-4 whitespace-nowrap">
                 <div class="user-info">
-                    <img src="${user.profile_picture || '../img/default-avatar.jpg'}" 
-                         alt="Profile" class="user-avatar">
+                    <img src="${this.escapeHtml(user.profile_picture || '../img/default-avatar.jpg')}" 
+                         alt="Profile picture for ${this.escapeHtml(user.username)}" 
+                         class="user-avatar"
+                         onerror="this.src='../img/default-avatar.jpg'">
                     <div>
-                        <div class="user-name">${this.escapeHtml(user.username)}</div>
+                        <div class="user-name">
+                            ${this.escapeHtml(user.username)}
+                            ${isCurrentUser ? '<span class="text-sm text-blue-600 ml-2">(You)</span>' : ''}
+                        </div>
                         <div class="user-email">${this.escapeHtml(user.email)}</div>
                     </div>
                 </div>
             </td>
-            <td>
+            <td class="px-2 sm:px-6 py-4 whitespace-nowrap">
                 <span class="role-badge ${this.getRoleClass('master')}">
                     Master Admin
                 </span>
             </td>
-            <td>
+            <td class="px-2 sm:px-6 py-4 whitespace-nowrap">
                 <span class="status-badge ${user.is_suspended ? 'suspended' : 'active'}">
                     ${user.is_suspended ? 'Suspended' : 'Active'}
                 </span>
             </td>
-            <td>
+            <td class="px-2 sm:px-6 py-4 whitespace-nowrap">
                 <div class="action-buttons">
-                    ${user.id === AuthManager.getCurrentUser().id ?
+                    ${isCurrentUser ?
                         `<span class="text-sm text-gray-500 font-medium">System Administrator</span>` :
                         `<button class="btn-action ${user.is_suspended ? 'btn-activate' : 'btn-suspend'}"
-                                onclick="userManager.toggleUserSuspension('${user.id}', ${!user.is_suspended})">
+                                onclick="userManager.handleSuspensionToggle('${user.id}', ${!user.is_suspended})"
+                                ${this.isUpdating ? 'disabled' : ''}>
                             ${user.is_suspended ? 'Activate' : 'Suspend'}
                         </button>`
                     }
@@ -219,339 +298,288 @@ class UserManager {
     }
 
     /**
-     * Update a single user's row in real-time without full re-render
-     * @param {string} userId - User ID to update
-     * @param {Object} updatedUser - Updated user object
+     * Get display name for role
      */
-    async updateUserRow(userId, updatedUser) {
-        if (this.isUpdating) return; // Prevent concurrent updates
-        
-        this.isUpdating = true;
-
-        try {
-            // Find and update user in allUsers array
-            const userIndex = this.allUsers.findIndex(user => user.id === userId);
-            if (userIndex === -1) {
-                console.warn(`User ${userId} not found in allUsers`);
-                await this.fetchUsers(); // Fallback to full refresh
-                return;
-            }
-
-            // Update user data
-            this.allUsers[userIndex] = { ...this.allUsers[userIndex], ...updatedUser };
-            localStorage.setItem('allUsers', JSON.stringify(this.allUsers));
-
-
-            // Remove old row from DOM
-            const oldRow = document.querySelector(`tr[data-user-id="${userId}"]`);
-            if (oldRow) {
-                // Add fade-out animation
-                oldRow.style.transition = 'opacity 0.3s ease';
-                oldRow.style.opacity = '0';
-                
-                setTimeout(() => {
-                    if (oldRow.parentNode) {
-                        oldRow.parentNode.removeChild(oldRow);
-                    }
-                }, 300);
-            }
-
-            // Wait for fade-out to complete before re-rendering
-            setTimeout(() => {
-                // Re-render with updated data, preserving search state
-                this.renderUsers(this.allUsers, true);
-                
-                // Highlight the updated user row
-                this.highlightUpdatedRow(userId);
-                
-                this.isUpdating = false;
-            }, 350);
-
-        } catch (error) {
-            console.error('Error updating user row:', error);
-            this.isUpdating = false;
-            // Fallback to full refresh on error
-            await this.fetchUsers();
-        }
+    getRoleDisplayName(role) {
+        const roleNames = {
+            'master': 'Master Admin',
+            'vice_admin': 'Vice Admin',
+            'guide': 'Guide',
+            'member': 'Member'
+        };
+        return roleNames[role] || 'Member';
     }
 
     /**
-     * Highlight updated user row with animation
-     * @param {string} userId - User ID to highlight
-     */
-    highlightUpdatedRow(userId) {
-        setTimeout(() => {
-            const newRow = document.querySelector(`tr[data-user-id="${userId}"]`);
-            if (newRow) {
-                newRow.classList.add('row-updated');
-                newRow.style.backgroundColor = '#e8f5e8';
-                
-                setTimeout(() => {
-                    newRow.style.transition = 'background-color 1s ease';
-                    newRow.style.backgroundColor = '';
-                    setTimeout(() => {
-                        newRow.classList.remove('row-updated');
-                        newRow.style.transition = '';
-                    }, 1000);
-                }, 100);
-            }
-        }, 100);
-    }
-
-    /**
-     * Update user role via API
-     * @param {string} userId - User ID
-     * @param {string} newRole - New role
+     * Update user role with improved error handling and optimistic updates
      */
     async updateUserRole(userId, newRole) {
+        if (!userId || !newRole) {
+            this.showNotification('Invalid role update request', 'error');
+            return;
+        }
+
+        const originalUser = this.allUsers.find(u => u.id === userId);
+        if (!originalUser) {
+            this.showNotification('User not found', 'error');
+            return;
+        }
+
         try {
-            // Show loading state
+            this.isUpdating = true;
             this.setUserRowLoading(userId, true);
 
-            const response = await AuthAPI.request(`/api/admin/users/${userId}/role`, {
+            // Optimistic update
+            const userIndex = this.allUsers.findIndex(u => u.id === userId);
+            const previousRole = this.getUserRole(originalUser);
+            
+            // Create updated user object
+            const updatedUser = { ...originalUser };
+            updatedUser.is_vice_admin = newRole === 'vice_admin';
+            updatedUser.is_guide = newRole === 'guide';
+            
+            this.allUsers[userIndex] = updatedUser;
+            this.filterUsers(this.currentSearchTerm);
+
+            const response = await this.makeApiRequest(`/api/admin/users/${userId}/role`, {
                 method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ role: newRole.toLowerCase() }) // Ensure role is lowercase for backend
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ role: newRole.toLowerCase() })
             });
 
-            if (!response.ok) {
-                throw new Error(`Failed to update role: ${response.statusText}`);
-            }
+            const serverUser = await response.json();
+            this.allUsers[userIndex] = serverUser;
+            this.filterUsers(this.currentSearchTerm);
 
-            const result = await response.json();
-            
-            // Update user row with new data
-            await this.updateUserRow(userId, result); // Pass the full updated user object from the server
-
-            // Show success message
-            this.showNotification(`User role updated to ${newRole}`, 'success');
+            this.showNotification(`User role updated to ${this.getRoleDisplayName(newRole)}`, 'success');
+            this.clearCache();
 
         } catch (error) {
-            console.error('Error updating user role:', error);
-            this.showNotification('Failed to update user role', 'error');
-            
-            // Reset the selector to original value
-            const selector = document.querySelector(`tr[data-user-id="${userId}"] .role-selector`);
-            if (selector) {
-                const originalUser = this.allUsers.find(user => user.id === userId);
-                if (originalUser) {
-                    selector.value = originalUser.role;
-                }
+            // Revert optimistic update
+            const userIndex = this.allUsers.findIndex(u => u.id === userId);
+            if (userIndex !== -1) {
+                this.allUsers[userIndex] = originalUser;
+                this.filterUsers(this.currentSearchTerm);
             }
+            
+            this.handleError('Failed to update user role', error);
         } finally {
+            this.isUpdating = false;
             this.setUserRowLoading(userId, false);
         }
     }
 
     /**
-     * Toggle user suspension status
-     * @param {string} userId - User ID
-     * @param {boolean} suspend - Whether to suspend (true) or activate (false)
+     * Toggle user suspension with improved error handling
      */
     async toggleUserSuspension(userId, suspend) {
+        if (!userId || typeof suspend !== 'boolean') {
+            this.showNotification('Invalid suspension request', 'error');
+            return;
+        }
+
+        const originalUser = this.allUsers.find(u => u.id === userId);
+        if (!originalUser) {
+            this.showNotification('User not found', 'error');
+            return;
+        }
+
         try {
+            this.isUpdating = true;
             this.setUserRowLoading(userId, true);
 
-            const response = await AuthAPI.request(`/api/admin/users/${userId}/suspension`, {
+            // Optimistic update
+            const userIndex = this.allUsers.findIndex(u => u.id === userId);
+            const updatedUser = { ...originalUser, is_suspended: suspend };
+            this.allUsers[userIndex] = updatedUser;
+            this.filterUsers(this.currentSearchTerm);
+
+            const response = await this.makeApiRequest(`/api/admin/users/${userId}/suspension`, {
                 method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ suspend: suspend })
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ suspend })
             });
 
-            if (!response.ok) {
-                throw new Error(`Failed to ${suspend ? 'suspend' : 'activate'} user: ${response.statusText}`);
-            }
+            const serverUser = await response.json();
+            this.allUsers[userIndex] = serverUser;
+            this.filterUsers(this.currentSearchTerm);
 
-            const result = await response.json();
-            
-            // Update user row
-            await this.updateUserRow(userId, result); // Pass the full updated user object from the server
-
-            // Show success message
             this.showNotification(`User ${suspend ? 'suspended' : 'activated'} successfully`, 'success');
+            this.clearCache();
 
         } catch (error) {
-            console.error('Error toggling user suspension:', error);
-            this.showNotification(`Failed to ${suspend ? 'suspend' : 'activate'} user`, 'error');
+            // Revert optimistic update
+            const userIndex = this.allUsers.findIndex(u => u.id === userId);
+            if (userIndex !== -1) {
+                this.allUsers[userIndex] = originalUser;
+                this.filterUsers(this.currentSearchTerm);
+            }
+            
+            this.handleError(`Failed to ${suspend ? 'suspend' : 'activate'} user`, error);
         } finally {
+            this.isUpdating = false;
             this.setUserRowLoading(userId, false);
         }
     }
 
     /**
-     * Filter users based on search term
-     * @param {string} searchTerm - Search term
+     * Filter users with improved search functionality
      */
     filterUsers(searchTerm) {
-        this.currentSearchTerm = searchTerm.toLowerCase();
+        this.currentSearchTerm = searchTerm.toLowerCase().trim();
 
-        const filterUserArray = (users) => {
-            return users.filter(user => 
-                user.username.toLowerCase().includes(this.currentSearchTerm) || // Use username
-                user.email.toLowerCase().includes(this.currentSearchTerm)
-            );
-        };
+        if (!this.currentSearchTerm) {
+            this.filteredUsers = [...this.allUsers];
+        } else {
+            this.filteredUsers = this.allUsers.filter(user => {
+                const username = user.username?.toLowerCase() || '';
+                const email = user.email?.toLowerCase() || '';
+                const role = this.getUserRole(user).toLowerCase();
+                
+                return username.includes(this.currentSearchTerm) ||
+                       email.includes(this.currentSearchTerm) ||
+                       role.includes(this.currentSearchTerm);
+            });
+        }
 
-        // Filter each role category
-        const filteredCategories = {
-            masterAdmin: filterUserArray(this.allUsers.filter(user => 
-                user.is_master
-            )),
-            viceAdmin: filterUserArray(this.allUsers.filter(user => 
-                user.is_vice_admin
-            )),
-            guide: filterUserArray(this.allUsers.filter(user => 
-                user.is_guide
-            )),
-            member: filterUserArray(this.allUsers.filter(user => 
-                !user.is_master && !user.is_vice_admin && !user.is_guide
-            ))
-        };
-
-        // Update DOM
-        Object.keys(filteredCategories).forEach(role => {
-            let listElement;
-            if (role === 'masterAdmin') {
-                listElement = document.getElementById('masterAdminList');
-            } else {
-                listElement = document.getElementById(`${role}List`);
-            }
-            
-            if (listElement) {
-                listElement.innerHTML = '';
-                filteredCategories[role].forEach(user => {
-                    if (role === 'masterAdmin') {
-                        listElement.appendChild(this.createMasterAdminRow(user));
-                    } else {
-                        listElement.appendChild(this.createUserRow(user));
-                    }
-                });
-            }
-        });
-
-        // Update filteredUsers state
-        this.filteredUsers = filteredCategories;
+        this.renderUsers(this.filteredUsers);
     }
 
     /**
-     * Fetch users from API
+     * Fetch users with retry mechanism and caching
      */
     async fetchUsers() {
+        const cacheKey = 'users';
+        
         try {
-            const cachedUsers = localStorage.getItem('allUsers');
-            if (cachedUsers) {
-                this.renderUsers(JSON.parse(cachedUsers));
-            } else {
-                const response = await AuthAPI.request('/api/admin/users', {
-                    headers: {
-                        'Authorization': `Bearer ${AuthManager.getAuthToken()}` // Use AuthManager
-                    }
-                });
+            this.isLoading = true;
 
-                if (!response.ok) {
-                    throw new Error(`Failed to fetch users: ${response.statusText}`);
-                }
+            const response = await this.makeApiRequest('/api/admin/users', {
+                headers: { 'Authorization': `Bearer ${AuthManager.getAuthToken()}` }
+            });
 
-                const users = await response.json();
-                localStorage.setItem('allUsers', JSON.stringify(users));
-                this.renderUsers(users);
-            }
+            const users = await response.json();
             
-            // Fetch and update dashboard statistics
+            if (!Array.isArray(users)) {
+                throw new Error('Invalid users data received');
+            }
+
+            this.allUsers = users;
+            this.filteredUsers = [...users];
+            this.cache.set(cacheKey, { data: users, timestamp: Date.now() });
+            
+            this.renderUsers();
             await this.fetchDashboardStats();
             
         } catch (error) {
-            console.error('Error fetching users:', error);
-            this.showNotification('Failed to load users', 'error');
+            // Try to use cached data
+            const cached = this.cache.get(cacheKey);
+            if (cached && Date.now() - cached.timestamp < 300000) { // 5 minutes
+                this.allUsers = cached.data;
+                this.filteredUsers = [...cached.data];
+                this.renderUsers();
+                this.showNotification('Using cached data - some information may be outdated', 'warning');
+            } else {
+                this.handleError('Failed to load users', error);
+            }
+        } finally {
+            this.isLoading = false;
         }
     }
 
     /**
-     * Fetch dashboard statistics from API
+     * Fetch dashboard statistics with fallback
      */
     async fetchDashboardStats() {
         try {
-            const response = await AuthAPI.request('/api/admin/stats', {
-                headers: {
-                    'Authorization': `Bearer ${AuthManager.getAuthToken()}`
-                }
+            const response = await this.makeApiRequest('/api/admin/stats', {
+                headers: { 'Authorization': `Bearer ${AuthManager.getAuthToken()}` }
             });
-
-            if (!response.ok) {
-                throw new Error(`Failed to fetch stats: ${response.statusText}`);
-            }
 
             const stats = await response.json();
             this.updateDashboardStats(stats);
             
         } catch (error) {
-            console.error('Error fetching dashboard stats:', error);
-            // Fall back to calculating stats from available data
+            console.warn('Failed to fetch dashboard stats:', error);
             this.calculateStatsFromUsers();
         }
     }
 
     /**
      * Update dashboard statistics in the UI
-     * @param {Object} stats - Statistics object from API
      */
     updateDashboardStats(stats) {
-        // Update main dashboard stats
-        const totalUsersElement = document.getElementById('totalUsers');
-        if (totalUsersElement && stats.total_users !== undefined) {
-            totalUsersElement.textContent = stats.total_users.toLocaleString();
-        }
+        const updates = [
+            { id: 'totalUsers', value: stats.total_users },
+            { id: 'newUsersMonth', value: stats.new_users_month },
+            { id: 'totalPosts', value: stats.total_posts },
+            { id: 'viceAdminCount', value: stats.vice_admins_count }
+        ];
 
-        const newUsersMonthElement = document.getElementById('newUsersMonth');
-        if (newUsersMonthElement && stats.new_users_month !== undefined) {
-            newUsersMonthElement.textContent = stats.new_users_month.toLocaleString();
-        }
-
-        const totalPostsElement = document.getElementById('totalPosts');
-        if (totalPostsElement && stats.total_posts !== undefined) {
-            totalPostsElement.textContent = stats.total_posts.toLocaleString();
-        }
-
-        const viceAdminCountElement = document.getElementById('viceAdminCount');
-        if (viceAdminCountElement && stats.vice_admins_count !== undefined) {
-            viceAdminCountElement.textContent = stats.vice_admins_count.toLocaleString();
-        }
+        updates.forEach(({ id, value }) => {
+            const element = document.getElementById(id);
+            if (element && typeof value === 'number') {
+                element.textContent = value.toLocaleString();
+            }
+        });
     }
 
     /**
-     * Calculate basic stats from current user data (fallback method)
+     * Calculate basic stats from current user data
      */
     calculateStatsFromUsers() {
         if (!this.allUsers.length) return;
 
-        // Calculate total users
-        const totalUsersElement = document.getElementById('totalUsers');
-        if (totalUsersElement) {
-            totalUsersElement.textContent = this.allUsers.length.toLocaleString();
-        }
+        const totalUsers = this.allUsers.length;
+        const viceAdminCount = this.allUsers.filter(user => user.is_vice_admin && !user.is_master).length;
 
-        // Calculate vice admin count
-        const viceAdminCount = this.allUsers.filter(user => user.is_vice_admin).length;
-        const viceAdminCountElement = document.getElementById('viceAdminCount');
-        if (viceAdminCountElement) {
-            viceAdminCountElement.textContent = viceAdminCount.toLocaleString();
-        }
+        document.getElementById('totalUsers').textContent = totalUsers.toLocaleString();
+        document.getElementById('viceAdminCount').textContent = viceAdminCount.toLocaleString();
 
-        // For new users this month and total posts, we need backend data
-        // Set placeholder values or fetch from backend
-        const newUsersMonthElement = document.getElementById('newUsersMonth');
-        if (newUsersMonthElement && newUsersMonthElement.textContent === '0') {
-            newUsersMonthElement.textContent = '--';
-        }
-
+        // Set placeholders for unavailable stats
+        const newUsersElement = document.getElementById('newUsersMonth');
         const totalPostsElement = document.getElementById('totalPosts');
+        
+        if (newUsersElement && newUsersElement.textContent === '0') {
+            newUsersElement.textContent = '--';
+        }
         if (totalPostsElement && totalPostsElement.textContent === '0') {
             totalPostsElement.textContent = '--';
         }
+    }
+
+    /**
+     * Make API request with retry logic and better error handling
+     */
+    async makeApiRequest(url, options = {}) {
+        const maxRetries = 3;
+        let lastError;
+
+        for (let attempt = 0; attempt < maxRetries; attempt++) {
+            try {
+                if (!window.AuthAPI) {
+                    throw new Error('AuthAPI not available');
+                }
+
+                const response = await AuthAPI.request(url, options);
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`HTTP ${response.status}: ${errorText}`);
+                }
+
+                return response;
+            } catch (error) {
+                lastError = error;
+                
+                if (attempt < maxRetries - 1) {
+                    // Exponential backoff
+                    await new Promise(resolve => setTimeout(resolve, Math.pow(2, attempt) * 1000));
+                }
+            }
+        }
+
+        throw lastError;
     }
 
     /**
@@ -561,163 +589,136 @@ class UserManager {
         const row = document.querySelector(`tr[data-user-id="${userId}"]`);
         if (row) {
             if (loading) {
-                row.classList.add('loading');
-                row.style.opacity = '0.6';
+                row.classList.add('opacity-50', 'pointer-events-none');
             } else {
-                row.classList.remove('loading');
-                row.style.opacity = '1';
+                row.classList.remove('opacity-50', 'pointer-events-none');
             }
         }
     }
 
     updateUserCounts() {
-        // Update the vice admin count in the main dashboard stats
-        const viceAdminCountElement = document.getElementById('viceAdminCount');
-        if (viceAdminCountElement) {
-            viceAdminCountElement.textContent = this.filteredUsers.viceAdmin.length.toLocaleString();
-        }
+        const masterCount = this.allUsers.filter(user => user.is_master).length;
+        const viceAdminCount = this.allUsers.filter(user => user.is_vice_admin && !user.is_master).length;
+        const guideCount = this.allUsers.filter(user => user.is_guide && !user.is_master && !user.is_vice_admin).length;
+        const memberCount = this.allUsers.filter(user => !user.is_master && !user.is_vice_admin && !user.is_guide).length;
 
-        // Update total users count with current loaded users
-        const totalUsersElement = document.getElementById('totalUsers');
-        if (totalUsersElement && this.allUsers.length > 0) {
-            totalUsersElement.textContent = this.allUsers.length.toLocaleString();
-        }
-
-        // If you have separate count elements for each section (not in the HTML you provided)
-        const guideCountElement = document.getElementById('guideCount');
-        if (guideCountElement) {
-            guideCountElement.textContent = this.filteredUsers.guide.length.toLocaleString();
-        }
-
-        const memberCountElement = document.getElementById('memberCount');
-        if (memberCountElement) {
-            memberCountElement.textContent = this.filteredUsers.member.length.toLocaleString();
-        }
-
-        // Calculate and display additional stats from loaded users
-        this.updateCalculatedStats();
+        document.getElementById('totalUsers').textContent = this.allUsers.length.toLocaleString();
+        document.getElementById('viceAdminCount').textContent = viceAdminCount.toLocaleString();
     }
 
-    /**
-     * Update calculated statistics from current user data
-     */
-    updateCalculatedStats() {
-        if (!this.allUsers.length) return;
-
-        // Calculate users by role
-        const roleStats = {
-            master: this.allUsers.filter(user => user.is_master).length,
-            viceAdmin: this.allUsers.filter(user => user.is_vice_admin).length,
-            guide: this.allUsers.filter(user => user.is_guide).length,
-            member: this.allUsers.filter(user => !user.is_master && !user.is_vice_admin && !user.is_guide).length,
-            suspended: this.allUsers.filter(user => user.is_suspended).length,
-            active: this.allUsers.filter(user => !user.is_suspended).length
-        };
-
-        // Update main stats if backend data isn't available
-        const totalUsersElement = document.getElementById('totalUsers');
-        if (totalUsersElement) {
-            totalUsersElement.textContent = this.allUsers.length.toLocaleString();
+    updateSearchResults(count) {
+        const searchInput = document.getElementById('userSearch');
+        if (searchInput && this.currentSearchTerm) {
+            searchInput.setAttribute('title', `Found ${count} users`);
         }
+    }
 
-        const viceAdminCountElement = document.getElementById('viceAdminCount');
-        if (viceAdminCountElement) {
-            viceAdminCountElement.textContent = roleStats.viceAdmin.toLocaleString();
+    showLoading(show) {
+        const overlay = document.getElementById('loading-overlay');
+        if (overlay) {
+            if (show) {
+                overlay.classList.remove('hidden');
+                overlay.classList.add('flex');
+            } else {
+                overlay.classList.add('hidden');
+                overlay.classList.remove('flex');
+            }
         }
+    }
 
-        // Log stats for debugging
-        console.log('User Statistics:', {
-            total: this.allUsers.length,
-            ...roleStats
-        });
+    updateUI() {
+        // Update current user info in sidebar
+        const user = AuthManager.getCurrentUser();
+        if (user) {
+            const profileImg = document.getElementById('sidebar-profile-picture');
+            const username = document.getElementById('sidebar-username');
+            
+            if (profileImg && user.profile_picture) {
+                profileImg.src = user.profile_picture;
+            }
+            if (username && user.username) {
+                username.textContent = user.username;
+            }
+        }
+    }
+
+    clearCache() {
+        this.cache.clear();
     }
 
     escapeHtml(text) {
+        if (!text) return '';
         const div = document.createElement('div');
         div.textContent = text;
         return div.innerHTML;
     }
 
-    getAuthToken() {
-        return AuthManager.getAuthToken(); // Use AuthManager
+    handleError(message, error) {
+        console.error(message, error);
+        this.showNotification(message, 'error');
+    }
+
+    handleWindowFocus() {
+        // Refresh data when window gains focus (user might have been away)
+        if (Date.now() - this.lastFetch > 60000) { // 1 minute
+            this.fetchUsers();
+        }
+    }
+
+    handleOnline() {
+        this.showNotification('Connection restored', 'success');
+        this.fetchUsers();
+    }
+
+    handleOffline() {
+        this.showNotification('You are offline. Some features may not work.', 'warning');
     }
 
     showNotification(message, type = 'info') {
-        // Implementation depends on your notification system
-        console.log(`${type.toUpperCase()}: ${message}`);
-        
-        // Example implementation with toast
+        // Remove existing toasts
+        document.querySelectorAll('.toast').forEach(toast => toast.remove());
+
         const toast = document.createElement('div');
-        toast.className = `toast toast-${type}`;
+        toast.className = `toast toast-${type} fixed top-4 right-4 px-6 py-3 rounded-lg text-white font-medium z-50 shadow-lg transform transition-all duration-300 ease-in-out translate-x-full`;
+        
+        const colors = {
+            success: 'bg-green-500',
+            error: 'bg-red-500',
+            warning: 'bg-yellow-500',
+            info: 'bg-blue-500'
+        };
+        
+        toast.classList.add(colors[type] || colors.info);
         toast.textContent = message;
-        toast.style.cssText = `
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 12px 24px;
-            border-radius: 4px;
-            color: white;
-            font-weight: bold;
-            z-index: 1000;
-            background-color: ${type === 'success' ? '#4CAF50' : type === 'error' ? '#f44336' : '#2196F3'};
-            animation: slideIn 0.3s ease;
-        `;
         
         document.body.appendChild(toast);
         
+        // Animate in
+        requestAnimationFrame(() => {
+            toast.classList.remove('translate-x-full');
+        });
+        
+        // Auto remove after 5 seconds
         setTimeout(() => {
-            toast.style.animation = 'slideOut 0.3s ease';
-            setTimeout(() => document.body.removeChild(toast), 300);
-        }, 3000);
+            toast.classList.add('translate-x-full');
+            setTimeout(() => {
+                if (toast.parentNode) {
+                    toast.parentNode.removeChild(toast);
+                }
+            }, 300);
+        }, 5000);
     }
 }
 
-// Initialize the user manager
+// Initialize the enhanced user manager
 const userManager = new UserManager();
 
-// Initialize on page load
+// Enhanced initialization
 document.addEventListener('DOMContentLoaded', async () => {
-    // Show loading state
-    const loadingOverlay = document.getElementById('loading-overlay');
-    if (loadingOverlay) {
-        loadingOverlay.classList.remove('hidden');
-        loadingOverlay.classList.add('flex');
-    }
-
     try {
-        // Initialize user manager and load data
-        await userManager.fetchUsers();
-        
-        // Setup search functionality
-        const searchInput = document.getElementById('userSearch');
-        if (searchInput) {
-            searchInput.addEventListener('input', (e) => {
-                userManager.filterUsers(e.target.value);
-            });
-        }
-
-        // Setup logout functionality
-        const logoutButton = document.querySelector('[data-logout]');
-        if (logoutButton) {
-            logoutButton.addEventListener('click', async () => {
-                try {
-                    await AuthManager.logout();
-                    window.location.href = '../index.html';
-                } catch (error) {
-                    console.error('Logout error:', error);
-                    userManager.showNotification('Error during logout', 'error');
-                }
-            });
-        }
-
+        await userManager.init();
     } catch (error) {
-        console.error('Error initializing dashboard:', error);
-        userManager.showNotification('Failed to initialize dashboard', 'error');
-    } finally {
-        // Hide loading state
-        if (loadingOverlay) {
-            loadingOverlay.classList.add('hidden');
-            loadingOverlay.classList.remove('flex');
-        }
+        console.error('Failed to initialize dashboard:', error);
+        userManager.showNotification('Dashboard initialization failed', 'error');
     }
 });
