@@ -21,8 +21,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const logoutConfirmBtn = document.getElementById('logout-confirm-btn');
     const logoutCancelBtn = document.getElementById('logout-cancel-btn');
 
+    console.log('logoutConfirmBtn:', logoutConfirmBtn); // Debugging line
+
     if (logoutConfirmBtn) {
         logoutConfirmBtn.addEventListener('click', () => {
+            console.log('Logout confirm button clicked!'); // Debugging line
             if (window.AuthManager && typeof window.AuthManager.logout === 'function') {
                 window.AuthManager.logout();
             }

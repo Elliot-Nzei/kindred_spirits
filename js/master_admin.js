@@ -318,8 +318,8 @@ class UserManager {
             this.showNotification('Invalid role update request', 'error');
             return;
         }
-
-        const originalUser = this.allUsers.find(u => u.id === userId);
+        const userIdNum = parseInt(userId, 10); // Convert userId to a number
+        const originalUser = this.allUsers.find(u => u.id === userIdNum);
         if (!originalUser) {
             this.showNotification('User not found', 'error');
             return;
@@ -377,8 +377,8 @@ class UserManager {
             this.showNotification('Invalid suspension request', 'error');
             return;
         }
-
-        const originalUser = this.allUsers.find(u => u.id === userId);
+        const userIdNum = parseInt(userId, 10); // Convert userId to a number
+        const originalUser = this.allUsers.find(u => u.id === userIdNum);
         if (!originalUser) {
             this.showNotification('User not found', 'error');
             return;

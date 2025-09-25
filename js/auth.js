@@ -57,7 +57,7 @@ const AuthManager = {
     // Logout user
     logout() {
         this.clearAuthData();
-        window.location.href = '/index.html';
+        window.location.href = '../index.html';
     }
 };
 
