@@ -12,6 +12,7 @@ class UserManager {
         this.debounceTimer = null;
         this.retryAttempts = 0;
         this.maxRetries = 3;
+        this.realtimeUpdateInterval = null;
         
         // Bind methods to preserve context
         this.handleSearch = this.handleSearch.bind(this);
@@ -29,11 +30,33 @@ class UserManager {
             await this.fetchUsers();
             this.setupEventListeners();
             this.updateUI();
+            this.startRealtimeUpdates();
         } catch (error) {
             this.handleError('Failed to initialize dashboard', error);
         } finally {
             this.showLoading(false);
         }
+    }
+
+    /**
+     * Start real-time data updates
+     */
+    startRealtimeUpdates() {
+        if (this.realtimeUpdateInterval) {
+            clearInterval(this.realtimeUpdateInterval);
+        }
+        this.realtimeUpdateInterval = setInterval(async () => {
+            const activeElement = document.activeElement;
+            const isInteracting = activeElement && (activeElement.closest('#masterAdminList') || activeElement.closest('#allMembersList'));
+
+            if (!this.isLoading && !isInteracting) {
+                try {
+                    await this.fetchUsers();
+                } catch (error) {
+                    console.error("Error during real-time update:", error);
+                }
+            }
+        }, 10000); // Refresh every 10 seconds
     }
 
     /**
@@ -330,11 +353,12 @@ class UserManager {
             this.setUserRowLoading(userId, true);
 
             // Optimistic update
-            const userIndex = this.allUsers.findIndex(u => u.id === userId);
+            const userIndex = this.allUsers.findIndex(u => u.id === userIdNum);
             const previousRole = this.getUserRole(originalUser);
             
             // Create updated user object
             const updatedUser = { ...originalUser };
+            updatedUser.is_master = newRole === 'master';
             updatedUser.is_vice_admin = newRole === 'vice_admin';
             updatedUser.is_guide = newRole === 'guide';
             
