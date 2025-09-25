@@ -1,1 +1,28 @@
-Unexpected token 'I', "Internal S"... is not valid JSON
+(index):64 
+ cdn.tailwindcss.com should not be used in production. To use Tailwind CSS in production, install it as a PostCSS plugin or use the Tailwind CLI: https://tailwindcss.com/docs/installation
+master_admin.js:663 
+ Failed to initialize dashboard Error: Unauthorized: Master admin privileges required
+    at UserManager.validateAuth (master_admin.js:49:19)
+    at UserManager.init (master_admin.js:28:24)
+    at HTMLDocument.<anonymous> (master_admin.js:725:27)
+logout_modal.js:29 
+ Logout modal element not found. Creating dynamically...
+logout_modal.js:49 Logout modal manager initialized successfully
+[NEW] Explain Console errors by using Copilot in Edge: click 
+ to explain an error. Learn more
+Don't show again
+﻿
+
+Compatibility
+'-webkit-text-size-adjust' is not supported by Chrome, Chrome Android, Edge 79+, Firefox, Safari. Add 'text-size-adjust' to support Chrome 54+, Chrome Android 54+, Edge 79+.
+'backdrop-filter' is not supported by Safari. Add '-webkit-backdrop-filter' to support Safari 9+.
+
+
+
+Login attempt for user: masteradmin, is_master: True
+INFO:     127.0.0.1:63967 - "POST /api/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63970 - "GET /pages/master_admin_dashboard.html HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:63970 - "GET /js/auth.js HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:63969 - "GET /js/logout_modal.js HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:63977 - "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 Not Found
+
