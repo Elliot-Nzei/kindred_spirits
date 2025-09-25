@@ -1,3 +1,1 @@
-Buttons must have discernible text: Element has no title attribute
-Compatibility
-'-webkit-text-size-adjust' is not supported by Chrome, Chrome Android, Edge 79+, Firefox, Safari. Add 'text-size-adjust' to support Chrome 54+, Chrome Android 54+, Edge 79+.
+Unexpected token 'I', "Internal S"... is not valid JSON

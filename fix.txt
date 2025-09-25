@@ -1,46 +1,47 @@
-Master Admin
-System administrator with full privileges
+(index):64 
+ cdn.tailwindcss.com should not be used in production. To use Tailwind CSS in production, install it as a PostCSS plugin or use the Tailwind CLI: https://tailwindcss.com/docs/installation
+master_admin.js:657 
+ Failed to initialize dashboard Error: Unauthorized: Master admin privileges required
+    at UserManager.validateAuth (master_admin.js:49:19)
+    at UserManager.init (master_admin.js:28:24)
+    at HTMLDocument.<anonymous> (master_admin.js:719:27)
+[NEW] Explain Console errors by using Copilot in Edge: click 
+ to explain an error. Learn more
+Don't show again
+﻿
 
-User	Role	Status	Actions
-Profile
-masteradmin
-masteradmin@example.com
-Master Admin	
-Active
-Suspend
-Vice-Admin Management
-Users with elevated administrative privileges
+Compatibility
+'-webkit-text-size-adjust' is not supported by Chrome, Chrome Android, Edge 79+, Firefox, Safari. Add 'text-size-adjust' to support Chrome 54+, Chrome Android 54+, Edge 79+.
 
-User	Role	Status	Actions
-Profile
-Elliot
-elliotnzei41@gmail.com
-Vice admin	
-Active
 
-Vice-Admin
-Suspend
-Profile
-zarmil
-zarmil@gmail.com
-Vice admin	
-Active
 
-Vice-Admin
-Suspend
-Guide Management
-Community guides and mentors
 
-User	Role	Status	Actions
-Profile
-doris
-doris@gmail.com
-Guide	
-Active
-
-Guide
-Suspend
-Member Management
-Regular community members
-
-User	Role	Status	Actions
+Terminal: 
+Master user already exists and is correctly configured.
+INFO:     Application startup complete.
+INFO:     127.0.0.1:51286 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51286 - "GET /css/auth.css HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:51287 - "GET /js/config.js HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:51288 - "GET /js/auth.js?v=1.1 HTTP/1.1" 304 Not Modified
+                                                                       Login attempt for user: masteradmin, is_master: True
+INFO:     127.0.0.1:51995 - "POST /api/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51995 - "GET /pages/master_admin_dashboard.html HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51995 - "GET /css/main.css HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51998 - "GET /css/master_dashboard.css HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51999 - "GET /img/logo_only.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52000 - "GET /img/default-avatar.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53140 - "GET /pages/master_admin_dashboard.html HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53140 - "GET /css/main.css HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:53141 - "GET /css/master_dashboard.css HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:53143 - "GET /img/logo_only.jpg HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:53144 - "GET /img/default-avatar.jpg HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:53144 - "GET /js/auth.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53141 - "GET /js/master_admin.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53143 - "GET /js/config.js HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:53140 - "GET /js/mobileMenu.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53146 - "GET /js/realtimeClock.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53145 - "GET /js/logout_modal.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57498 - "GET /pages/master_admin_dashboard.html HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:57499 - "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:61477 - "GET /pages/master_admin_dashboard.html HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:61477 - "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 Not Found

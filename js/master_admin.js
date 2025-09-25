@@ -602,8 +602,14 @@ class UserManager {
         const guideCount = this.allUsers.filter(user => user.is_guide && !user.is_master && !user.is_vice_admin).length;
         const memberCount = this.allUsers.filter(user => !user.is_master && !user.is_vice_admin && !user.is_guide).length;
 
-        document.getElementById('totalUsers').textContent = this.allUsers.length.toLocaleString();
+        const totalUsers = this.allUsers.length;
+        document.getElementById('totalUsers').textContent = totalUsers.toLocaleString();
         document.getElementById('viceAdminCount').textContent = viceAdminCount.toLocaleString();
+        
+        const userCountBadge = document.getElementById('user-count-badge');
+        if (userCountBadge) {
+            userCountBadge.textContent = totalUsers.toLocaleString();
+        }
     }
 
     updateSearchResults(count) {

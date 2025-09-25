@@ -16,11 +16,18 @@ const AuthManager = {
 
     // Get current user data
     getCurrentUser() {
+        const is_master = localStorage.getItem('is_master');
+        const is_vice_admin = localStorage.getItem('is_vice_admin');
+        const is_guide = localStorage.getItem('is_guide');
+
         return {
             id: localStorage.getItem('user_id'),
             username: localStorage.getItem('username'),
             email: localStorage.getItem('email'),
-            profile_picture: localStorage.getItem('profile_picture')
+            profile_picture: localStorage.getItem('profile_picture'),
+            is_master: is_master === 'true',
+            is_vice_admin: is_vice_admin === 'true',
+            is_guide: is_guide === 'true'
         };
     },
 
