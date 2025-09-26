@@ -198,6 +198,10 @@ html {
     background-color: #388e3c;
 }
 
+.spinning {
+    animation: spin 1s linear infinite;
+}
+
 @media (max-width: 767px) { /* Small screens */
     .min-w-full td, .min-w-full th {
         padding-left: 8px; /* px-2 equivalent */

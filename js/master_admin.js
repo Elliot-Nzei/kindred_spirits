@@ -29,6 +29,7 @@ class UserManager {
             await this.validateAuth();
             await this.fetchUsers();
             this.setupEventListeners();
+            this.setupMobileMenu();
             this.updateUI();
             this.startRealtimeUpdates();
         } catch (error) {
@@ -46,17 +47,14 @@ class UserManager {
             clearInterval(this.realtimeUpdateInterval);
         }
         this.realtimeUpdateInterval = setInterval(async () => {
-            const activeElement = document.activeElement;
-            const isInteracting = activeElement && (activeElement.closest('#masterAdminList') || activeElement.closest('#allMembersList'));
-
-            if (!this.isLoading && !isInteracting) {
+            if (!this.isLoading) {
                 try {
                     await this.fetchUsers();
                 } catch (error) {
                     console.error("Error during real-time update:", error);
                 }
             }
-        }, 10000); // Refresh every 10 seconds
+        }, 5000); // Refresh every 5 seconds
     }
 
     /**
@@ -84,12 +82,49 @@ class UserManager {
             searchInput.addEventListener('input', this.handleSearch);
         }
 
+        const refreshButton = document.getElementById('refresh-data');
+        if (refreshButton) {
+            refreshButton.addEventListener('click', this.fetchUsers.bind(this));
+        }
+
         // Listen for window focus to refresh data
         window.addEventListener('focus', this.handleWindowFocus.bind(this));
         
         // Handle online/offline events
         window.addEventListener('online', this.handleOnline.bind(this));
         window.addEventListener('offline', this.handleOffline.bind(this));
+    }
+
+    /**
+     * Setup mobile menu interactions
+     */
+    setupMobileMenu() {
+        const sidebar = document.getElementById('sidebar');
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const sidebarOverlay = document.getElementById('sidebar-overlay');
+        const navLinks = document.querySelectorAll('#sidebar .nav-link');
+
+        if (sidebar && mobileMenuButton && sidebarOverlay) {
+            const toggleMenu = () => {
+                sidebar.classList.toggle('-translate-x-full');
+                sidebarOverlay.classList.toggle('hidden');
+            };
+
+            mobileMenuButton.addEventListener('click', toggleMenu);
+            sidebarOverlay.addEventListener('click', toggleMenu);
+
+            // Close sidebar when a nav link is clicked on mobile
+            navLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    if (window.innerWidth < 768) { // md breakpoint
+                        // Check if the sidebar is open before toggling
+                        if (!sidebar.classList.contains('-translate-x-full')) {
+                            toggleMenu();
+                        }
+                    }
+                });
+            });
+        }
     }
 
     /**
@@ -474,9 +509,13 @@ class UserManager {
      */
     async fetchUsers() {
         const cacheKey = 'users';
+        const refreshIcon = document.querySelector('#refresh-data svg');
         
         try {
             this.isLoading = true;
+            if (refreshIcon) {
+                refreshIcon.classList.add('spinning');
+            }
 
             const response = await this.makeApiRequest('/api/admin/users', {
                 headers: { 'Authorization': `Bearer ${AuthManager.getAuthToken()}` }
@@ -508,6 +547,9 @@ class UserManager {
             }
         } finally {
             this.isLoading = false;
+            if (refreshIcon) {
+                refreshIcon.classList.remove('spinning');
+            }
         }
     }
 
